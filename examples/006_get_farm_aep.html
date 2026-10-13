@@ -27,8 +27,8 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
-<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+  <link href="../_static/styles/theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
@@ -39,10 +39,10 @@
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- So that users can add custom icons -->
-  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="../_static/scripts/fontawesome.js?digest=55c26ed414f5f8a31ebb"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
-<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
     <script src="../_static/documentation_options.js?v=30a733bc"></script>
     <script src="../_static/doctools.js?v=9a2dae69"></script>
@@ -60,6 +60,12 @@
     <script>
                 window.dataLayer = window.dataLayer || [];
                 function gtag(){ dataLayer.push(arguments); }
+                gtag('consent', 'default', {
+                    'ad_storage': 'denied',
+                    'ad_user_data': 'denied',
+                    'ad_personalization': 'denied',
+                    'analytics_storage': 'denied'
+                });
                 gtag('js', new Date());
                 gtag('config', 'G-JV2SK7CNPR');
             </script>
@@ -69,11 +75,18 @@
     <script>
                 window.dataLayer = window.dataLayer || [];
                 function gtag(){ dataLayer.push(arguments); }
+                gtag('consent', 'default', {
+                    'ad_storage': 'denied',
+                    'ad_user_data': 'denied',
+                    'ad_personalization': 'denied',
+                    'analytics_storage': 'denied'
+                });
                 gtag('js', new Date());
                 gtag('config', 'G-JV2SK7CNPR');
             </script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'examples/006_get_farm_aep';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Example 7: Sweeping Variables" href="007_sweeping_variables.html" />
@@ -81,20 +94,26 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="python"/>
   <meta name="docsearch:version" content="" />
+  
+    
+    <script src="../_static/searchtools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../searchindex.js"></script>
+  
   </head>
-  
-  
-  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
-
+  <body data-default-mode="">
   
   
   <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
   
   <div id="pst-scroll-pixel-helper"></div>
   
   <button type="button" class="btn rounded-pill" id="pst-back-to-top">
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
-
+  
+  
+  
   
   <dialog id="pst-search-dialog">
     
@@ -120,7 +139,47 @@
 </div>
 
   
-    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
     </header>
   
 
@@ -646,7 +705,7 @@
 <h1>Example 6: Getting Expected Power and AEP<a class="headerlink" href="#example-6-getting-expected-power-and-aep" title="Link to this heading">#</a></h1>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Example 6: Getting Expected Power and AEP</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="sd">"""Example 6: Getting Expected Power and AEP</span>
 
 <span class="sd">The expected power of a farm is computed by multiplying the power output of the farm by the</span>
 <span class="sd">frequency of each findex.  This is done by the `get_expected_farm_power` method.  The expected</span>
@@ -658,7 +717,7 @@
 <span class="sd"> of the wind data object.  If not, a frequency table must be passed into these functions</span>
 
 
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
@@ -669,7 +728,7 @@
 <span class="p">)</span>
 
 
-<span class="n">fmodel</span> <span class="o">=</span> <span class="n">FlorisModel</span><span class="p">(</span><span class="s2">&quot;inputs/gch.yaml&quot;</span><span class="p">)</span>
+<span class="n">fmodel</span> <span class="o">=</span> <span class="n">FlorisModel</span><span class="p">(</span><span class="s2">"inputs/gch.yaml"</span><span class="p">)</span>
 
 
 <span class="c1"># Set to a 3-turbine layout</span>
@@ -701,13 +760,13 @@
 <span class="c1"># Note this is equivalent to the following</span>
 <span class="n">aep_b</span> <span class="o">=</span> <span class="n">fmodel</span><span class="o">.</span><span class="n">get_farm_AEP</span><span class="p">(</span><span class="n">freq</span><span class="o">=</span><span class="n">time_series</span><span class="o">.</span><span class="n">unpack_freq</span><span class="p">())</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;AEP from time series: </span><span class="si">{</span><span class="n">aep</span><span class="si">}</span><span class="s2">, and re-computed AEP: </span><span class="si">{</span><span class="n">aep_b</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"AEP from time series: </span><span class="si">{</span><span class="n">aep</span><span class="si">}</span><span class="s2">, and re-computed AEP: </span><span class="si">{</span><span class="n">aep_b</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
 <span class="c1"># Using WindRose==============================================</span>
 
 <span class="c1"># Load the wind rose from csv as in example 003</span>
 <span class="n">wind_rose</span> <span class="o">=</span> <span class="n">WindRose</span><span class="o">.</span><span class="n">read_csv_long</span><span class="p">(</span>
-    <span class="s2">&quot;inputs/wind_rose.csv&quot;</span><span class="p">,</span> <span class="n">wd_col</span><span class="o">=</span><span class="s2">&quot;wd&quot;</span><span class="p">,</span> <span class="n">ws_col</span><span class="o">=</span><span class="s2">&quot;ws&quot;</span><span class="p">,</span> <span class="n">freq_col</span><span class="o">=</span><span class="s2">&quot;freq_val&quot;</span><span class="p">,</span> <span class="n">ti_col_or_value</span><span class="o">=</span><span class="mf">0.06</span>
+    <span class="s2">"inputs/wind_rose.csv"</span><span class="p">,</span> <span class="n">wd_col</span><span class="o">=</span><span class="s2">"wd"</span><span class="p">,</span> <span class="n">ws_col</span><span class="o">=</span><span class="s2">"ws"</span><span class="p">,</span> <span class="n">freq_col</span><span class="o">=</span><span class="s2">"freq_val"</span><span class="p">,</span> <span class="n">ti_col_or_value</span><span class="o">=</span><span class="mf">0.06</span>
 <span class="p">)</span>
 
 
@@ -725,17 +784,17 @@
 <span class="n">fmodel</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 
 <span class="c1"># Note that the frequency table contains 0 frequency for some wind directions and wind speeds</span>
-<span class="c1"># and we&#39;ve not selected to compute 0 frequency bins, therefore the n_findex will be less than</span>
+<span class="c1"># and we've not selected to compute 0 frequency bins, therefore the n_findex will be less than</span>
 <span class="c1"># the total number of wind directions and wind speed combinations</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Total number of wind direction and wind speed combination: </span><span class="si">{</span><span class="n">n_wd</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">n_ws</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Number of 0 frequency bins: </span><span class="si">{</span><span class="n">n_zeros</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;n_findex: </span><span class="si">{</span><span class="n">fmodel</span><span class="o">.</span><span class="n">n_findex</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Total number of wind direction and wind speed combination: </span><span class="si">{</span><span class="n">n_wd</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">n_ws</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Number of 0 frequency bins: </span><span class="si">{</span><span class="n">n_zeros</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"n_findex: </span><span class="si">{</span><span class="n">fmodel</span><span class="o">.</span><span class="n">n_findex</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
 <span class="c1"># Get the AEP</span>
 <span class="n">aep</span> <span class="o">=</span> <span class="n">fmodel</span><span class="o">.</span><span class="n">get_farm_AEP</span><span class="p">()</span>
 
 <span class="c1"># Print the AEP</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;AEP from wind rose: </span><span class="si">{</span><span class="n">aep</span><span class="o">/</span><span class="mf">1E9</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> (GWh)&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"AEP from wind rose: </span><span class="si">{</span><span class="n">aep</span><span class="o">/</span><span class="mf">1E9</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> (GWh)"</span><span class="p">)</span>
 
 <span class="c1"># Run the model again, without wakes, and use the result to compute the wake losses</span>
 <span class="n">fmodel</span><span class="o">.</span><span class="n">run_no_wake</span><span class="p">()</span>
@@ -747,9 +806,9 @@
 <span class="n">wake_losses</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="p">(</span><span class="n">aep_no_wake</span> <span class="o">-</span> <span class="n">aep</span><span class="p">)</span> <span class="o">/</span> <span class="n">aep_no_wake</span>
 
 <span class="c1"># Print the wake losses</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Wake losses: </span><span class="si">{</span><span class="n">wake_losses</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Wake losses: </span><span class="si">{</span><span class="n">wake_losses</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">%"</span><span class="p">)</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
-<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">'ignore'</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -769,7 +828,7 @@ Wake losses: 0.99%
   val = 2 * (avg_v - v_core) / (v_top + v_bottom)
 /home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:160: RuntimeWarning: invalid value encountered in divide
   C0 = 1 - u0 / freestream_velocity
-/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:505: RuntimeWarning: invalid value encountered in divide
+/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:512: RuntimeWarning: invalid value encountered in divide
   I_total = np.sqrt((2 / 3) * k_total) / average_u_i
 /home/runner/work/floris/floris/floris/core/wake_velocity/gauss.py:80: RuntimeWarning: invalid value encountered in divide
   sigma_z0 = rotor_diameter_i * 0.5 * np.sqrt(uR / (u_initial + u0))
@@ -877,8 +936,8 @@ By National Laboratory of the Rockies
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
-<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb"></script>
 
   <footer class="bd-footer">
   </footer>

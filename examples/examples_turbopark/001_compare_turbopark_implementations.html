@@ -27,8 +27,8 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
-<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+  <link href="../../_static/styles/theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
@@ -39,10 +39,10 @@
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- So that users can add custom icons -->
-  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="../../_static/scripts/fontawesome.js?digest=55c26ed414f5f8a31ebb"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
-<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
     <script src="../../_static/documentation_options.js?v=30a733bc"></script>
     <script src="../../_static/doctools.js?v=9a2dae69"></script>
@@ -60,6 +60,12 @@
     <script>
                 window.dataLayer = window.dataLayer || [];
                 function gtag(){ dataLayer.push(arguments); }
+                gtag('consent', 'default', {
+                    'ad_storage': 'denied',
+                    'ad_user_data': 'denied',
+                    'ad_personalization': 'denied',
+                    'analytics_storage': 'denied'
+                });
                 gtag('js', new Date());
                 gtag('config', 'G-JV2SK7CNPR');
             </script>
@@ -69,11 +75,18 @@
     <script>
                 window.dataLayer = window.dataLayer || [];
                 function gtag(){ dataLayer.push(arguments); }
+                gtag('consent', 'default', {
+                    'ad_storage': 'denied',
+                    'ad_user_data': 'denied',
+                    'ad_personalization': 'denied',
+                    'analytics_storage': 'denied'
+                });
                 gtag('js', new Date());
                 gtag('config', 'G-JV2SK7CNPR');
             </script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'examples/examples_turbopark/001_compare_turbopark_implementations';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="Example: Uncertain Model Parameters" href="../examples_uncertain/001_uncertain_model_params.html" />
@@ -81,20 +94,26 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="python"/>
   <meta name="docsearch:version" content="" />
+  
+    
+    <script src="../../_static/searchtools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script src="../../searchindex.js"></script>
+  
   </head>
-  
-  
-  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
-
+  <body data-default-mode="">
   
   
   <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
   
   <div id="pst-scroll-pixel-helper"></div>
   
   <button type="button" class="btn rounded-pill" id="pst-back-to-top">
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
-
+  
+  
+  
   
   <dialog id="pst-search-dialog">
     
@@ -120,7 +139,47 @@
 </div>
 
   
-    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
     </header>
   
 
@@ -646,12 +705,12 @@
 <h1>Example: Compare TurbOPark model implementations<a class="headerlink" href="#example-compare-turbopark-model-implementations" title="Link to this heading">#</a></h1>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Example: Compare TurbOPark model implementations</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="sd">"""Example: Compare TurbOPark model implementations</span>
 <span class="sd">This example demonstrates a new implementation of the TurbOPark model that is</span>
 <span class="sd">more faithful to the original description provided by Pedersen et al and uses</span>
 <span class="sd">the sequential_solver, and compares it to the existing implementation in</span>
 <span class="sd">Floris.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
@@ -662,19 +721,19 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">floris.turbine_library</span><span class="w"> </span><span class="kn">import</span> <span class="n">build_cosine_loss_turbine_dict</span>
 
 
-<span class="c1"># Note: &quot;new&quot; is used to refer to the new implementation of TurbOPark, which is</span>
-<span class="c1"># more faithful to the description provided by Pedersen et al. (2022). &quot;orig&quot;</span>
+<span class="c1"># Note: "new" is used to refer to the new implementation of TurbOPark, which is</span>
+<span class="c1"># more faithful to the description provided by Pedersen et al. (2022). "orig"</span>
 <span class="c1"># is used to refer to the existing TurbOPark implementation in Floris (which</span>
-<span class="c1"># was based on Ørsted&#39;s Matlab code, originally from Nygaard et al. (2020).</span>
+<span class="c1"># was based on Ørsted's Matlab code, originally from Nygaard et al. (2020).</span>
 
 <span class="c1">### Build a constant CT turbine model for use in comparisons (not realistic)</span>
 <span class="n">const_CT_turb</span> <span class="o">=</span> <span class="n">build_cosine_loss_turbine_dict</span><span class="p">(</span>
     <span class="n">turbine_data_dict</span><span class="o">=</span><span class="p">{</span>
-        <span class="s2">&quot;wind_speed&quot;</span><span class="p">:[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">30.0</span><span class="p">],</span>
-        <span class="s2">&quot;power&quot;</span><span class="p">:[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span> <span class="c1"># Not realistic but won&#39;t be used here</span>
-        <span class="s2">&quot;thrust_coefficient&quot;</span><span class="p">:[</span><span class="mf">0.75</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">]</span>
+        <span class="s2">"wind_speed"</span><span class="p">:[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">30.0</span><span class="p">],</span>
+        <span class="s2">"power"</span><span class="p">:[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span> <span class="c1"># Not realistic but won't be used here</span>
+        <span class="s2">"thrust_coefficient"</span><span class="p">:[</span><span class="mf">0.75</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">]</span>
     <span class="p">},</span>
-    <span class="n">turbine_name</span><span class="o">=</span><span class="s2">&quot;ConstantCT&quot;</span><span class="p">,</span>
+    <span class="n">turbine_name</span><span class="o">=</span><span class="s2">"ConstantCT"</span><span class="p">,</span>
     <span class="n">rotor_diameter</span><span class="o">=</span><span class="mf">120.0</span><span class="p">,</span>
     <span class="n">hub_height</span><span class="o">=</span><span class="mf">100.0</span><span class="p">,</span>
     <span class="n">ref_tilt</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
@@ -682,7 +741,7 @@
 
 <span class="c1">### Start by visualizing a single turbine in and its wake with the new model</span>
 <span class="c1"># Load the new TurboPark implementation and switch to constant CT turbine</span>
-<span class="n">fmodel_new</span> <span class="o">=</span> <span class="n">FlorisModel</span><span class="p">(</span><span class="s2">&quot;../inputs/turboparkgauss_cubature.yaml&quot;</span><span class="p">)</span>
+<span class="n">fmodel_new</span> <span class="o">=</span> <span class="n">FlorisModel</span><span class="p">(</span><span class="s2">"../inputs/turboparkgauss_cubature.yaml"</span><span class="p">)</span>
 <span class="n">fmodel_new</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
     <span class="n">turbine_type</span><span class="o">=</span><span class="p">[</span><span class="n">const_CT_turb</span><span class="p">],</span>
     <span class="n">reference_wind_height</span><span class="o">=</span><span class="n">fmodel_new</span><span class="o">.</span><span class="n">reference_wind_height</span>
@@ -690,8 +749,8 @@
 <span class="n">fmodel_new</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 <span class="n">u0</span> <span class="o">=</span> <span class="n">fmodel_new</span><span class="o">.</span><span class="n">wind_speeds</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
-<span class="n">col_orig</span> <span class="o">=</span> <span class="s2">&quot;C0&quot;</span>
-<span class="n">col_new</span> <span class="o">=</span> <span class="s2">&quot;C1&quot;</span>
+<span class="n">col_orig</span> <span class="o">=</span> <span class="s2">"C0"</span>
+<span class="n">col_new</span> <span class="o">=</span> <span class="s2">"C1"</span>
 
 <span class="c1"># Get plane of points for visualization</span>
 <span class="n">rotor_diameter</span> <span class="o">=</span> <span class="mf">120.0</span>
@@ -714,10 +773,10 @@
     <span class="n">horizontal_plane</span><span class="p">,</span>
     <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
     <span class="n">label_contours</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Horizontal plane&quot;</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">"Horizontal plane"</span>
 <span class="p">)</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;x [m]&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;y [m]&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"x [m]"</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"y [m]"</span><span class="p">)</span>
 
 <span class="c1"># Get points and velocities, normalized by rotor diameter and freestream velocity</span>
 <span class="n">x_locs_norm</span> <span class="o">=</span> <span class="n">horizontal_plane</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">x1</span><span class="p">[:</span><span class="n">x_resolution</span><span class="p">]</span><span class="o">/</span><span class="n">rotor_diameter</span>
@@ -726,8 +785,8 @@
 
 <span class="c1"># Plot downstream velocities</span>
 <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_locs_norm</span><span class="p">,</span> <span class="n">u_norm</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">col_new</span><span class="p">)</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Downstream distance [D]&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Normalized velocity [-]&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"Downstream distance [D]"</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"Normalized velocity [-]"</span><span class="p">)</span>
 <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
 <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">([</span><span class="n">x</span><span class="o">/</span><span class="n">rotor_diameter</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">x_bounds</span><span class="p">])</span>
 
@@ -735,16 +794,16 @@
 <span class="k">for</span> <span class="n">loc</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">251</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">350</span><span class="p">,</span><span class="mi">750</span><span class="p">,</span><span class="mi">5</span><span class="p">)):</span>  <span class="c1">#range(200,1200,200):</span>
     <span class="n">u_norm</span> <span class="o">=</span> <span class="n">horizontal_plane</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">u</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">loc</span><span class="p">)::</span><span class="n">x_resolution</span><span class="p">]</span><span class="o">/</span><span class="n">u0</span>
     <span class="n">alpha</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="p">(</span><span class="n">loc</span><span class="o">-</span><span class="mi">250</span><span class="p">)</span><span class="o">/</span><span class="mi">1000</span>
-    <span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">y_locs_norm</span><span class="p">,</span> <span class="n">u_norm</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="nb">str</span><span class="p">((</span><span class="n">loc</span><span class="o">-</span><span class="mi">250</span><span class="p">)</span><span class="o">/</span><span class="mi">50</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;D downstream&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">col_new</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">y_locs_norm</span><span class="p">,</span> <span class="n">u_norm</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="nb">str</span><span class="p">((</span><span class="n">loc</span><span class="o">-</span><span class="mi">250</span><span class="p">)</span><span class="o">/</span><span class="mi">50</span><span class="p">)</span><span class="o">+</span><span class="s2">"D downstream"</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">col_new</span><span class="p">)</span>
 <span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Radial distance [D]&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Normalized velocity [-]&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"Radial distance [D]"</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"Normalized velocity [-]"</span><span class="p">)</span>
 <span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
 <span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">([</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
 
 <span class="c1">### Look at the wake profile at a single downstream distance for a range of wind directions</span>
 <span class="c1"># Load the original TurboPark implementation and switch to constant CT turbine</span>
-<span class="n">fmodel_orig</span> <span class="o">=</span> <span class="n">FlorisModel</span><span class="p">(</span><span class="s2">&quot;../inputs/turbopark_cubature.yaml&quot;</span><span class="p">)</span>
+<span class="n">fmodel_orig</span> <span class="o">=</span> <span class="n">FlorisModel</span><span class="p">(</span><span class="s2">"../inputs/turbopark_cubature.yaml"</span><span class="p">)</span>
 <span class="n">fmodel_orig</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
     <span class="n">turbine_type</span><span class="o">=</span><span class="p">[</span><span class="n">const_CT_turb</span><span class="p">],</span>
     <span class="n">reference_wind_height</span><span class="o">=</span><span class="n">fmodel_orig</span><span class="o">.</span><span class="n">reference_wind_height</span>
@@ -777,19 +836,19 @@
 <span class="n">fmodel_new</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 <span class="n">new_vels_ds</span> <span class="o">=</span> <span class="n">fmodel_new</span><span class="o">.</span><span class="n">turbine_average_velocities</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span>
 
-<span class="c1"># Load comparison data (generated by running Ørsted&#39;s Matlab code</span>
+<span class="c1"># Load comparison data (generated by running Ørsted's Matlab code</span>
 <span class="c1"># https://github.com/OrstedRD/TurbOPark)</span>
-<span class="n">df_twinpark</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;comparison_data/WindDirection_Sweep_Orsted.csv&quot;</span><span class="p">)</span>
+<span class="n">df_twinpark</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">"comparison_data/WindDirection_Sweep_Orsted.csv"</span><span class="p">)</span>
 
 <span class="c1"># Plot the data and compare</span>
 <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 <span class="n">fig</span><span class="o">.</span><span class="n">set_size_inches</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wd_array</span><span class="p">,</span> <span class="n">orig_vels_ds</span><span class="o">/</span><span class="n">u0</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Floris - TurbOPark&quot;</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">col_orig</span><span class="p">)</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wd_array</span><span class="p">,</span> <span class="n">new_vels_ds</span><span class="o">/</span><span class="n">u0</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Floris - TurbOPark-Gauss&quot;</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">col_new</span><span class="p">)</span>
-<span class="n">df_twinpark</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="s2">&quot;wd&quot;</span><span class="p">,</span> <span class="s2">&quot;wws&quot;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Orsted - TurbOPark&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wd_array</span><span class="p">,</span> <span class="n">orig_vels_ds</span><span class="o">/</span><span class="n">u0</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Floris - TurbOPark"</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">col_orig</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wd_array</span><span class="p">,</span> <span class="n">new_vels_ds</span><span class="o">/</span><span class="n">u0</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Floris - TurbOPark-Gauss"</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">col_new</span><span class="p">)</span>
+<span class="n">df_twinpark</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="s2">"wd"</span><span class="p">,</span> <span class="s2">"wws"</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">"--"</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"k"</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Orsted - TurbOPark"</span><span class="p">)</span>
 
-<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Wind direction [deg]&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Normalized rotor averaged waked wind speed [-]&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"Wind direction [deg]"</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"Normalized rotor averaged waked wind speed [-]"</span><span class="p">)</span>
 <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="mi">240</span><span class="p">,</span><span class="mi">300</span><span class="p">)</span>
 <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mf">0.65</span><span class="p">,</span><span class="mf">1.05</span><span class="p">)</span>
 <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
@@ -823,27 +882,27 @@
 <span class="n">u0</span> <span class="o">=</span> <span class="n">fmodel_orig</span><span class="o">.</span><span class="n">wind_speeds</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="c1"># Get freestream wind speed for normalization</span>
 
 <span class="c1"># Load comparison data</span>
-<span class="n">df_rowpark</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;comparison_data/Rowpark_Orsted.csv&quot;</span><span class="p">)</span>
+<span class="n">df_rowpark</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">"comparison_data/Rowpark_Orsted.csv"</span><span class="p">)</span>
 
 <span class="c1"># Plot the data and compare</span>
 <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>
-    <span class="n">turbines</span><span class="p">,</span> <span class="n">df_rowpark</span><span class="p">[</span><span class="s2">&quot;wws&quot;</span><span class="p">],</span> <span class="n">s</span><span class="o">=</span><span class="mi">80</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;o&quot;</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Orsted - TurbOPark&quot;</span>
+    <span class="n">turbines</span><span class="p">,</span> <span class="n">df_rowpark</span><span class="p">[</span><span class="s2">"wws"</span><span class="p">],</span> <span class="n">s</span><span class="o">=</span><span class="mi">80</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">"o"</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s2">"k"</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Orsted - TurbOPark"</span>
 <span class="p">)</span>
 <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>
-    <span class="n">turbines</span><span class="p">,</span> <span class="n">orig_vels_row</span><span class="o">/</span><span class="n">u0</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;o&quot;</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">col_orig</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Floris - TurbOPark&quot;</span>
+    <span class="n">turbines</span><span class="p">,</span> <span class="n">orig_vels_row</span><span class="o">/</span><span class="n">u0</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">"o"</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">col_orig</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Floris - TurbOPark"</span>
 <span class="p">)</span>
 <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>
-    <span class="n">turbines</span><span class="p">,</span> <span class="n">new_vels_row</span><span class="o">/</span><span class="n">u0</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;o&quot;</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">col_new</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Floris - TurbOPark_Gauss&quot;</span>
+    <span class="n">turbines</span><span class="p">,</span> <span class="n">new_vels_row</span><span class="o">/</span><span class="n">u0</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">"o"</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">col_new</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Floris - TurbOPark_Gauss"</span>
 <span class="p">)</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Turbine number&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Normalized rotor averaged wind speed [-]&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"Turbine number"</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"Normalized rotor averaged wind speed [-]"</span><span class="p">)</span>
 <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mf">0.25</span><span class="p">,</span> <span class="mf">1.05</span><span class="p">)</span>
 <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
 <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
 
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
-<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">'ignore'</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -854,8 +913,8 @@
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Blue">floris.logging_manager.LoggingManager</span> <span class=" -Color -Color-Bold -Color-Bold-Black">WARNING</span> <span class=" -Color -Color-Yellow">The turbopark model has been superseded by the turboparkgauss model. We recommend using `velocity_model: turboparkgauss` instead.</span>
 </pre></div>
 </div>
-<img alt="../../_images/d7eae8d85f9c9c0f6f55ed04948de35188a67464948a68140cc7af7b716b79b5.png" src="../../_images/d7eae8d85f9c9c0f6f55ed04948de35188a67464948a68140cc7af7b716b79b5.png" />
-<img alt="../../_images/374b5606a7db37749f8cff569286f4e81533ccdf036b36c3f0d354bf9df63afe.png" src="../../_images/374b5606a7db37749f8cff569286f4e81533ccdf036b36c3f0d354bf9df63afe.png" />
+<img alt="../../_images/2f1562ecf1d050a828017ac23d904cc162f7b8d4e0924e59fb09cdfba5a5931b.png" src="../../_images/2f1562ecf1d050a828017ac23d904cc162f7b8d4e0924e59fb09cdfba5a5931b.png" />
+<img alt="../../_images/b2d787c14bb68e6fe4ac30581ae1f2c49419b89f7c87f049dc1ad988270f6184.png" src="../../_images/b2d787c14bb68e6fe4ac30581ae1f2c49419b89f7c87f049dc1ad988270f6184.png" />
 </div>
 </div>
 </section>
@@ -958,8 +1017,8 @@ By National Laboratory of the Rockies
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
-<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb"></script>
 
   <footer class="bd-footer">
   </footer>

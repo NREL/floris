@@ -27,8 +27,8 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
-<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+  <link href="../../_static/styles/theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
@@ -39,10 +39,10 @@
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- So that users can add custom icons -->
-  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="../../_static/scripts/fontawesome.js?digest=55c26ed414f5f8a31ebb"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
-<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
     <script src="../../_static/documentation_options.js?v=30a733bc"></script>
     <script src="../../_static/doctools.js?v=9a2dae69"></script>
@@ -60,6 +60,12 @@
     <script>
                 window.dataLayer = window.dataLayer || [];
                 function gtag(){ dataLayer.push(arguments); }
+                gtag('consent', 'default', {
+                    'ad_storage': 'denied',
+                    'ad_user_data': 'denied',
+                    'ad_personalization': 'denied',
+                    'analytics_storage': 'denied'
+                });
                 gtag('js', new Date());
                 gtag('config', 'G-JV2SK7CNPR');
             </script>
@@ -69,11 +75,18 @@
     <script>
                 window.dataLayer = window.dataLayer || [];
                 function gtag(){ dataLayer.push(arguments); }
+                gtag('consent', 'default', {
+                    'ad_storage': 'denied',
+                    'ad_user_data': 'denied',
+                    'ad_personalization': 'denied',
+                    'analytics_storage': 'denied'
+                });
                 gtag('js', new Date());
                 gtag('config', 'G-JV2SK7CNPR');
             </script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'examples/examples_wind_resource_grid/000_generate_example_wrg';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="Example: WindRoseWRG" href="001_wind_rose_wrg.html" />
@@ -81,20 +94,26 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="python"/>
   <meta name="docsearch:version" content="" />
+  
+    
+    <script src="../../_static/searchtools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script src="../../searchindex.js"></script>
+  
   </head>
-  
-  
-  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
-
+  <body data-default-mode="">
   
   
   <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
   
   <div id="pst-scroll-pixel-helper"></div>
   
   <button type="button" class="btn rounded-pill" id="pst-back-to-top">
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
-
+  
+  
+  
   
   <dialog id="pst-search-dialog">
     
@@ -120,7 +139,47 @@
 </div>
 
   
-    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
     </header>
   
 
@@ -646,7 +705,7 @@
 <h1>Example: Generate Example WRG File<a class="headerlink" href="#example-generate-example-wrg-file" title="Link to this heading">#</a></h1>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Example: Generate Example WRG File</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="sd">"""Example: Generate Example WRG File</span>
 
 <span class="sd">This first example demonstrates the content and structure of a</span>
 <span class="sd">Wind Resource Grid (WRG) file.</span>
@@ -657,7 +716,7 @@
 
 <span class="sd">In the script, a synthetic WRG file is derived using the WindRose class.</span>
 
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
@@ -703,11 +762,11 @@
 <span class="c1">##################################################</span>
 <span class="c1"># Generating data</span>
 <span class="c1">##################################################</span>
-<span class="c1"># The above parameters define a 3x3 grid of points.  Let&#39;s start</span>
+<span class="c1"># The above parameters define a 3x3 grid of points.  Let's start</span>
 <span class="c1"># by assuming the point at (0,0) has the wind rose as</span>
 <span class="c1"># defined in inputs/wind_rose.csv</span>
 <span class="n">wind_rose_base</span> <span class="o">=</span> <span class="n">WindRose</span><span class="o">.</span><span class="n">read_csv_long</span><span class="p">(</span>
-    <span class="s2">&quot;../inputs/wind_rose.csv&quot;</span><span class="p">,</span> <span class="n">wd_col</span><span class="o">=</span><span class="s2">&quot;wd&quot;</span><span class="p">,</span> <span class="n">ws_col</span><span class="o">=</span><span class="s2">&quot;ws&quot;</span><span class="p">,</span> <span class="n">freq_col</span><span class="o">=</span><span class="s2">&quot;freq_val&quot;</span><span class="p">,</span> <span class="n">ti_col_or_value</span><span class="o">=</span><span class="mf">0.06</span>
+    <span class="s2">"../inputs/wind_rose.csv"</span><span class="p">,</span> <span class="n">wd_col</span><span class="o">=</span><span class="s2">"wd"</span><span class="p">,</span> <span class="n">ws_col</span><span class="o">=</span><span class="s2">"ws"</span><span class="p">,</span> <span class="n">freq_col</span><span class="o">=</span><span class="s2">"freq_val"</span><span class="p">,</span> <span class="n">ti_col_or_value</span><span class="o">=</span><span class="mf">0.06</span>
 <span class="p">)</span>
 
 <span class="c1"># Resample to number of sectors</span>
@@ -730,10 +789,10 @@
 
         <span class="c1"># Instantiate the wind rose object</span>
         <span class="n">wind_rose</span> <span class="o">=</span> <span class="n">WindRose</span><span class="o">.</span><span class="n">read_csv_long</span><span class="p">(</span>
-            <span class="s2">&quot;../inputs/wind_rose.csv&quot;</span><span class="p">,</span>
-            <span class="n">wd_col</span><span class="o">=</span><span class="s2">&quot;wd&quot;</span><span class="p">,</span>
-            <span class="n">ws_col</span><span class="o">=</span><span class="s2">&quot;ws&quot;</span><span class="p">,</span>
-            <span class="n">freq_col</span><span class="o">=</span><span class="s2">&quot;freq_val&quot;</span><span class="p">,</span>
+            <span class="s2">"../inputs/wind_rose.csv"</span><span class="p">,</span>
+            <span class="n">wd_col</span><span class="o">=</span><span class="s2">"wd"</span><span class="p">,</span>
+            <span class="n">ws_col</span><span class="o">=</span><span class="s2">"ws"</span><span class="p">,</span>
+            <span class="n">freq_col</span><span class="o">=</span><span class="s2">"freq_val"</span><span class="p">,</span>
             <span class="n">ti_col_or_value</span><span class="o">=</span><span class="mf">0.06</span><span class="p">,</span>
         <span class="p">)</span>
 
@@ -775,14 +834,14 @@
 <span class="c1"># Show the wind roses in a grid</span>
 <span class="c1">##################################################</span>
 
-<span class="n">fig</span><span class="p">,</span> <span class="n">axarr</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">Nx</span><span class="p">,</span> <span class="n">Ny</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">12</span><span class="p">),</span> <span class="n">subplot_kw</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;polar&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">axarr</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">Nx</span><span class="p">,</span> <span class="n">Ny</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">12</span><span class="p">),</span> <span class="n">subplot_kw</span><span class="o">=</span><span class="p">{</span><span class="s2">"polar"</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
 <span class="n">axarr</span> <span class="o">=</span> <span class="n">axarr</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
 
 <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">wind_rose</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">wind_rose_list</span><span class="p">):</span>
     <span class="n">wind_rose</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">axarr</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">ws_step</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
-    <span class="n">axarr</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="n">x_list</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">y_list</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+    <span class="n">axarr</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">"(</span><span class="si">{</span><span class="n">x_list</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">y_list</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="si">}</span><span class="s2">)"</span><span class="p">)</span>
 
-<span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s2">&quot;Wind Roses at Grid Points&quot;</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s2">"Wind Roses at Grid Points"</span><span class="p">)</span>
 
 
 <span class="c1">##################################################</span>
@@ -791,18 +850,18 @@
 
 <span class="n">freq_test</span> <span class="o">=</span> <span class="n">wind_rose_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">freq_table</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span> <span class="o">/</span> <span class="n">wind_rose_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">freq_table</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
 <span class="n">a_test</span><span class="p">,</span> <span class="n">k_test</span> <span class="o">=</span> <span class="n">estimate_weibull</span><span class="p">(</span><span class="n">wind_rose_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">wind_speeds</span><span class="p">,</span> <span class="n">freq_test</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;A: </span><span class="si">{</span><span class="n">a_test</span><span class="si">}</span><span class="s2">, k: </span><span class="si">{</span><span class="n">k_test</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"A: </span><span class="si">{</span><span class="n">a_test</span><span class="si">}</span><span class="s2">, k: </span><span class="si">{</span><span class="n">k_test</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
 <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wind_rose_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">wind_speeds</span><span class="p">,</span> <span class="n">freq_test</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Original&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wind_rose_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">wind_speeds</span><span class="p">,</span> <span class="n">freq_test</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Original"</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
     <span class="n">wind_rose_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">wind_speeds</span><span class="p">,</span>
     <span class="n">weibull_func</span><span class="p">(</span><span class="n">wind_rose_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">wind_speeds</span><span class="p">,</span> <span class="n">a_test</span><span class="p">,</span> <span class="n">k_test</span><span class="p">),</span>
-    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Fitted&quot;</span><span class="p">,</span>
+    <span class="n">label</span><span class="o">=</span><span class="s2">"Fitted"</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Wind speed (m/s)&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Frequency&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"Wind speed (m/s)"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"Frequency"</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
 
 
@@ -811,26 +870,26 @@
 <span class="c1">##################################################</span>
 
 <span class="c1"># Open the file</span>
-<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;wrg_example.wrg&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">"wrg_example.wrg"</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
     <span class="c1"># Write the top line of the file</span>
-    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">Nx</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">Ny</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">Xmin</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">Ymin</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">cell_size</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">Nx</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">Ny</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">Xmin</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">Ymin</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">cell_size</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
 
     <span class="c1"># Now loop over the points</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">Nx</span> <span class="o">*</span> <span class="n">Ny</span><span class="p">):</span>
         <span class="c1"># Initiate the line to write as 10 blank spaces</span>
-        <span class="n">line</span> <span class="o">=</span> <span class="s2">&quot;          &quot;</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="s2">"          "</span>
 
         <span class="c1"># Add the x-coodinate as a 10 character fixed width integer</span>
-        <span class="n">line</span> <span class="o">=</span> <span class="n">line</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">x_list</span><span class="p">[</span><span class="n">i</span><span class="p">])</span><span class="si">:</span><span class="s2">10d</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="n">line</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">x_list</span><span class="p">[</span><span class="n">i</span><span class="p">])</span><span class="si">:</span><span class="s2">10d</span><span class="si">}</span><span class="s2">"</span>
 
         <span class="c1"># Add the y-coodinate as a 10 character fixed width integer</span>
-        <span class="n">line</span> <span class="o">=</span> <span class="n">line</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">y_list</span><span class="p">[</span><span class="n">i</span><span class="p">])</span><span class="si">:</span><span class="s2">10d</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="n">line</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">y_list</span><span class="p">[</span><span class="n">i</span><span class="p">])</span><span class="si">:</span><span class="s2">10d</span><span class="si">}</span><span class="s2">"</span>
 
         <span class="c1"># Add the z-coodinate as a 10 character fixed width integer</span>
-        <span class="n">line</span> <span class="o">=</span> <span class="n">line</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">z_coord</span><span class="p">)</span><span class="si">:</span><span class="s2">8d</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="n">line</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">z_coord</span><span class="p">)</span><span class="si">:</span><span class="s2">8d</span><span class="si">}</span><span class="s2">"</span>
 
         <span class="c1"># Add the height above ground level as a 10 character fixed width integer</span>
-        <span class="n">line</span> <span class="o">=</span> <span class="n">line</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">height_above_ground_level</span><span class="p">)</span><span class="si">:</span><span class="s2">5d</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="n">line</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">height_above_ground_level</span><span class="p">)</span><span class="si">:</span><span class="s2">5d</span><span class="si">}</span><span class="s2">"</span>
 
         <span class="c1"># Get the wind rose for this point</span>
         <span class="n">wind_rose</span> <span class="o">=</span> <span class="n">wind_rose_list</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
@@ -845,13 +904,13 @@
         <span class="n">A</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="n">estimate_weibull</span><span class="p">(</span><span class="n">wind_speeds</span><span class="p">,</span> <span class="n">freq_table_ws</span><span class="p">)</span>
 
         <span class="c1"># Write the A and k parameters</span>
-        <span class="n">line</span> <span class="o">=</span> <span class="n">line</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">A</span><span class="si">:</span><span class="s2">5.1f</span><span class="si">}{</span><span class="n">k</span><span class="si">:</span><span class="s2">6.2f</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="n">line</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">A</span><span class="si">:</span><span class="s2">5.1f</span><span class="si">}{</span><span class="n">k</span><span class="si">:</span><span class="s2">6.2f</span><span class="si">}</span><span class="s2">"</span>
 
         <span class="c1"># Add place holder 0 for the power density</span>
-        <span class="n">line</span> <span class="o">=</span> <span class="n">line</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="mi">0</span><span class="si">:</span><span class="s2">15d</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="n">line</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="mi">0</span><span class="si">:</span><span class="s2">15d</span><span class="si">}</span><span class="s2">"</span>
 
         <span class="c1"># Write the number of sectors</span>
-        <span class="n">line</span> <span class="o">=</span> <span class="n">line</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">num_sectors</span><span class="si">:</span><span class="s2">3d</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="n">line</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">num_sectors</span><span class="si">:</span><span class="s2">3d</span><span class="si">}</span><span class="s2">"</span>
 
         <span class="c1"># Get the frequency table across wind directions</span>
         <span class="n">freq_table_wd</span> <span class="o">=</span> <span class="n">freq_table</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
@@ -859,22 +918,22 @@
         <span class="c1"># Step through the sectors</span>
         <span class="k">for</span> <span class="n">wd_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_sectors</span><span class="p">):</span>
             <span class="c1"># Write the probability for this sector</span>
-            <span class="n">line</span> <span class="o">=</span> <span class="n">line</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="mi">1000</span><span class="o">*</span><span class="n">freq_table_wd</span><span class="p">[</span><span class="n">wd_idx</span><span class="p">])</span><span class="si">:</span><span class="s2">4d</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="n">line</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="mi">1000</span><span class="o">*</span><span class="n">freq_table_wd</span><span class="p">[</span><span class="n">wd_idx</span><span class="p">])</span><span class="si">:</span><span class="s2">4d</span><span class="si">}</span><span class="s2">"</span>
 
             <span class="c1"># Get the A and k parameters for this sector</span>
             <span class="n">A</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="n">estimate_weibull</span><span class="p">(</span><span class="n">wind_speeds</span><span class="p">,</span> <span class="n">freq_table</span><span class="p">[</span><span class="n">wd_idx</span><span class="p">,</span> <span class="p">:])</span>
 
             <span class="c1"># Write the A and k parameters</span>
-            <span class="n">line</span> <span class="o">=</span> <span class="n">line</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">A</span><span class="o">*</span><span class="mi">10</span><span class="p">)</span><span class="si">:</span><span class="s2">4d</span><span class="si">}{</span><span class="nb">int</span><span class="p">(</span><span class="n">k</span><span class="o">*</span><span class="mi">100</span><span class="p">)</span><span class="si">:</span><span class="s2">5d</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="n">line</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">A</span><span class="o">*</span><span class="mi">10</span><span class="p">)</span><span class="si">:</span><span class="s2">4d</span><span class="si">}{</span><span class="nb">int</span><span class="p">(</span><span class="n">k</span><span class="o">*</span><span class="mi">100</span><span class="p">)</span><span class="si">:</span><span class="s2">5d</span><span class="si">}</span><span class="s2">"</span>
 
         <span class="c1"># Write the line to the file</span>
-        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">line</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">line</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
 
 
 <span class="c1"># Show the plots</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
-<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">'ignore'</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -882,8 +941,8 @@
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>A: 10.601377096210022, k: 2.7344039961863937
 </pre></div>
 </div>
-<img alt="../../_images/68b02aed5a00aa890fcb11288c79a7639202dc6291d0187fa085e3c8a8d3f903.png" src="../../_images/68b02aed5a00aa890fcb11288c79a7639202dc6291d0187fa085e3c8a8d3f903.png" />
-<img alt="../../_images/6060de00164c82b7f44443e23d0fc536023856474410339f741070b9e2247093.png" src="../../_images/6060de00164c82b7f44443e23d0fc536023856474410339f741070b9e2247093.png" />
+<img alt="../../_images/430165daed8714adb59e070c5d90b641f5a959b90992d8ec117aa636dc088a74.png" src="../../_images/430165daed8714adb59e070c5d90b641f5a959b90992d8ec117aa636dc088a74.png" />
+<img alt="../../_images/610c16330331082c9a69265ccf225bb69410ca3445c4096d1f7708602e02a99e.png" src="../../_images/610c16330331082c9a69265ccf225bb69410ca3445c4096d1f7708602e02a99e.png" />
 </div>
 </div>
 </section>
@@ -986,8 +1045,8 @@ By National Laboratory of the Rockies
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
-<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb"></script>
 
   <footer class="bd-footer">
   </footer>

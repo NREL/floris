@@ -27,8 +27,8 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
-<link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+  <link href="_static/styles/theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
@@ -39,10 +39,10 @@
     <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- So that users can add custom icons -->
-  <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="_static/scripts/fontawesome.js?digest=55c26ed414f5f8a31ebb"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
-<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
     <script src="_static/documentation_options.js?v=30a733bc"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
@@ -60,6 +60,12 @@
     <script>
                 window.dataLayer = window.dataLayer || [];
                 function gtag(){ dataLayer.push(arguments); }
+                gtag('consent', 'default', {
+                    'ad_storage': 'denied',
+                    'ad_user_data': 'denied',
+                    'ad_personalization': 'denied',
+                    'analytics_storage': 'denied'
+                });
                 gtag('js', new Date());
                 gtag('config', 'G-JV2SK7CNPR');
             </script>
@@ -69,11 +75,18 @@
     <script>
                 window.dataLayer = window.dataLayer || [];
                 function gtag(){ dataLayer.push(arguments); }
+                gtag('consent', 'default', {
+                    'ad_storage': 'denied',
+                    'ad_user_data': 'denied',
+                    'ad_personalization': 'denied',
+                    'analytics_storage': 'denied'
+                });
                 gtag('js', new Date());
                 gtag('config', 'G-JV2SK7CNPR');
             </script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'wind_data_user';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="FLORIS Models" href="floris_models.html" />
@@ -81,20 +94,26 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="python"/>
   <meta name="docsearch:version" content="" />
+  
+    
+    <script src="_static/searchtools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script src="searchindex.js"></script>
+  
   </head>
-  
-  
-  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
-
+  <body data-default-mode="">
   
   
   <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
   
   <div id="pst-scroll-pixel-helper"></div>
   
   <button type="button" class="btn rounded-pill" id="pst-back-to-top">
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
-
+  
+  
+  
   
   <dialog id="pst-search-dialog">
     
@@ -120,7 +139,51 @@
 </div>
 
   
-    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
     </header>
   
 
@@ -639,8 +702,8 @@
                 <h2> Contents </h2>
             </div>
             <nav aria-label="Page">
-                <ul class="visible nav section-nav flex-column">
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Wind Data Objects</a><ul class="visible nav section-nav flex-column">
+                <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Wind Data Objects</a><ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#winddatabase">WindDataBase</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#timeseries">TimeSeries</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#timeseries-instantiation">TimeSeries Instantiation</a></li>
@@ -690,7 +753,7 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
 
-<span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">"ignore"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -764,16 +827,16 @@
 
 <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">time_series</span><span class="o">.</span><span class="n">wind_speeds</span><span class="p">,</span> <span class="n">time_series</span><span class="o">.</span><span class="n">turbulence_intensities</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Wind Speed (m/s)&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Turbulence Intensity&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"Wind Speed (m/s)"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"Turbulence Intensity"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0, 0.5, &#39;Turbulence Intensity&#39;)
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0, 0.5, 'Turbulence Intensity')
 </pre></div>
 </div>
-<img alt="_images/a2cc0969df3d67b2b054495f1886baaf4848b717a05ded1b36b50252e18a8d1f.png" src="_images/a2cc0969df3d67b2b054495f1886baaf4848b717a05ded1b36b50252e18a8d1f.png" />
+<img alt="_images/b320ac0d814fcd7a228de0336fb469e151e97b813c57e498cd79f09227274aa8.png" src="_images/b320ac0d814fcd7a228de0336fb469e151e97b813c57e498cd79f09227274aa8.png" />
 </div>
 </div>
 </section>
@@ -788,16 +851,16 @@
 <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">time_series</span><span class="o">.</span><span class="n">wind_speeds</span><span class="p">,</span> <span class="n">time_series</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Wind Speed (m/s)&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Value (normalized price/MWh)&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"Wind Speed (m/s)"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"Value (normalized price/MWh)"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0, 0.5, &#39;Value (normalized price/MWh)&#39;)
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0, 0.5, 'Value (normalized price/MWh)')
 </pre></div>
 </div>
-<img alt="_images/e3de5be148b80b40e4f8b7f91d1b60299add49e192c0ff7e6aacb4c178e4a75a.png" src="_images/e3de5be148b80b40e4f8b7f91d1b60299add49e192c0ff7e6aacb4c178e4a75a.png" />
+<img alt="_images/4455840c0bfbc1460ac82cc8a2e5ff180a6d8721a9cf58fb9e10eff39e45bc9e.png" src="_images/4455840c0bfbc1460ac82cc8a2e5ff180a6d8721a9cf58fb9e10eff39e45bc9e.png" />
 </div>
 </div>
 </section>
@@ -843,12 +906,12 @@
 
 <span class="n">wind_rose</span><span class="o">.</span><span class="n">assign_ti_using_IEC_method</span><span class="p">()</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;wind_rose.ti_table&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"wind_rose.ti_table"</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">wind_rose</span><span class="o">.</span><span class="n">ti_table</span><span class="p">)</span>
 
 <span class="n">wind_rose</span><span class="o">.</span><span class="n">assign_value_piecewise_linear</span><span class="p">()</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">wind_rose.value_table&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">wind_rose.value_table"</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">wind_rose</span><span class="o">.</span><span class="n">value_table</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -937,7 +1000,7 @@ wind_rose.value_table
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;PolarAxes: &gt;
 </pre></div>
 </div>
-<img alt="_images/45c2463a70345172c54d8cba866e11ada73e13173a73e9bb3a47746b98ee09a9.png" src="_images/45c2463a70345172c54d8cba866e11ada73e13173a73e9bb3a47746b98ee09a9.png" />
+<img alt="_images/d286f11141ebb1d071b0e4221a92e48f3325de7afb710588348f38a6f8577660.png" src="_images/d286f11141ebb1d071b0e4221a92e48f3325de7afb710588348f38a6f8577660.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -953,7 +1016,7 @@ wind_rose.value_table
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;PolarAxes: &gt;
 </pre></div>
 </div>
-<img alt="_images/dc391f941eaede459f9b14a584954d2a384b17b2587dfa023ffe197e01c2a569.png" src="_images/dc391f941eaede459f9b14a584954d2a384b17b2587dfa023ffe197e01c2a569.png" />
+<img alt="_images/2a6b96b3da8e99da66539544f89671db107fb58ef7f5fffd64c87fdae7c36293.png" src="_images/2a6b96b3da8e99da66539544f89671db107fb58ef7f5fffd64c87fdae7c36293.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -969,7 +1032,7 @@ wind_rose.value_table
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;PolarAxes: &gt;
 </pre></div>
 </div>
-<img alt="_images/ca00a82e4b02207f313f4fd569e6b1fccbea92c32738e5fc158742802439755d.png" src="_images/ca00a82e4b02207f313f4fd569e6b1fccbea92c32738e5fc158742802439755d.png" />
+<img alt="_images/96187a0568a0048edc969585d25df822de2635e6bff0ab849740e345912f7b27.png" src="_images/96187a0568a0048edc969585d25df822de2635e6bff0ab849740e345912f7b27.png" />
 </div>
 </div>
 </section>
@@ -1003,10 +1066,10 @@ wind_rose.value_table
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/a478cded83c57824f9ffe651a94369ffadfe3f5ba556575ca90b0150ef6205a3.png" src="_images/a478cded83c57824f9ffe651a94369ffadfe3f5ba556575ca90b0150ef6205a3.png" />
-<img alt="_images/071320628d5b148c6aa1744c0f3d37a87e458a69845ad417846019a20237b456.png" src="_images/071320628d5b148c6aa1744c0f3d37a87e458a69845ad417846019a20237b456.png" />
-<img alt="_images/1c4632ace26e9c7bf4256653eb12ef1c06e6cce587b779116abc2270f744da86.png" src="_images/1c4632ace26e9c7bf4256653eb12ef1c06e6cce587b779116abc2270f744da86.png" />
-<img alt="_images/cd248b616214812c3a165fb76ad930d24ba8334c074fee123abc9000b32713eb.png" src="_images/cd248b616214812c3a165fb76ad930d24ba8334c074fee123abc9000b32713eb.png" />
+<img alt="_images/47f2e4017c2ef30805de0bad3c2eac7242fdd4a6340a06457b226a9461326266.png" src="_images/47f2e4017c2ef30805de0bad3c2eac7242fdd4a6340a06457b226a9461326266.png" />
+<img alt="_images/1dee5c972f13071643fd7ea769161a6ffa904b74b681d043159ee16351a92809.png" src="_images/1dee5c972f13071643fd7ea769161a6ffa904b74b681d043159ee16351a92809.png" />
+<img alt="_images/b830cb84ab7b5f44e1a1a8f725a04393ce4bd1dd26c450a443b609b9a9ae80b8.png" src="_images/b830cb84ab7b5f44e1a1a8f725a04393ce4bd1dd26c450a443b609b9a9ae80b8.png" />
+<img alt="_images/36d6222f548bf791d0114639f4aaa72713079805612b45776ef953d3f08c608a.png" src="_images/36d6222f548bf791d0114639f4aaa72713079805612b45776ef953d3f08c608a.png" />
 </div>
 </div>
 </section>
@@ -1022,7 +1085,7 @@ wind_rose.value_table
 <span class="kn">from</span><span class="w"> </span><span class="nn">floris</span><span class="w"> </span><span class="kn">import</span> <span class="n">FlorisModel</span>
 
 <span class="c1"># Create a FlorisModel object</span>
-<span class="n">fmodel</span> <span class="o">=</span> <span class="n">FlorisModel</span><span class="p">(</span><span class="s2">&quot;../examples/inputs/gch.yaml&quot;</span><span class="p">)</span>
+<span class="n">fmodel</span> <span class="o">=</span> <span class="n">FlorisModel</span><span class="p">(</span><span class="s2">"../examples/inputs/gch.yaml"</span><span class="p">)</span>
 
 <span class="c1"># Set a two-turbine layout</span>
 <span class="n">fmodel</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">layout_x</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">500</span><span class="p">],</span> <span class="n">layout_y</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
@@ -1038,7 +1101,7 @@ wind_rose.value_table
     <span class="n">turbulence_intensities</span><span class="o">=</span><span class="n">turbulence_intensities</span><span class="p">,</span>
 <span class="p">)</span>
 
-<span class="c1"># Is equivalent to the following (but now we&#39;ll include value as well):</span>
+<span class="c1"># Is equivalent to the following (but now we'll include value as well):</span>
 <span class="n">time_series</span> <span class="o">=</span> <span class="n">TimeSeries</span><span class="p">(</span>
     <span class="n">wind_directions</span><span class="o">=</span><span class="n">wind_directions</span><span class="p">,</span> <span class="n">wind_speeds</span><span class="o">=</span><span class="mf">8.0</span><span class="p">,</span> <span class="n">turbulence_intensities</span><span class="o">=</span><span class="mf">0.06</span>
 <span class="p">)</span>
@@ -1067,12 +1130,12 @@ wind_rose.value_table
 <span class="n">avp</span> <span class="o">=</span> <span class="n">fmodel</span><span class="o">.</span><span class="n">get_farm_AVP</span><span class="p">()</span>
 
 <span class="c1"># Display</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Turbine power have shape </span><span class="si">{</span><span class="n">turbine_powers</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2"> and are </span><span class="si">{</span><span class="n">turbine_powers</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Farm power has shape </span><span class="si">{</span><span class="n">farm_power</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2"> and is </span><span class="si">{</span><span class="n">farm_power</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Expected farm power has shape </span><span class="si">{</span><span class="n">expected_farm_power</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2"> and is </span><span class="si">{</span><span class="n">expected_farm_power</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Farm AEP is </span><span class="si">{</span><span class="n">aep</span><span class="o">/</span><span class="mf">1e9</span><span class="si">}</span><span class="s2"> GWh&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Expected farm value has shape </span><span class="si">{</span><span class="n">expected_farm_power</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2"> and is </span><span class="si">{</span><span class="n">expected_farm_value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Farm annual value production (AVP) is </span><span class="si">{</span><span class="n">avp</span><span class="o">/</span><span class="mf">1e6</span><span class="si">}</span><span class="s2"> USD&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Turbine power have shape </span><span class="si">{</span><span class="n">turbine_powers</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2"> and are </span><span class="si">{</span><span class="n">turbine_powers</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Farm power has shape </span><span class="si">{</span><span class="n">farm_power</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2"> and is </span><span class="si">{</span><span class="n">farm_power</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Expected farm power has shape </span><span class="si">{</span><span class="n">expected_farm_power</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2"> and is </span><span class="si">{</span><span class="n">expected_farm_power</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Farm AEP is </span><span class="si">{</span><span class="n">aep</span><span class="o">/</span><span class="mf">1e9</span><span class="si">}</span><span class="s2"> GWh"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Expected farm value has shape </span><span class="si">{</span><span class="n">expected_farm_power</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2"> and is </span><span class="si">{</span><span class="n">expected_farm_value</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Farm annual value production (AVP) is </span><span class="si">{</span><span class="n">avp</span><span class="o">/</span><span class="mf">1e6</span><span class="si">}</span><span class="s2"> USD"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1124,7 +1187,7 @@ Farm annual value production (AVP) is 655061.5344544204 USD
 
 <span class="n">fmodel</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">wind_data</span><span class="o">=</span><span class="n">wind_rose</span><span class="p">)</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Fmodel has n_findex </span><span class="si">{</span><span class="n">fmodel</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">n_findex</span><span class="si">}</span><span class="s2"> because two cases have 0 frequency&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Fmodel has n_findex </span><span class="si">{</span><span class="n">fmodel</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">n_findex</span><span class="si">}</span><span class="s2"> because two cases have 0 frequency"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1152,12 +1215,12 @@ Farm annual value production (AVP) is 655061.5344544204 USD
 <span class="c1"># Note that the nan values in the non-computed cases are expected since these are not run</span>
 
 <span class="c1"># Display</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Turbine power have shape </span><span class="si">{</span><span class="n">turbine_powers</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2"> and are </span><span class="si">{</span><span class="n">turbine_powers</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Farm power has shape </span><span class="si">{</span><span class="n">farm_power</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2"> and is </span><span class="si">{</span><span class="n">farm_power</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Expected farm power has shape </span><span class="si">{</span><span class="n">expected_farm_power</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2"> and is </span><span class="si">{</span><span class="n">expected_farm_power</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Farm AEP is </span><span class="si">{</span><span class="n">aep</span><span class="o">/</span><span class="mf">1e9</span><span class="si">}</span><span class="s2"> GWh&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Expected farm value has shape </span><span class="si">{</span><span class="n">expected_farm_power</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2"> and is </span><span class="si">{</span><span class="n">expected_farm_value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Farm annual value production (AVP) is </span><span class="si">{</span><span class="n">avp</span><span class="o">/</span><span class="mf">1e6</span><span class="si">}</span><span class="s2"> USD&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Turbine power have shape </span><span class="si">{</span><span class="n">turbine_powers</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2"> and are </span><span class="si">{</span><span class="n">turbine_powers</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Farm power has shape </span><span class="si">{</span><span class="n">farm_power</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2"> and is </span><span class="si">{</span><span class="n">farm_power</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Expected farm power has shape </span><span class="si">{</span><span class="n">expected_farm_power</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2"> and is </span><span class="si">{</span><span class="n">expected_farm_power</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Farm AEP is </span><span class="si">{</span><span class="n">aep</span><span class="o">/</span><span class="mf">1e9</span><span class="si">}</span><span class="s2"> GWh"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Expected farm value has shape </span><span class="si">{</span><span class="n">expected_farm_power</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2"> and is </span><span class="si">{</span><span class="n">expected_farm_value</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Farm annual value production (AVP) is </span><span class="si">{</span><span class="n">avp</span><span class="o">/</span><span class="mf">1e6</span><span class="si">}</span><span class="s2"> USD"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1181,7 +1244,7 @@ Farm annual value production (AVP) is 464356.91342938814 USD
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># It&#39;s possible however to force the running of 0 frequency cases</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># It's possible however to force the running of 0 frequency cases</span>
 <span class="n">wind_rose</span> <span class="o">=</span> <span class="n">WindRose</span><span class="p">(</span>
     <span class="n">wind_directions</span><span class="o">=</span><span class="n">wind_directions</span><span class="p">,</span>
     <span class="n">wind_speeds</span><span class="o">=</span><span class="n">wind_speeds</span><span class="p">,</span>
@@ -1195,7 +1258,7 @@ Farm annual value production (AVP) is 464356.91342938814 USD
 
 <span class="n">fmodel</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">wind_data</span><span class="o">=</span><span class="n">wind_rose</span><span class="p">)</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Fmodel has n_findex </span><span class="si">{</span><span class="n">fmodel</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">n_findex</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Fmodel has n_findex </span><span class="si">{</span><span class="n">fmodel</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">n_findex</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
 <span class="c1"># Run the model and collect the outputs</span>
 <span class="n">fmodel</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
@@ -1211,17 +1274,17 @@ Farm annual value production (AVP) is 464356.91342938814 USD
 <span class="n">avp</span> <span class="o">=</span> <span class="n">fmodel</span><span class="o">.</span><span class="n">get_farm_AVP</span><span class="p">()</span>
 
 <span class="c1"># Display</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Turbine powers and farm power are now computed for all cases&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Turbine power have shape </span><span class="si">{</span><span class="n">turbine_powers</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2"> and are </span><span class="si">{</span><span class="n">turbine_powers</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Farm power has shape </span><span class="si">{</span><span class="n">farm_power</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2"> and is </span><span class="si">{</span><span class="n">farm_power</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Turbine powers and farm power are now computed for all cases"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Turbine power have shape </span><span class="si">{</span><span class="n">turbine_powers</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2"> and are </span><span class="si">{</span><span class="n">turbine_powers</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Farm power has shape </span><span class="si">{</span><span class="n">farm_power</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2"> and is </span><span class="si">{</span><span class="n">farm_power</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
 <span class="nb">print</span><span class="p">(</span>
-    <span class="s2">&quot;Expected farm power and value, AEP, and AVP are the same as before since the new cases are weighted by 0&quot;</span>
+    <span class="s2">"Expected farm power and value, AEP, and AVP are the same as before since the new cases are weighted by 0"</span>
 <span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Expected farm power has shape </span><span class="si">{</span><span class="n">expected_farm_power</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2"> and is </span><span class="si">{</span><span class="n">expected_farm_power</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Farm AEP is </span><span class="si">{</span><span class="n">aep</span><span class="o">/</span><span class="mf">1e9</span><span class="si">}</span><span class="s2"> GWh&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Expected farm value has shape </span><span class="si">{</span><span class="n">expected_farm_power</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2"> and is </span><span class="si">{</span><span class="n">expected_farm_value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Farm annual value production (AVP) is </span><span class="si">{</span><span class="n">avp</span><span class="o">/</span><span class="mf">1e6</span><span class="si">}</span><span class="s2"> USD&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Expected farm power has shape </span><span class="si">{</span><span class="n">expected_farm_power</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2"> and is </span><span class="si">{</span><span class="n">expected_farm_power</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Farm AEP is </span><span class="si">{</span><span class="n">aep</span><span class="o">/</span><span class="mf">1e9</span><span class="si">}</span><span class="s2"> GWh"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Expected farm value has shape </span><span class="si">{</span><span class="n">expected_farm_power</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2"> and is </span><span class="si">{</span><span class="n">expected_farm_value</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Farm annual value production (AVP) is </span><span class="si">{</span><span class="n">avp</span><span class="o">/</span><span class="mf">1e6</span><span class="si">}</span><span class="s2"> USD"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1264,7 +1327,7 @@ for each turbine in a provided layout.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Read a WRG file (from examples)</span>
-<span class="n">wind_rose_wrg</span> <span class="o">=</span> <span class="n">WindRoseWRG</span><span class="p">(</span><span class="s2">&quot;../examples/examples_wind_resource_grid/wrg_example.wrg&quot;</span><span class="p">)</span>
+<span class="n">wind_rose_wrg</span> <span class="o">=</span> <span class="n">WindRoseWRG</span><span class="p">(</span><span class="s2">"../examples/examples_wind_resource_grid/wrg_example.wrg"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1308,7 +1371,7 @@ ti_table: 0.06
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Set up a FLORIS model with the above layout and wind_rose_wrg</span>
-<span class="n">fmodel</span> <span class="o">=</span> <span class="n">FlorisModel</span><span class="p">(</span><span class="s2">&quot;../examples/inputs/gch.yaml&quot;</span><span class="p">)</span>
+<span class="n">fmodel</span> <span class="o">=</span> <span class="n">FlorisModel</span><span class="p">(</span><span class="s2">"../examples/inputs/gch.yaml"</span><span class="p">)</span>
 
 <span class="n">fmodel</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">layout_x</span><span class="o">=</span><span class="n">layout_x</span><span class="p">,</span> <span class="n">layout_y</span><span class="o">=</span><span class="n">layout_y</span><span class="p">,</span> <span class="n">wind_data</span><span class="o">=</span><span class="n">wind_rose_wrg</span><span class="p">)</span>
 </pre></div>
@@ -1324,7 +1387,7 @@ ti_table: 0.06
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/2acae1cd3a80e76f47afc405349678c64720a683e6f38ed516ee7ce6f253b31d.png" src="_images/2acae1cd3a80e76f47afc405349678c64720a683e6f38ed516ee7ce6f253b31d.png" />
+<img alt="_images/9749330c22cc6c4555f7fa8fb29f16055dd60c79b323d16d619772245a27572a.png" src="_images/9749330c22cc6c4555f7fa8fb29f16055dd60c79b323d16d619772245a27572a.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -1386,7 +1449,7 @@ ti_table: 0.06
         <span class="n">show_colorbar</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="p">)</span>
 
-    <span class="n">axarr</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Wind Direction: </span><span class="si">{</span><span class="n">wd</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">axarr</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Wind Direction: </span><span class="si">{</span><span class="n">wd</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1394,7 +1457,7 @@ ti_table: 0.06
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Using point 0 at (0.0, 0.0) as reference location
 </pre></div>
 </div>
-<img alt="_images/c13ab391bf546c6ad12974e2bdebba2ecd6ef87e93b65c9dcaf451a18ef89794.png" src="_images/c13ab391bf546c6ad12974e2bdebba2ecd6ef87e93b65c9dcaf451a18ef89794.png" />
+<img alt="_images/07c013d5e6c182fef68a7a95d27af496fca8cca2b0d7158423780e6284ab87af.png" src="_images/07c013d5e6c182fef68a7a95d27af496fca8cca2b0d7158423780e6284ab87af.png" />
 </div>
 </div>
 </section>
@@ -1464,8 +1527,8 @@ ti_table: 0.06
     <i class="fa-solid fa-list"></i> Contents
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
-    <ul class="visible nav section-nav flex-column">
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Wind Data Objects</a><ul class="visible nav section-nav flex-column">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Wind Data Objects</a><ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#winddatabase">WindDataBase</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#timeseries">TimeSeries</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#timeseries-instantiation">TimeSeries Instantiation</a></li>
@@ -1539,8 +1602,8 @@ By National Laboratory of the Rockies
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
-<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb"></script>
 
   <footer class="bd-footer">
   </footer>

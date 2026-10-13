@@ -26,8 +26,8 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
-<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+  <link href="../../../../_static/styles/theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
@@ -38,10 +38,10 @@
     <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- So that users can add custom icons -->
-  <script src="../../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="../../../../_static/scripts/fontawesome.js?digest=55c26ed414f5f8a31ebb"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
-<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
     <script src="../../../../_static/documentation_options.js?v=30a733bc"></script>
     <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
@@ -59,6 +59,12 @@
     <script>
                 window.dataLayer = window.dataLayer || [];
                 function gtag(){ dataLayer.push(arguments); }
+                gtag('consent', 'default', {
+                    'ad_storage': 'denied',
+                    'ad_user_data': 'denied',
+                    'ad_personalization': 'denied',
+                    'analytics_storage': 'denied'
+                });
                 gtag('js', new Date());
                 gtag('config', 'G-JV2SK7CNPR');
             </script>
@@ -68,11 +74,16 @@
     <script>
                 window.dataLayer = window.dataLayer || [];
                 function gtag(){ dataLayer.push(arguments); }
+                gtag('consent', 'default', {
+                    'ad_storage': 'denied',
+                    'ad_user_data': 'denied',
+                    'ad_personalization': 'denied',
+                    'analytics_storage': 'denied'
+                });
                 gtag('js', new Date());
                 gtag('config', 'G-JV2SK7CNPR');
             </script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
-    <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
     <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10.8/dist/mermaid.esm.min.mjs";
 
 
@@ -81,173 +92,11 @@
 
 const initStyles = () => {
     const defaultStyle = document.createElement('style');
-    defaultStyle.textContent = `pre.mermaid {
-    /* Same as .mermaid-container > pre */
-    display: block;
-    width: 100%;
-}
-
-pre.mermaid > svg {
-    /* Same as .mermaid-container > pre > svg */
-    height: 500px;
-    width: 100%;
-    max-width: 100% !important;
-}`;
+    defaultStyle.textContent = "pre.mermaid {\n    /* Same as .mermaid-container > pre */\n    display: block;\n    width: 100%;\n}\n\npre.mermaid > svg {\n    /* Same as .mermaid-container > pre > svg */\n    height: 500px;\n    width: 100%;\n    max-width: 100% !important;\n}";
     document.head.appendChild(defaultStyle);
 
     const fullscreenStyle = document.createElement('style');
-    fullscreenStyle.textContent = `.mermaid-container {
-    display: flex;
-    flex-direction: row;
-    width: 100%;
-}
-
-.mermaid-container > pre {
-    display: block;
-    width: 100%;
-}
-
-.mermaid-container > pre > svg {
-    height: 500px;
-    width: 100%;
-    max-width: 100% !important;
-}
-
-.mermaid-fullscreen-btn {
-    width: 28px;
-    height: 28px;
-    background: rgba(255, 255, 255, 0.95);
-    border: 1px solid rgba(0, 0, 0, 0.3);
-    border-radius: 4px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-    font-size: 14px;
-    line-height: 1;
-    padding: 0;
-    color: #333;
-}
-
-.mermaid-fullscreen-btn:hover {
-    opacity: 100% !important;
-    background: rgba(255, 255, 255, 1);
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
-    transform: scale(1.1);
-}
-
-.mermaid-fullscreen-btn.dark-theme {
-    background: rgba(50, 50, 50, 0.95);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    color: #e0e0e0;
-}
-
-.mermaid-fullscreen-btn.dark-theme:hover {
-    background: rgba(60, 60, 60, 1);
-    box-shadow: 0 3px 10px rgba(255, 255, 255, 0.2);
-}
-
-.mermaid-fullscreen-modal {
-    display: none;
-    position: fixed !important;
-    top: 0 !important;
-    left: 0 !important;
-    width: 95vw;
-    height: 100vh;
-    background: rgba(255, 255, 255, 0.98);
-    z-index: 9999;
-    padding: 20px;
-    overflow: auto;
-}
-
-.mermaid-fullscreen-modal.dark-theme {
-    background: rgba(0, 0, 0, 0.98);
-}
-
-.mermaid-fullscreen-modal.active {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.mermaid-container-fullscreen {
-    position: relative;
-    width: 95vw;
-    height: 90vh;
-    max-width: 95vw;
-    max-height: 90vh;
-    background: white;
-    border-radius: 8px;
-    padding: 20px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-    overflow: auto;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.mermaid-container-fullscreen.dark-theme {
-    background: #1a1a1a;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
-}
-
-.mermaid-container-fullscreen pre.mermaid {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.mermaid-container-fullscreen .mermaid svg {
-    height: 100% !important;
-    width: 100% !important;
-    cursor: grab;
-}
-
-.mermaid-fullscreen-close {
-    position: fixed !important;
-    top: 20px !important;
-    right: 20px !important;
-    width: 40px;
-    height: 40px;
-    background: rgba(255, 255, 255, 0.95);
-    border: 1px solid rgba(0, 0, 0, 0.2);
-    border-radius: 50%;
-    cursor: pointer;
-    z-index: 10000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-    transition: all 0.2s;
-    font-size: 24px;
-    line-height: 1;
-    color: #333;
-}
-
-.mermaid-fullscreen-close:hover {
-    background: white;
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
-    transform: scale(1.1);
-}
-
-.mermaid-fullscreen-close.dark-theme {
-    background: rgba(50, 50, 50, 0.95);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    color: #e0e0e0;
-}
-
-.mermaid-fullscreen-close.dark-theme:hover {
-    background: rgba(60, 60, 60, 1);
-    box-shadow: 0 6px 16px rgba(255, 255, 255, 0.2);
-}
-
-.mermaid-fullscreen-modal .mermaid-fullscreen-btn {
-    display: none !important;
-}`;
+    fullscreenStyle.textContent = ".mermaid-container {\n    position: relative;\n    display: flex;\n    flex-direction: row;\n    width: 100%;\n}\n\n.mermaid-container > pre {\n    display: block;\n    width: 100%;\n}\n\n.mermaid-container > pre > svg {\n    height: 500px;\n    width: 100%;\n    max-width: 100% !important;\n}\n\n.mermaid-fullscreen-btn {\n    position: absolute;\n    width: 28px;\n    height: 28px;\n    background: rgba(255, 255, 255, 0.95);\n    border: 1px solid rgba(0, 0, 0, 0.3);\n    border-radius: 4px;\n    cursor: pointer;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n    transition: all 0.2s;\n    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);\n    font-size: 14px;\n    line-height: 1;\n    padding: 0;\n    color: #333;\n}\n\n.mermaid-fullscreen-btn:hover {\n    opacity: 100% !important;\n    background: rgba(255, 255, 255, 1);\n    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);\n    transform: scale(1.1);\n}\n\n.mermaid-fullscreen-btn.dark-theme {\n    background: rgba(50, 50, 50, 0.95);\n    border: 1px solid rgba(255, 255, 255, 0.3);\n    color: #e0e0e0;\n}\n\n.mermaid-fullscreen-btn.dark-theme:hover {\n    background: rgba(60, 60, 60, 1);\n    box-shadow: 0 3px 10px rgba(255, 255, 255, 0.2);\n}\n\n.mermaid-fullscreen-modal {\n    display: none;\n    position: fixed !important;\n    top: 0 !important;\n    left: 0 !important;\n    width: 95vw;\n    height: 100vh;\n    background: rgba(255, 255, 255, 0.98);\n    z-index: 9999;\n    padding: 20px;\n    overflow: auto;\n}\n\n.mermaid-fullscreen-modal.dark-theme {\n    background: rgba(0, 0, 0, 0.98);\n}\n\n.mermaid-fullscreen-modal.active {\n    display: flex;\n    align-items: center;\n    justify-content: center;\n}\n\n.mermaid-container-fullscreen {\n    position: relative;\n    width: 95vw;\n    height: 90vh;\n    max-width: 95vw;\n    max-height: 90vh;\n    background: white;\n    border-radius: 8px;\n    padding: 20px;\n    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);\n    overflow: auto;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n}\n\n.mermaid-container-fullscreen.dark-theme {\n    background: #1a1a1a;\n    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);\n}\n\n.mermaid-container-fullscreen pre.mermaid {\n    width: 100%;\n    height: 100%;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n}\n\n.mermaid-container-fullscreen .mermaid svg {\n    height: 100% !important;\n    width: 100% !important;\n    cursor: grab;\n}\n\n.mermaid-fullscreen-close {\n    position: fixed !important;\n    top: 20px !important;\n    right: 20px !important;\n    width: 40px;\n    height: 40px;\n    background: rgba(255, 255, 255, 0.95);\n    border: 1px solid rgba(0, 0, 0, 0.2);\n    border-radius: 50%;\n    cursor: pointer;\n    z-index: 10000;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);\n    transition: all 0.2s;\n    font-size: 24px;\n    line-height: 1;\n    color: #333;\n}\n\n.mermaid-fullscreen-close:hover {\n    background: white;\n    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);\n    transform: scale(1.1);\n}\n\n.mermaid-fullscreen-close.dark-theme {\n    background: rgba(50, 50, 50, 0.95);\n    border: 1px solid rgba(255, 255, 255, 0.2);\n    color: #e0e0e0;\n}\n\n.mermaid-fullscreen-close.dark-theme:hover {\n    background: rgba(60, 60, 60, 1);\n    box-shadow: 0 6px 16px rgba(255, 255, 255, 0.2);\n}\n\n.mermaid-fullscreen-modal .mermaid-fullscreen-btn {\n    display: none !important;\n}";
     document.head.appendChild(fullscreenStyle);
 }
 
@@ -292,6 +141,32 @@ let darkTheme = isDarkTheme();
 let modal = null;
 let modalContent = null;
 let previousScrollOffset = [window.scrollX, window.scrollY];
+let _lazyObserver = null;
+let _renderQueue = Promise.resolve();
+let closeModal = () => {};
+
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal?.classList.contains('active')) {
+        closeModal();
+    }
+});
+
+// Apply d3 zoom to each SVG. Idempotent: an SVG already wrapped is skipped,
+// so this is safe to call both for the initial batch and for diagrams that
+// render lazily once they become visible.
+const addZoomToSvgs = (svgs) => {
+    svgs.each(function() {
+        if (this.getAttribute('data-zoom-applied') === 'true') return;
+        var svg = d3.select(this);
+        svg.html("<g class='wrapper'>" + svg.html() + "</g>");
+        var inner = svg.select("g");
+        var zoom = d3.zoom().on("zoom", function(event) {
+            inner.attr("transform", event.transform);
+        });
+        svg.call(zoom);
+        this.setAttribute('data-zoom-applied', 'true');
+    });
+};
 
 const runMermaid = async (rerun) => {
     console.log("Running mermaid diagrams, rerun =", rerun);
@@ -299,7 +174,15 @@ const runMermaid = async (rerun) => {
     let all_mermaids = document.querySelectorAll(".mermaid");
 
     if (rerun) {
+        // Disconnect any previous lazy rendering observer
+        if (_lazyObserver) {
+            _lazyObserver.disconnect();
+            _lazyObserver = null;
+        }
+
         all_mermaids.forEach((el) => {
+            el.removeAttribute('data-mermaid-deferred');
+            el.removeAttribute('data-mermaid-render-failed');
             if(!el.hasAttribute("data-original-code")) {
                 // store original code
                 // console.log(`Storing original code for first run: `, el.innerHTML);
@@ -316,42 +199,100 @@ const runMermaid = async (rerun) => {
                 el.setAttribute('data-original-code', el.innerHTML);
             }
         });
-        await mermaid.run();
+
+        // Separate visible and hidden elements. Mermaid's layout engine measures
+        // text dimensions via the DOM, which fails for elements hidden by a parent
+        // (e.g., Reveal.js non-active slides, sphinx-design unopened tabs),
+        // producing broken SVGs. Render visible elements now, defer hidden ones.
+        const visible = [];
+        const hidden = [];
+        all_mermaids.forEach((el) => {
+            // offsetParent is null for display:none ancestors.
+            // getClientRects().length > 0 catches position:fixed elements
+            // (which also have null offsetParent but are still visible).
+            if (el.offsetParent !== null || el.getClientRects().length > 0) {
+                visible.push(el);
+            } else {
+                hidden.push(el);
+                el.setAttribute('data-mermaid-deferred', 'true');
+            }
+        });
+
+        if (visible.length > 0) {
+            try {
+                await mermaid.run({ nodes: visible });
+            } catch (e) {
+                console.error("Mermaid rendering failed:", e);
+            }
+        }
+
+        // Lazily render hidden elements when they become visible.
+        // Uses a promise chain (_renderQueue) to serialize rendering,
+        // since IntersectionObserver may report multiple entries at once
+        // and mermaid.run() is not safe to call concurrently.
+        if (hidden.length > 0) {
+            if (typeof IntersectionObserver === 'undefined') {
+                console.warn("IntersectionObserver not available; hidden mermaid diagrams will not render.");
+            } else {
+                _renderQueue = Promise.resolve();
+                _lazyObserver = new IntersectionObserver((entries) => {
+                    for (const entry of entries) {
+                        if (entry.isIntersecting && entry.target.getAttribute("data-processed") !== "true") {
+                            _lazyObserver.unobserve(entry.target);
+                            const el = entry.target;
+                            _renderQueue = _renderQueue.then(async () => {
+                                try {
+                                    await mermaid.run({ nodes: [el] });
+                                    el.removeAttribute('data-mermaid-deferred');
+                                    // Apply zoom to the now-rendered diagram, matching
+                                    // the decoration visible diagrams receive.
+                                    if (false) {
+                                        addZoomToSvgs(d3.selectAll("").select(function() {
+                                            return this.querySelector("svg");
+                                        }));
+                                    }
+                                } catch (e) {
+                                    console.error("Mermaid deferred rendering failed:", e);
+                                    el.removeAttribute('data-mermaid-deferred');
+                                    el.setAttribute('data-mermaid-render-failed', 'true');
+                                }
+                            });
+                        }
+                    }
+                });
+                hidden.forEach((el) => _lazyObserver.observe(el));
+            }
+        }
     }
 
     all_mermaids = document.querySelectorAll(".mermaid");
-    const mermaids_processed = document.querySelectorAll(".mermaid[data-processed='true']");
+    // Exclude deferred (hidden) and render-failed elements from completion checks
+    const mermaids_active = document.querySelectorAll(".mermaid:not([data-mermaid-deferred]):not([data-mermaid-render-failed])");
+    const mermaids_processed = document.querySelectorAll(".mermaid:not([data-mermaid-deferred]):not([data-mermaid-render-failed])[data-processed='true']");
 
-    if ("False" === "True") {
-        const mermaids_to_add_zoom = -1 === -1 ? all_mermaids.length : -1;
+    if (false) {
+        const mermaids_to_add_zoom = 0 === -1 ? mermaids_active.length : 0;
         if(mermaids_to_add_zoom > 0) {
-            var svgs = d3.selectAll("");
-            if(all_mermaids.length !== mermaids_processed.length) {
+            var svgs = d3.selectAll("").select(function() {
+                return this.querySelector("svg");
+            });
+            // Wait until every active (visible) diagram has rendered. Deferred
+            // diagrams are excluded, so a fixed d3_node_count that counts a
+            // hidden diagram no longer loops forever waiting for its SVG.
+            if(mermaids_active.length !== mermaids_processed.length) {
                 setTimeout(() => runMermaid(false), 200);
                 return;
-            } else if(svgs.size() !== mermaids_to_add_zoom) {
-                setTimeout(() => runMermaid(false), 200);
-                return;
-            } else {
-                svgs.each(function() {
-                    var svg = d3.select(this);
-                    svg.html("<g class='wrapper'>" + svg.html() + "</g>");
-                    var inner = svg.select("g");
-                    var zoom = d3.zoom().on("zoom", function(event) {
-                        inner.attr("transform", event.transform);
-                    });
-                    svg.call(zoom);
-                });
             }
+            addZoomToSvgs(svgs);
         }
-    } else if(all_mermaids.length !== mermaids_processed.length) {
+    } else if(mermaids_active.length !== mermaids_processed.length) {
         // Wait for mermaid to process all diagrams
         setTimeout(() => runMermaid(false), 200);
         return;
     }
 
     // Stop here if not adding fullscreen capability
-    if ("True" !== "True") return;
+    if (!true) return;
 
     if (modal !== null ) {
         // Destroy existing modal
@@ -374,7 +315,7 @@ const runMermaid = async (rerun) => {
     modalContent = modal.querySelector('.mermaid-container-fullscreen');
     const closeBtn = modal.querySelector('.mermaid-fullscreen-close');
 
-    const closeModal = () => {
+    closeModal = () => {
         modal.classList.remove('active');
         modalContent.innerHTML = '';
         document.body.style.overflow = ''
@@ -385,12 +326,6 @@ const runMermaid = async (rerun) => {
     modal.addEventListener('click', (e) => {
         if (e.target === modal) closeModal();
     });
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && modal.classList.contains('active')) {
-            closeModal();
-        }
-    });
-
     document.querySelectorAll('.mermaid').forEach((mermaidDiv) => {
         if (mermaidDiv.parentNode.classList.contains('mermaid-container') ||
             mermaidDiv.closest('.mermaid-fullscreen-modal')) {
@@ -410,8 +345,8 @@ const runMermaid = async (rerun) => {
         const fullscreenBtn = document.createElement('button');
         fullscreenBtn.className = 'mermaid-fullscreen-btn' + (darkTheme ? ' dark-theme' : '');
         fullscreenBtn.setAttribute('aria-label', 'View diagram in fullscreen');
-        fullscreenBtn.textContent = '⛶';
-        fullscreenBtn.style.opacity = '50%';
+        fullscreenBtn.textContent = "\u26f6";
+        fullscreenBtn.style.opacity = "50%";
 
         // Calculate dynamic position based on diagram's margin and padding
         const diagramStyle = window.getComputedStyle(mermaidDiv);
@@ -423,7 +358,7 @@ const runMermaid = async (rerun) => {
         fullscreenBtn.style.right = `${marginRight + paddingRight + 4}px`;
 
         fullscreenBtn.addEventListener('click', () => {
-            previousScrollOffset = [window.scroll, window.scrollY];
+            previousScrollOffset = [window.scrollX, window.scrollY];
             const clone = mermaidDiv.cloneNode(true);
             modalContent.innerHTML = '';
             modalContent.appendChild(clone);
@@ -435,9 +370,9 @@ const runMermaid = async (rerun) => {
                 svg.style.width = '100%';
                 svg.style.height = 'auto';
                 svg.style.maxWidth = '100%';
-                svg.style.sdisplay = 'block';
+                svg.style.display = 'block';
 
-                if ("False" === "True") {
+                if (false) {
                     setTimeout(() => {
                         const g = svg.querySelector('g');
                         if (g) {
@@ -460,8 +395,11 @@ const runMermaid = async (rerun) => {
     });
 };
 
+
+
 const load = async () => {
     initStyles();
+
 
     await runMermaid(true);
 
@@ -471,10 +409,8 @@ const load = async () => {
             darkTheme = newDarkTheme;
             console.log("Theme change detected, re-running mermaid with", darkTheme ? "dark" : "default", "theme");
             await mermaid.initialize(
-                {...JSON.parse(
-                    `{"startOnLoad": false}`
-                ),
-                ...{ darkMode: darkTheme, theme: darkTheme ? 'dark' : 'default' },
+                {...{"startOnLoad": false},
+                ...{ darkMode: darkTheme, theme: darkTheme ? "dark" : "default" },
                 }
             );
             await runMermaid(true);
@@ -499,35 +435,40 @@ const load = async () => {
 
 console.log("Initializing mermaid with", darkTheme ? "dark" : "default", "theme");
 mermaid.initialize(
-    {...JSON.parse(
-        `{"startOnLoad": false}`
-    ),
-    ...{ darkMode: darkTheme, theme: darkTheme ? 'dark' : 'default' },
+    {...{"startOnLoad": false},
+    ...{ darkMode: darkTheme, theme: darkTheme ? "dark" : "default" },
     }
 );
 
 window.addEventListener("load", load);
 window.runMermaid = runMermaid;</script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/floris/core/wake_deflection/gauss';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="python"/>
   <meta name="docsearch:version" content="" />
+  
+    
+    <script src="../../../../_static/searchtools.js"></script>
+    <script src="../../../../_static/language_data.js"></script>
+    <script src="../../../../searchindex.js"></script>
+  
   </head>
-  
-  
-  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
-
+  <body data-default-mode="">
   
   
   <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
   
   <div id="pst-scroll-pixel-helper"></div>
   
   <button type="button" class="btn rounded-pill" id="pst-back-to-top">
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
-
+  
+  
+  
   
   <dialog id="pst-search-dialog">
     
@@ -553,7 +494,47 @@ window.runMermaid = runMermaid;</script>
 </div>
 
   
-    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
     </header>
   
 
@@ -1040,7 +1021,7 @@ window.runMermaid = runMermaid;</script>
 <a class="viewcode-back" href="../../../../_autosummary/floris.core.wake_deflection.gauss.html#floris.core.wake_deflection.gauss.GaussVelocityDeflection">[docs]</a>
 <span class="nd">@define</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">GaussVelocityDeflection</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    The Gauss deflection model is a blend of the models described in</span>
 <span class="sd">    :cite:`gdm-bastankhah2016experimental` and :cite:`gdm-King2019Controls` for</span>
 <span class="sd">    calculating the deflection field in turbine wakes.</span>
@@ -1060,7 +1041,7 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">                wake and far wake region on the turbulence intensity.</span>
 <span class="sd">            -   **beta** (*float*): Parameter that determines the</span>
 <span class="sd">                dependence of the downstream boundary between the near</span>
-<span class="sd">                wake and far wake region on the turbine&#39;s induction</span>
+<span class="sd">                wake and far wake region on the turbine's induction</span>
 <span class="sd">                factor.</span>
 <span class="sd">            -   **ad** (*float*): Additional tuning parameter to modify</span>
 <span class="sd">                the wake deflection with a lateral offset.</span>
@@ -1084,7 +1065,7 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">            :style: unsrt</span>
 <span class="sd">            :filter: docname in docnames</span>
 <span class="sd">            :keyprefix: gdm-</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">ad</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">converter</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
     <span class="n">bd</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">converter</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
@@ -1105,11 +1086,11 @@ window.runMermaid = runMermaid;</script>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 
         <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="n">grid</span><span class="o">.</span><span class="n">x_sorted</span><span class="p">,</span>
-            <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="n">grid</span><span class="o">.</span><span class="n">y_sorted</span><span class="p">,</span>
-            <span class="s2">&quot;z&quot;</span><span class="p">:</span> <span class="n">grid</span><span class="o">.</span><span class="n">z_sorted</span><span class="p">,</span>
-            <span class="s2">&quot;freestream_velocity&quot;</span><span class="p">:</span> <span class="n">flow_field</span><span class="o">.</span><span class="n">u_initial_sorted</span><span class="p">,</span>
-            <span class="s2">&quot;wind_veer&quot;</span><span class="p">:</span> <span class="n">flow_field</span><span class="o">.</span><span class="n">wind_veer</span><span class="p">,</span>
+            <span class="s2">"x"</span><span class="p">:</span> <span class="n">grid</span><span class="o">.</span><span class="n">x_sorted</span><span class="p">,</span>
+            <span class="s2">"y"</span><span class="p">:</span> <span class="n">grid</span><span class="o">.</span><span class="n">y_sorted</span><span class="p">,</span>
+            <span class="s2">"z"</span><span class="p">:</span> <span class="n">grid</span><span class="o">.</span><span class="n">z_sorted</span><span class="p">,</span>
+            <span class="s2">"freestream_velocity"</span><span class="p">:</span> <span class="n">flow_field</span><span class="o">.</span><span class="n">u_initial_sorted</span><span class="p">,</span>
+            <span class="s2">"wind_veer"</span><span class="p">:</span> <span class="n">flow_field</span><span class="o">.</span><span class="n">wind_veer</span><span class="p">,</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="n">kwargs</span></div>
 
@@ -1132,7 +1113,7 @@ window.runMermaid = runMermaid;</script>
         <span class="n">freestream_velocity</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
         <span class="n">wind_veer</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Calculates the deflection field of the wake. See</span>
 <span class="sd">        :cite:`gdm-bastankhah2016experimental` and :cite:`gdm-King2019Controls`</span>
 <span class="sd">        for details on the methods used.</span>
@@ -1147,7 +1128,7 @@ window.runMermaid = runMermaid;</script>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            np.array: Deflection field for the wake.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># ==============================================================</span>
 
         <span class="c1"># Opposite sign convention in this model</span>
@@ -1181,10 +1162,10 @@ window.runMermaid = runMermaid;</script>
 
         <span class="n">C0</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">u0</span> <span class="o">/</span> <span class="n">freestream_velocity</span>
         <span class="n">M0</span> <span class="o">=</span> <span class="n">C0</span> <span class="o">*</span> <span class="p">(</span><span class="mi">2</span> <span class="o">-</span> <span class="n">C0</span><span class="p">)</span>
-        <span class="n">E0</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;C0 ** 2 - 3 * exp(1.0 / 12.0) * C0 + 3 * exp(1.0 / 3.0)&quot;</span><span class="p">)</span>
+        <span class="n">E0</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">"C0 ** 2 - 3 * exp(1.0 / 12.0) * C0 + 3 * exp(1.0 / 3.0)"</span><span class="p">)</span>
 
         <span class="c1"># initial Gaussian wake expansion</span>
-        <span class="n">sigma_z0</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;rotor_diameter_i * 0.5 * sqrt(uR / (freestream_velocity + u0))&quot;</span><span class="p">)</span>
+        <span class="n">sigma_z0</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">"rotor_diameter_i * 0.5 * sqrt(uR / (freestream_velocity + u0))"</span><span class="p">)</span>
         <span class="n">sigma_y0</span> <span class="o">=</span> <span class="n">sigma_z0</span> <span class="o">*</span> <span class="n">cosd</span><span class="p">(</span><span class="n">yaw_i</span><span class="p">)</span> <span class="o">*</span> <span class="n">cosd</span><span class="p">(</span><span class="n">wind_veer</span><span class="p">)</span>
 
         <span class="c1"># yR = y - y_i</span>
@@ -1213,11 +1194,11 @@ window.runMermaid = runMermaid;</script>
         <span class="n">ln_deltaDen</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.6</span> <span class="o">-</span> <span class="n">M0_sqrt</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.6</span> <span class="o">*</span> <span class="n">middle_term</span> <span class="o">+</span> <span class="n">M0_sqrt</span><span class="p">)</span>
 
         <span class="n">middle_term</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span>
-            <span class="s2">&quot;theta_c0&quot;</span>
-            <span class="s2">&quot; * E0&quot;</span>
-            <span class="s2">&quot; / 5.2&quot;</span>
-            <span class="s2">&quot; * sqrt(sigma_y0 * sigma_z0 / (ky * kz * M0))&quot;</span>
-            <span class="s2">&quot; * log(ln_deltaNum / ln_deltaDen)&quot;</span>
+            <span class="s2">"theta_c0"</span>
+            <span class="s2">" * E0"</span>
+            <span class="s2">" / 5.2"</span>
+            <span class="s2">" * sqrt(sigma_y0 * sigma_z0 / (ky * kz * M0))"</span>
+            <span class="s2">" * log(ln_deltaNum / ln_deltaDen)"</span>
         <span class="p">)</span>
         <span class="n">delta_far_wake</span> <span class="o">=</span> <span class="n">delta0</span> <span class="o">+</span> <span class="n">middle_term</span> <span class="o">+</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ad</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">bd</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">x_i</span><span class="p">))</span>
 
@@ -1239,7 +1220,7 @@ window.runMermaid = runMermaid;</script>
     <span class="n">Ct</span><span class="p">,</span>
     <span class="n">scale</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Vortex circulation strength. Units of XXX TODO</span>
 
 <span class="sd">    Args:</span>
@@ -1250,7 +1231,7 @@ window.runMermaid = runMermaid;</script>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        [type]: [description]</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># NOTE the cos commented below is included in Ct</span>
     <span class="k">return</span> <span class="n">scale</span> <span class="o">*</span> <span class="p">(</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">8</span><span class="p">)</span> <span class="o">*</span> <span class="n">D</span> <span class="o">*</span> <span class="n">velocity</span> <span class="o">*</span> <span class="n">Uinf</span> <span class="o">*</span> <span class="n">Ct</span> <span class="c1"># * cosd(yaw)</span></div>
 
@@ -1272,14 +1253,14 @@ window.runMermaid = runMermaid;</script>
     <span class="n">wind_shear</span><span class="p">,</span>
     <span class="n">scale</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    what yaw angle would have produced that same average spanwise velocity</span>
 
 <span class="sd">    These calculations focus around the current turbine. The formulation could</span>
 <span class="sd">    remove the dimension for n-turbines, but for consistency with other</span>
 <span class="sd">    similar equations it is left. However, the turbine dimension should</span>
 <span class="sd">    always have length 1.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="c1"># turbine parameters</span>
     <span class="n">D</span> <span class="o">=</span> <span class="n">rotor_diameter</span>              <span class="c1"># scalar</span>
@@ -1328,27 +1309,27 @@ window.runMermaid = runMermaid;</script>
     <span class="n">zT</span> <span class="o">=</span> <span class="n">z_i</span> <span class="o">-</span> <span class="p">(</span><span class="n">HH</span> <span class="o">+</span> <span class="n">D</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="n">NUM_EPS</span>  <span class="c1"># distance from the top of the grid</span>
     <span class="c1"># NOTE: This is (-) in the paper, but (+) is consistent with the</span>
     <span class="c1"># Martínez-Tossas et al. (2019) source.</span>
-    <span class="n">rT_squared</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;yLocs ** 2 + zT ** 2&quot;</span><span class="p">)</span>
+    <span class="n">rT_squared</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">"yLocs ** 2 + zT ** 2"</span><span class="p">)</span>
     <span class="c1"># This looks like spanwise decay;</span>
     <span class="c1"># it defines the vortex profile in the spanwise directions</span>
-    <span class="n">core_shape</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;1 - exp(-rT_squared / (eps ** 2))&quot;</span><span class="p">)</span>
-    <span class="n">v_top</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;(Gamma_top * zT) / (2 * pi * rT_squared) * core_shape&quot;</span><span class="p">)</span>
+    <span class="n">core_shape</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">"1 - exp(-rT_squared / (eps ** 2))"</span><span class="p">)</span>
+    <span class="n">v_top</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">"(Gamma_top * zT) / (2 * pi * rT_squared) * core_shape"</span><span class="p">)</span>
     <span class="n">v_top</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span> <span class="n">v_top</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span> <span class="p">)</span>
     <span class="c1"># w_top = (-1 * Gamma_top * yLocs) / (2 * pi * rT) * core_shape * decay</span>
 
     <span class="c1"># bottom vortex</span>
     <span class="n">zB</span> <span class="o">=</span> <span class="n">z_i</span> <span class="o">-</span> <span class="p">(</span><span class="n">HH</span> <span class="o">-</span> <span class="n">D</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="n">NUM_EPS</span>
-    <span class="n">rB_squared</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;yLocs ** 2 + zB ** 2&quot;</span><span class="p">)</span>
-    <span class="n">core_shape</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;1 - exp(-rB_squared / (eps ** 2))&quot;</span><span class="p">)</span>
-    <span class="n">v_bottom</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;(Gamma_bottom * zB) / (2 * pi * rB_squared) * core_shape&quot;</span><span class="p">)</span>
+    <span class="n">rB_squared</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">"yLocs ** 2 + zB ** 2"</span><span class="p">)</span>
+    <span class="n">core_shape</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">"1 - exp(-rB_squared / (eps ** 2))"</span><span class="p">)</span>
+    <span class="n">v_bottom</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">"(Gamma_bottom * zB) / (2 * pi * rB_squared) * core_shape"</span><span class="p">)</span>
     <span class="n">v_bottom</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span> <span class="n">v_bottom</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span> <span class="p">)</span>
     <span class="c1"># w_bottom = (-1 * Gamma_bottom * yLocs) / (2 * pi * rB) * core_shape * decay</span>
 
     <span class="c1"># wake rotation vortex</span>
     <span class="n">zC</span> <span class="o">=</span> <span class="n">z_i</span> <span class="o">-</span> <span class="n">HH</span> <span class="o">+</span> <span class="n">NUM_EPS</span>
-    <span class="n">rC_squared</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;yLocs ** 2 + zC ** 2&quot;</span><span class="p">)</span>
-    <span class="n">core_shape</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;1 - exp(-rC_squared / (eps ** 2))&quot;</span><span class="p">)</span>
-    <span class="n">v_core</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;(Gamma_wake_rotation * zC) / (2 * pi * rC_squared) * core_shape&quot;</span><span class="p">)</span>
+    <span class="n">rC_squared</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">"yLocs ** 2 + zC ** 2"</span><span class="p">)</span>
+    <span class="n">core_shape</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">"1 - exp(-rC_squared / (eps ** 2))"</span><span class="p">)</span>
+    <span class="n">v_core</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">"(Gamma_wake_rotation * zC) / (2 * pi * rC_squared) * core_shape"</span><span class="p">)</span>
     <span class="n">v_core</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span> <span class="n">v_core</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span> <span class="p">)</span>
     <span class="c1"># w_core = (-1 * Gamma_wake_rotation * yLocs) / (2 * pi * rC_squared) * core_shape * decay</span>
 
@@ -1379,10 +1360,10 @@ window.runMermaid = runMermaid;</script>
     <span class="n">wind_shear</span><span class="p">,</span>
     <span class="n">scale</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Calculate transverse velocity components for all downstream turbines</span>
 <span class="sd">    given the vortices at the current turbine.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="c1"># turbine parameters</span>
     <span class="n">D</span> <span class="o">=</span> <span class="n">rotor_diameter</span>
@@ -1427,63 +1408,63 @@ window.runMermaid = runMermaid;</script>
     <span class="n">nu</span> <span class="o">=</span> <span class="n">lm</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">dudz_initial</span><span class="p">)</span>
 
     <span class="c1"># This is the decay downstream</span>
-    <span class="n">decay</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;eps ** 2 / (4 * nu * delta_x / Uinf + eps ** 2)&quot;</span><span class="p">)</span>
+    <span class="n">decay</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">"eps ** 2 / (4 * nu * delta_x / Uinf + eps ** 2)"</span><span class="p">)</span>
     <span class="n">yLocs</span> <span class="o">=</span> <span class="n">delta_y</span> <span class="o">+</span> <span class="n">NUM_EPS</span>
 
     <span class="c1"># top vortex</span>
     <span class="n">zT</span> <span class="o">=</span> <span class="n">z</span> <span class="o">-</span> <span class="p">(</span><span class="n">HH</span> <span class="o">+</span> <span class="n">D</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="n">NUM_EPS</span>
     <span class="c1"># NOTE: This is (-) in the paper, but (+) is consistent with the</span>
     <span class="c1"># Martínez-Tossas et al. (2019) source.</span>
-    <span class="n">rT_squared</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;yLocs ** 2 + zT ** 2&quot;</span><span class="p">)</span>
+    <span class="n">rT_squared</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">"yLocs ** 2 + zT ** 2"</span><span class="p">)</span>
     <span class="c1"># This looks like spanwise decay;</span>
     <span class="c1"># it defines the vortex profile in the spanwise directions</span>
-    <span class="n">core_shape</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;1 - exp(-rT_squared / (eps ** 2))&quot;</span><span class="p">)</span>
-    <span class="n">V1</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;(Gamma_top * zT) / (2 * pi * rT_squared) * core_shape * decay&quot;</span><span class="p">)</span>
-    <span class="n">W1</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;(-1 * Gamma_top * yLocs) / (2 * pi * rT_squared) * core_shape * decay&quot;</span><span class="p">)</span>
+    <span class="n">core_shape</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">"1 - exp(-rT_squared / (eps ** 2))"</span><span class="p">)</span>
+    <span class="n">V1</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">"(Gamma_top * zT) / (2 * pi * rT_squared) * core_shape * decay"</span><span class="p">)</span>
+    <span class="n">W1</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">"(-1 * Gamma_top * yLocs) / (2 * pi * rT_squared) * core_shape * decay"</span><span class="p">)</span>
 
     <span class="c1"># bottom vortex</span>
     <span class="n">zB</span> <span class="o">=</span> <span class="n">z</span> <span class="o">-</span> <span class="p">(</span><span class="n">HH</span> <span class="o">-</span> <span class="n">D</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="n">NUM_EPS</span>
-    <span class="n">rB_squared</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;yLocs ** 2 + zB ** 2&quot;</span><span class="p">)</span>
-    <span class="n">core_shape</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;1 - exp(-rB_squared / (eps ** 2))&quot;</span><span class="p">)</span>
-    <span class="n">V2</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;(Gamma_bottom * zB) / (2 * pi * rB_squared) * core_shape * decay&quot;</span><span class="p">)</span>
-    <span class="n">W2</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;(-1 * Gamma_bottom * yLocs) / (2 * pi * rB_squared) * core_shape * decay&quot;</span><span class="p">)</span>
+    <span class="n">rB_squared</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">"yLocs ** 2 + zB ** 2"</span><span class="p">)</span>
+    <span class="n">core_shape</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">"1 - exp(-rB_squared / (eps ** 2))"</span><span class="p">)</span>
+    <span class="n">V2</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">"(Gamma_bottom * zB) / (2 * pi * rB_squared) * core_shape * decay"</span><span class="p">)</span>
+    <span class="n">W2</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">"(-1 * Gamma_bottom * yLocs) / (2 * pi * rB_squared) * core_shape * decay"</span><span class="p">)</span>
 
     <span class="c1"># wake rotation vortex</span>
     <span class="n">zC</span> <span class="o">=</span> <span class="n">z</span> <span class="o">-</span> <span class="n">HH</span> <span class="o">+</span> <span class="n">NUM_EPS</span>
-    <span class="n">rC_squared</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;yLocs ** 2 + zC ** 2&quot;</span><span class="p">)</span>
-    <span class="n">core_shape</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;1 - exp(-rC_squared / (eps ** 2))&quot;</span><span class="p">)</span>
-    <span class="n">V5</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;(Gamma_wake_rotation * zC) / (2 * pi * rC_squared) * core_shape * decay&quot;</span><span class="p">)</span>
+    <span class="n">rC_squared</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">"yLocs ** 2 + zC ** 2"</span><span class="p">)</span>
+    <span class="n">core_shape</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">"1 - exp(-rC_squared / (eps ** 2))"</span><span class="p">)</span>
+    <span class="n">V5</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">"(Gamma_wake_rotation * zC) / (2 * pi * rC_squared) * core_shape * decay"</span><span class="p">)</span>
     <span class="n">W5</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span>
-        <span class="s2">&quot;(-1 * Gamma_wake_rotation * yLocs) / (2 * pi * rC_squared) * core_shape * decay&quot;</span>
+        <span class="s2">"(-1 * Gamma_wake_rotation * yLocs) / (2 * pi * rC_squared) * core_shape * decay"</span>
     <span class="p">)</span>
 
     <span class="c1">### Boundary condition - ground mirror vortex</span>
 
     <span class="c1"># top vortex - ground</span>
     <span class="n">zTb</span> <span class="o">=</span> <span class="n">z</span> <span class="o">+</span> <span class="p">(</span><span class="n">HH</span> <span class="o">+</span> <span class="n">D</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="n">NUM_EPS</span>
-    <span class="n">rTb_squared</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;yLocs ** 2 + zTb ** 2&quot;</span><span class="p">)</span>
+    <span class="n">rTb_squared</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">"yLocs ** 2 + zTb ** 2"</span><span class="p">)</span>
     <span class="c1"># This looks like spanwise decay;</span>
     <span class="c1"># it defines the vortex profile in the spanwise directions</span>
-    <span class="n">core_shape</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;1 - exp(-rTb_squared / (eps ** 2))&quot;</span><span class="p">)</span>
-    <span class="n">V3</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;(-1 * Gamma_top * zTb) / (2 * pi * rTb_squared) * core_shape * decay&quot;</span><span class="p">)</span>
-    <span class="n">W3</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;(Gamma_top * yLocs) / (2 * pi * rTb_squared) * core_shape * decay&quot;</span><span class="p">)</span>
+    <span class="n">core_shape</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">"1 - exp(-rTb_squared / (eps ** 2))"</span><span class="p">)</span>
+    <span class="n">V3</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">"(-1 * Gamma_top * zTb) / (2 * pi * rTb_squared) * core_shape * decay"</span><span class="p">)</span>
+    <span class="n">W3</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">"(Gamma_top * yLocs) / (2 * pi * rTb_squared) * core_shape * decay"</span><span class="p">)</span>
 
     <span class="c1"># bottom vortex - ground</span>
     <span class="n">zBb</span> <span class="o">=</span> <span class="n">z</span> <span class="o">+</span> <span class="p">(</span><span class="n">HH</span> <span class="o">-</span> <span class="n">D</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="n">NUM_EPS</span>
-    <span class="n">rBb_squared</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;yLocs ** 2 + zBb ** 2&quot;</span><span class="p">)</span>
-    <span class="n">core_shape</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;1 - exp(-rBb_squared / (eps ** 2))&quot;</span><span class="p">)</span>
-    <span class="n">V4</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;(-1 * Gamma_bottom * zBb) / (2 * pi * rBb_squared) * core_shape * decay&quot;</span><span class="p">)</span>
-    <span class="n">W4</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;(Gamma_bottom * yLocs) / (2 * pi * rBb_squared) * core_shape * decay&quot;</span><span class="p">)</span>
+    <span class="n">rBb_squared</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">"yLocs ** 2 + zBb ** 2"</span><span class="p">)</span>
+    <span class="n">core_shape</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">"1 - exp(-rBb_squared / (eps ** 2))"</span><span class="p">)</span>
+    <span class="n">V4</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">"(-1 * Gamma_bottom * zBb) / (2 * pi * rBb_squared) * core_shape * decay"</span><span class="p">)</span>
+    <span class="n">W4</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">"(Gamma_bottom * yLocs) / (2 * pi * rBb_squared) * core_shape * decay"</span><span class="p">)</span>
 
     <span class="c1"># wake rotation vortex - ground effect</span>
     <span class="n">zCb</span> <span class="o">=</span> <span class="n">z</span> <span class="o">+</span> <span class="n">HH</span> <span class="o">+</span> <span class="n">NUM_EPS</span>
-    <span class="n">rCb_squared</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;yLocs ** 2 + zCb ** 2&quot;</span><span class="p">)</span>
-    <span class="n">core_shape</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;1 - exp(-rCb_squared / (eps ** 2))&quot;</span><span class="p">)</span>
+    <span class="n">rCb_squared</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">"yLocs ** 2 + zCb ** 2"</span><span class="p">)</span>
+    <span class="n">core_shape</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">"1 - exp(-rCb_squared / (eps ** 2))"</span><span class="p">)</span>
     <span class="n">V6</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span>
-        <span class="s2">&quot;(-1 * Gamma_wake_rotation * zCb) / (2 * pi * rCb_squared) * core_shape * decay&quot;</span>
+        <span class="s2">"(-1 * Gamma_wake_rotation * zCb) / (2 * pi * rCb_squared) * core_shape * decay"</span>
     <span class="p">)</span>
     <span class="n">W6</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span>
-        <span class="s2">&quot;(Gamma_wake_rotation * yLocs) / (2 * pi * rCb_squared) * core_shape * decay&quot;</span>
+        <span class="s2">"(Gamma_wake_rotation * yLocs) / (2 * pi * rCb_squared) * core_shape * decay"</span>
     <span class="p">)</span>
 
     <span class="c1"># total spanwise velocity</span>
@@ -1494,7 +1475,7 @@ window.runMermaid = runMermaid;</script>
     <span class="c1">### Original v3 implementation</span>
     <span class="c1"># V[delta_x &lt; -1] = 0.0  # Subtract by 1 to avoid numerical issues on rotation</span>
     <span class="c1"># W[delta_x &lt; -1] = 0.0  # Subtract by 1 to avoid numerical issues on rotation</span>
-    <span class="c1"># TODO Should this be &lt;= ? Shouldn&#39;t be adding V and W on the current turbine?</span>
+    <span class="c1"># TODO Should this be &lt;= ? Shouldn't be adding V and W on the current turbine?</span>
     <span class="c1">### Then we changed it to this</span>
     <span class="c1"># V[delta_x &lt; 0.0] = 0.0  # Subtract by 1 to avoid numerical issues on rotation</span>
     <span class="c1"># W[delta_x &lt; 0.0] = 0.0  # Subtract by 1 to avoid numerical issues on rotation</span>
@@ -1516,22 +1497,29 @@ window.runMermaid = runMermaid;</script>
     <span class="n">v_i</span><span class="p">,</span>
     <span class="n">w_i</span><span class="p">,</span>
     <span class="n">turb_v_i</span><span class="p">,</span>
-    <span class="n">turb_w_i</span>
+    <span class="n">turb_w_i</span><span class="p">,</span>
+    <span class="n">enable_turbine_turbulence_grid</span><span class="p">,</span>
 <span class="p">):</span>
-    <span class="c1"># Since turbulence mixing is constant for the turbine,</span>
-    <span class="c1"># use the left two dimensions only here and expand</span>
-    <span class="c1"># before returning. Dimensions are (wd, ws).</span>
+    <span class="c1"># If modeling turbulence as a grid, use the full 4D arrays for computations.</span>
+    <span class="c1"># Otherwise, average over the spatial dimensions.</span>
 
-    <span class="n">I_i</span> <span class="o">=</span> <span class="n">I_i</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
-
-    <span class="n">average_u_i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cbrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">u_i</span> <span class="o">**</span> <span class="mi">3</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)))</span>
+    <span class="k">if</span> <span class="n">enable_turbine_turbulence_grid</span><span class="p">:</span>
+        <span class="n">average_u_i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cbrt</span><span class="p">(</span><span class="n">u_i</span> <span class="o">**</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">I_i</span> <span class="o">=</span> <span class="n">I_i</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="n">average_u_i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cbrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">u_i</span> <span class="o">**</span> <span class="mi">3</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)))</span>
 
     <span class="c1"># Convert ambient turbulence intensity to TKE (eq 24)</span>
     <span class="n">k</span> <span class="o">=</span> <span class="p">(</span><span class="n">average_u_i</span> <span class="o">*</span> <span class="n">I_i</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">/</span> <span class="mi">3</span><span class="p">)</span>
 
     <span class="n">u_term</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">k</span><span class="p">)</span>
-    <span class="n">v_term</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">v_i</span> <span class="o">+</span> <span class="n">turb_v_i</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
-    <span class="n">w_term</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">w_i</span> <span class="o">+</span> <span class="n">turb_w_i</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">enable_turbine_turbulence_grid</span><span class="p">:</span>
+        <span class="n">v_term</span> <span class="o">=</span> <span class="n">v_i</span> <span class="o">+</span> <span class="n">turb_v_i</span>
+        <span class="n">w_term</span> <span class="o">=</span> <span class="n">w_i</span> <span class="o">+</span> <span class="n">turb_w_i</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">v_term</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">v_i</span> <span class="o">+</span> <span class="n">turb_v_i</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+        <span class="n">w_term</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">w_i</span> <span class="o">+</span> <span class="n">turb_w_i</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+
 
     <span class="c1"># Compute the new TKE (eq 23)</span>
     <span class="n">k_total</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">u_term</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">v_term</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">w_term</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
@@ -1542,7 +1530,10 @@ window.runMermaid = runMermaid;</script>
     <span class="c1"># Remove ambient from total TI leaving only the TI due to mixing</span>
     <span class="n">I_mixing</span> <span class="o">=</span> <span class="n">I_total</span> <span class="o">-</span> <span class="n">I_i</span>
 
-    <span class="k">return</span> <span class="n">I_mixing</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span></div>
+    <span class="k">if</span> <span class="n">enable_turbine_turbulence_grid</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">I_mixing</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">I_mixing</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span></div>
 
 </pre></div>
 
@@ -1606,8 +1597,8 @@ By National Laboratory of the Rockies
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
-<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="../../../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb"></script>
+<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb"></script>
 
   <footer class="bd-footer">
   </footer>

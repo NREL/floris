@@ -26,8 +26,8 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
-<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+  <link href="../../../_static/styles/theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
@@ -38,10 +38,10 @@
     <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- So that users can add custom icons -->
-  <script src="../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="../../../_static/scripts/fontawesome.js?digest=55c26ed414f5f8a31ebb"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
-<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
     <script src="../../../_static/documentation_options.js?v=30a733bc"></script>
     <script src="../../../_static/doctools.js?v=9a2dae69"></script>
@@ -59,6 +59,12 @@
     <script>
                 window.dataLayer = window.dataLayer || [];
                 function gtag(){ dataLayer.push(arguments); }
+                gtag('consent', 'default', {
+                    'ad_storage': 'denied',
+                    'ad_user_data': 'denied',
+                    'ad_personalization': 'denied',
+                    'analytics_storage': 'denied'
+                });
                 gtag('js', new Date());
                 gtag('config', 'G-JV2SK7CNPR');
             </script>
@@ -68,11 +74,16 @@
     <script>
                 window.dataLayer = window.dataLayer || [];
                 function gtag(){ dataLayer.push(arguments); }
+                gtag('consent', 'default', {
+                    'ad_storage': 'denied',
+                    'ad_user_data': 'denied',
+                    'ad_personalization': 'denied',
+                    'analytics_storage': 'denied'
+                });
                 gtag('js', new Date());
                 gtag('config', 'G-JV2SK7CNPR');
             </script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
-    <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
     <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10.8/dist/mermaid.esm.min.mjs";
 
 
@@ -81,173 +92,11 @@
 
 const initStyles = () => {
     const defaultStyle = document.createElement('style');
-    defaultStyle.textContent = `pre.mermaid {
-    /* Same as .mermaid-container > pre */
-    display: block;
-    width: 100%;
-}
-
-pre.mermaid > svg {
-    /* Same as .mermaid-container > pre > svg */
-    height: 500px;
-    width: 100%;
-    max-width: 100% !important;
-}`;
+    defaultStyle.textContent = "pre.mermaid {\n    /* Same as .mermaid-container > pre */\n    display: block;\n    width: 100%;\n}\n\npre.mermaid > svg {\n    /* Same as .mermaid-container > pre > svg */\n    height: 500px;\n    width: 100%;\n    max-width: 100% !important;\n}";
     document.head.appendChild(defaultStyle);
 
     const fullscreenStyle = document.createElement('style');
-    fullscreenStyle.textContent = `.mermaid-container {
-    display: flex;
-    flex-direction: row;
-    width: 100%;
-}
-
-.mermaid-container > pre {
-    display: block;
-    width: 100%;
-}
-
-.mermaid-container > pre > svg {
-    height: 500px;
-    width: 100%;
-    max-width: 100% !important;
-}
-
-.mermaid-fullscreen-btn {
-    width: 28px;
-    height: 28px;
-    background: rgba(255, 255, 255, 0.95);
-    border: 1px solid rgba(0, 0, 0, 0.3);
-    border-radius: 4px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-    font-size: 14px;
-    line-height: 1;
-    padding: 0;
-    color: #333;
-}
-
-.mermaid-fullscreen-btn:hover {
-    opacity: 100% !important;
-    background: rgba(255, 255, 255, 1);
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
-    transform: scale(1.1);
-}
-
-.mermaid-fullscreen-btn.dark-theme {
-    background: rgba(50, 50, 50, 0.95);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    color: #e0e0e0;
-}
-
-.mermaid-fullscreen-btn.dark-theme:hover {
-    background: rgba(60, 60, 60, 1);
-    box-shadow: 0 3px 10px rgba(255, 255, 255, 0.2);
-}
-
-.mermaid-fullscreen-modal {
-    display: none;
-    position: fixed !important;
-    top: 0 !important;
-    left: 0 !important;
-    width: 95vw;
-    height: 100vh;
-    background: rgba(255, 255, 255, 0.98);
-    z-index: 9999;
-    padding: 20px;
-    overflow: auto;
-}
-
-.mermaid-fullscreen-modal.dark-theme {
-    background: rgba(0, 0, 0, 0.98);
-}
-
-.mermaid-fullscreen-modal.active {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.mermaid-container-fullscreen {
-    position: relative;
-    width: 95vw;
-    height: 90vh;
-    max-width: 95vw;
-    max-height: 90vh;
-    background: white;
-    border-radius: 8px;
-    padding: 20px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-    overflow: auto;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.mermaid-container-fullscreen.dark-theme {
-    background: #1a1a1a;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
-}
-
-.mermaid-container-fullscreen pre.mermaid {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.mermaid-container-fullscreen .mermaid svg {
-    height: 100% !important;
-    width: 100% !important;
-    cursor: grab;
-}
-
-.mermaid-fullscreen-close {
-    position: fixed !important;
-    top: 20px !important;
-    right: 20px !important;
-    width: 40px;
-    height: 40px;
-    background: rgba(255, 255, 255, 0.95);
-    border: 1px solid rgba(0, 0, 0, 0.2);
-    border-radius: 50%;
-    cursor: pointer;
-    z-index: 10000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-    transition: all 0.2s;
-    font-size: 24px;
-    line-height: 1;
-    color: #333;
-}
-
-.mermaid-fullscreen-close:hover {
-    background: white;
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
-    transform: scale(1.1);
-}
-
-.mermaid-fullscreen-close.dark-theme {
-    background: rgba(50, 50, 50, 0.95);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    color: #e0e0e0;
-}
-
-.mermaid-fullscreen-close.dark-theme:hover {
-    background: rgba(60, 60, 60, 1);
-    box-shadow: 0 6px 16px rgba(255, 255, 255, 0.2);
-}
-
-.mermaid-fullscreen-modal .mermaid-fullscreen-btn {
-    display: none !important;
-}`;
+    fullscreenStyle.textContent = ".mermaid-container {\n    position: relative;\n    display: flex;\n    flex-direction: row;\n    width: 100%;\n}\n\n.mermaid-container > pre {\n    display: block;\n    width: 100%;\n}\n\n.mermaid-container > pre > svg {\n    height: 500px;\n    width: 100%;\n    max-width: 100% !important;\n}\n\n.mermaid-fullscreen-btn {\n    position: absolute;\n    width: 28px;\n    height: 28px;\n    background: rgba(255, 255, 255, 0.95);\n    border: 1px solid rgba(0, 0, 0, 0.3);\n    border-radius: 4px;\n    cursor: pointer;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n    transition: all 0.2s;\n    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);\n    font-size: 14px;\n    line-height: 1;\n    padding: 0;\n    color: #333;\n}\n\n.mermaid-fullscreen-btn:hover {\n    opacity: 100% !important;\n    background: rgba(255, 255, 255, 1);\n    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);\n    transform: scale(1.1);\n}\n\n.mermaid-fullscreen-btn.dark-theme {\n    background: rgba(50, 50, 50, 0.95);\n    border: 1px solid rgba(255, 255, 255, 0.3);\n    color: #e0e0e0;\n}\n\n.mermaid-fullscreen-btn.dark-theme:hover {\n    background: rgba(60, 60, 60, 1);\n    box-shadow: 0 3px 10px rgba(255, 255, 255, 0.2);\n}\n\n.mermaid-fullscreen-modal {\n    display: none;\n    position: fixed !important;\n    top: 0 !important;\n    left: 0 !important;\n    width: 95vw;\n    height: 100vh;\n    background: rgba(255, 255, 255, 0.98);\n    z-index: 9999;\n    padding: 20px;\n    overflow: auto;\n}\n\n.mermaid-fullscreen-modal.dark-theme {\n    background: rgba(0, 0, 0, 0.98);\n}\n\n.mermaid-fullscreen-modal.active {\n    display: flex;\n    align-items: center;\n    justify-content: center;\n}\n\n.mermaid-container-fullscreen {\n    position: relative;\n    width: 95vw;\n    height: 90vh;\n    max-width: 95vw;\n    max-height: 90vh;\n    background: white;\n    border-radius: 8px;\n    padding: 20px;\n    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);\n    overflow: auto;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n}\n\n.mermaid-container-fullscreen.dark-theme {\n    background: #1a1a1a;\n    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);\n}\n\n.mermaid-container-fullscreen pre.mermaid {\n    width: 100%;\n    height: 100%;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n}\n\n.mermaid-container-fullscreen .mermaid svg {\n    height: 100% !important;\n    width: 100% !important;\n    cursor: grab;\n}\n\n.mermaid-fullscreen-close {\n    position: fixed !important;\n    top: 20px !important;\n    right: 20px !important;\n    width: 40px;\n    height: 40px;\n    background: rgba(255, 255, 255, 0.95);\n    border: 1px solid rgba(0, 0, 0, 0.2);\n    border-radius: 50%;\n    cursor: pointer;\n    z-index: 10000;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);\n    transition: all 0.2s;\n    font-size: 24px;\n    line-height: 1;\n    color: #333;\n}\n\n.mermaid-fullscreen-close:hover {\n    background: white;\n    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);\n    transform: scale(1.1);\n}\n\n.mermaid-fullscreen-close.dark-theme {\n    background: rgba(50, 50, 50, 0.95);\n    border: 1px solid rgba(255, 255, 255, 0.2);\n    color: #e0e0e0;\n}\n\n.mermaid-fullscreen-close.dark-theme:hover {\n    background: rgba(60, 60, 60, 1);\n    box-shadow: 0 6px 16px rgba(255, 255, 255, 0.2);\n}\n\n.mermaid-fullscreen-modal .mermaid-fullscreen-btn {\n    display: none !important;\n}";
     document.head.appendChild(fullscreenStyle);
 }
 
@@ -292,6 +141,32 @@ let darkTheme = isDarkTheme();
 let modal = null;
 let modalContent = null;
 let previousScrollOffset = [window.scrollX, window.scrollY];
+let _lazyObserver = null;
+let _renderQueue = Promise.resolve();
+let closeModal = () => {};
+
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal?.classList.contains('active')) {
+        closeModal();
+    }
+});
+
+// Apply d3 zoom to each SVG. Idempotent: an SVG already wrapped is skipped,
+// so this is safe to call both for the initial batch and for diagrams that
+// render lazily once they become visible.
+const addZoomToSvgs = (svgs) => {
+    svgs.each(function() {
+        if (this.getAttribute('data-zoom-applied') === 'true') return;
+        var svg = d3.select(this);
+        svg.html("<g class='wrapper'>" + svg.html() + "</g>");
+        var inner = svg.select("g");
+        var zoom = d3.zoom().on("zoom", function(event) {
+            inner.attr("transform", event.transform);
+        });
+        svg.call(zoom);
+        this.setAttribute('data-zoom-applied', 'true');
+    });
+};
 
 const runMermaid = async (rerun) => {
     console.log("Running mermaid diagrams, rerun =", rerun);
@@ -299,7 +174,15 @@ const runMermaid = async (rerun) => {
     let all_mermaids = document.querySelectorAll(".mermaid");
 
     if (rerun) {
+        // Disconnect any previous lazy rendering observer
+        if (_lazyObserver) {
+            _lazyObserver.disconnect();
+            _lazyObserver = null;
+        }
+
         all_mermaids.forEach((el) => {
+            el.removeAttribute('data-mermaid-deferred');
+            el.removeAttribute('data-mermaid-render-failed');
             if(!el.hasAttribute("data-original-code")) {
                 // store original code
                 // console.log(`Storing original code for first run: `, el.innerHTML);
@@ -316,42 +199,100 @@ const runMermaid = async (rerun) => {
                 el.setAttribute('data-original-code', el.innerHTML);
             }
         });
-        await mermaid.run();
+
+        // Separate visible and hidden elements. Mermaid's layout engine measures
+        // text dimensions via the DOM, which fails for elements hidden by a parent
+        // (e.g., Reveal.js non-active slides, sphinx-design unopened tabs),
+        // producing broken SVGs. Render visible elements now, defer hidden ones.
+        const visible = [];
+        const hidden = [];
+        all_mermaids.forEach((el) => {
+            // offsetParent is null for display:none ancestors.
+            // getClientRects().length > 0 catches position:fixed elements
+            // (which also have null offsetParent but are still visible).
+            if (el.offsetParent !== null || el.getClientRects().length > 0) {
+                visible.push(el);
+            } else {
+                hidden.push(el);
+                el.setAttribute('data-mermaid-deferred', 'true');
+            }
+        });
+
+        if (visible.length > 0) {
+            try {
+                await mermaid.run({ nodes: visible });
+            } catch (e) {
+                console.error("Mermaid rendering failed:", e);
+            }
+        }
+
+        // Lazily render hidden elements when they become visible.
+        // Uses a promise chain (_renderQueue) to serialize rendering,
+        // since IntersectionObserver may report multiple entries at once
+        // and mermaid.run() is not safe to call concurrently.
+        if (hidden.length > 0) {
+            if (typeof IntersectionObserver === 'undefined') {
+                console.warn("IntersectionObserver not available; hidden mermaid diagrams will not render.");
+            } else {
+                _renderQueue = Promise.resolve();
+                _lazyObserver = new IntersectionObserver((entries) => {
+                    for (const entry of entries) {
+                        if (entry.isIntersecting && entry.target.getAttribute("data-processed") !== "true") {
+                            _lazyObserver.unobserve(entry.target);
+                            const el = entry.target;
+                            _renderQueue = _renderQueue.then(async () => {
+                                try {
+                                    await mermaid.run({ nodes: [el] });
+                                    el.removeAttribute('data-mermaid-deferred');
+                                    // Apply zoom to the now-rendered diagram, matching
+                                    // the decoration visible diagrams receive.
+                                    if (false) {
+                                        addZoomToSvgs(d3.selectAll("").select(function() {
+                                            return this.querySelector("svg");
+                                        }));
+                                    }
+                                } catch (e) {
+                                    console.error("Mermaid deferred rendering failed:", e);
+                                    el.removeAttribute('data-mermaid-deferred');
+                                    el.setAttribute('data-mermaid-render-failed', 'true');
+                                }
+                            });
+                        }
+                    }
+                });
+                hidden.forEach((el) => _lazyObserver.observe(el));
+            }
+        }
     }
 
     all_mermaids = document.querySelectorAll(".mermaid");
-    const mermaids_processed = document.querySelectorAll(".mermaid[data-processed='true']");
+    // Exclude deferred (hidden) and render-failed elements from completion checks
+    const mermaids_active = document.querySelectorAll(".mermaid:not([data-mermaid-deferred]):not([data-mermaid-render-failed])");
+    const mermaids_processed = document.querySelectorAll(".mermaid:not([data-mermaid-deferred]):not([data-mermaid-render-failed])[data-processed='true']");
 
-    if ("False" === "True") {
-        const mermaids_to_add_zoom = -1 === -1 ? all_mermaids.length : -1;
+    if (false) {
+        const mermaids_to_add_zoom = 0 === -1 ? mermaids_active.length : 0;
         if(mermaids_to_add_zoom > 0) {
-            var svgs = d3.selectAll("");
-            if(all_mermaids.length !== mermaids_processed.length) {
+            var svgs = d3.selectAll("").select(function() {
+                return this.querySelector("svg");
+            });
+            // Wait until every active (visible) diagram has rendered. Deferred
+            // diagrams are excluded, so a fixed d3_node_count that counts a
+            // hidden diagram no longer loops forever waiting for its SVG.
+            if(mermaids_active.length !== mermaids_processed.length) {
                 setTimeout(() => runMermaid(false), 200);
                 return;
-            } else if(svgs.size() !== mermaids_to_add_zoom) {
-                setTimeout(() => runMermaid(false), 200);
-                return;
-            } else {
-                svgs.each(function() {
-                    var svg = d3.select(this);
-                    svg.html("<g class='wrapper'>" + svg.html() + "</g>");
-                    var inner = svg.select("g");
-                    var zoom = d3.zoom().on("zoom", function(event) {
-                        inner.attr("transform", event.transform);
-                    });
-                    svg.call(zoom);
-                });
             }
+            addZoomToSvgs(svgs);
         }
-    } else if(all_mermaids.length !== mermaids_processed.length) {
+    } else if(mermaids_active.length !== mermaids_processed.length) {
         // Wait for mermaid to process all diagrams
         setTimeout(() => runMermaid(false), 200);
         return;
     }
 
     // Stop here if not adding fullscreen capability
-    if ("True" !== "True") return;
+    if (!true) return;
 
     if (modal !== null ) {
         // Destroy existing modal
@@ -374,7 +315,7 @@ const runMermaid = async (rerun) => {
     modalContent = modal.querySelector('.mermaid-container-fullscreen');
     const closeBtn = modal.querySelector('.mermaid-fullscreen-close');
 
-    const closeModal = () => {
+    closeModal = () => {
         modal.classList.remove('active');
         modalContent.innerHTML = '';
         document.body.style.overflow = ''
@@ -385,12 +326,6 @@ const runMermaid = async (rerun) => {
     modal.addEventListener('click', (e) => {
         if (e.target === modal) closeModal();
     });
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && modal.classList.contains('active')) {
-            closeModal();
-        }
-    });
-
     document.querySelectorAll('.mermaid').forEach((mermaidDiv) => {
         if (mermaidDiv.parentNode.classList.contains('mermaid-container') ||
             mermaidDiv.closest('.mermaid-fullscreen-modal')) {
@@ -410,8 +345,8 @@ const runMermaid = async (rerun) => {
         const fullscreenBtn = document.createElement('button');
         fullscreenBtn.className = 'mermaid-fullscreen-btn' + (darkTheme ? ' dark-theme' : '');
         fullscreenBtn.setAttribute('aria-label', 'View diagram in fullscreen');
-        fullscreenBtn.textContent = '⛶';
-        fullscreenBtn.style.opacity = '50%';
+        fullscreenBtn.textContent = "\u26f6";
+        fullscreenBtn.style.opacity = "50%";
 
         // Calculate dynamic position based on diagram's margin and padding
         const diagramStyle = window.getComputedStyle(mermaidDiv);
@@ -423,7 +358,7 @@ const runMermaid = async (rerun) => {
         fullscreenBtn.style.right = `${marginRight + paddingRight + 4}px`;
 
         fullscreenBtn.addEventListener('click', () => {
-            previousScrollOffset = [window.scroll, window.scrollY];
+            previousScrollOffset = [window.scrollX, window.scrollY];
             const clone = mermaidDiv.cloneNode(true);
             modalContent.innerHTML = '';
             modalContent.appendChild(clone);
@@ -435,9 +370,9 @@ const runMermaid = async (rerun) => {
                 svg.style.width = '100%';
                 svg.style.height = 'auto';
                 svg.style.maxWidth = '100%';
-                svg.style.sdisplay = 'block';
+                svg.style.display = 'block';
 
-                if ("False" === "True") {
+                if (false) {
                     setTimeout(() => {
                         const g = svg.querySelector('g');
                         if (g) {
@@ -460,8 +395,11 @@ const runMermaid = async (rerun) => {
     });
 };
 
+
+
 const load = async () => {
     initStyles();
+
 
     await runMermaid(true);
 
@@ -471,10 +409,8 @@ const load = async () => {
             darkTheme = newDarkTheme;
             console.log("Theme change detected, re-running mermaid with", darkTheme ? "dark" : "default", "theme");
             await mermaid.initialize(
-                {...JSON.parse(
-                    `{"startOnLoad": false}`
-                ),
-                ...{ darkMode: darkTheme, theme: darkTheme ? 'dark' : 'default' },
+                {...{"startOnLoad": false},
+                ...{ darkMode: darkTheme, theme: darkTheme ? "dark" : "default" },
                 }
             );
             await runMermaid(true);
@@ -499,35 +435,40 @@ const load = async () => {
 
 console.log("Initializing mermaid with", darkTheme ? "dark" : "default", "theme");
 mermaid.initialize(
-    {...JSON.parse(
-        `{"startOnLoad": false}`
-    ),
-    ...{ darkMode: darkTheme, theme: darkTheme ? 'dark' : 'default' },
+    {...{"startOnLoad": false},
+    ...{ darkMode: darkTheme, theme: darkTheme ? "dark" : "default" },
     }
 );
 
 window.addEventListener("load", load);
 window.runMermaid = runMermaid;</script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/floris/core/core';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="python"/>
   <meta name="docsearch:version" content="" />
+  
+    
+    <script src="../../../_static/searchtools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <script src="../../../searchindex.js"></script>
+  
   </head>
-  
-  
-  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
-
+  <body data-default-mode="">
   
   
   <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
   
   <div id="pst-scroll-pixel-helper"></div>
   
   <button type="button" class="btn rounded-pill" id="pst-back-to-top">
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
-
+  
+  
+  
   
   <dialog id="pst-search-dialog">
     
@@ -553,7 +494,47 @@ window.runMermaid = runMermaid;</script>
 </div>
 
   
-    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
     </header>
   
 
@@ -1054,11 +1035,11 @@ window.runMermaid = runMermaid;</script>
 <a class="viewcode-back" href="../../../_autosummary/floris.core.core.html#floris.core.core.Core">[docs]</a>
 <span class="nd">@define</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">Core</span><span class="p">(</span><span class="n">BaseClass</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Top-level class that describes a Floris model and initializes the</span>
 <span class="sd">    simulation. Use the :py:class:`~.simulation.farm.Farm` attribute to</span>
 <span class="sd">    access other objects within the model.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">logging</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">converter</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
     <span class="n">solver</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">converter</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
@@ -1078,12 +1059,12 @@ window.runMermaid = runMermaid;</script>
 
         <span class="c1"># Configure logging</span>
         <span class="n">logging_manager</span><span class="o">.</span><span class="n">configure_console_log</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logging</span><span class="p">[</span><span class="s2">&quot;console&quot;</span><span class="p">][</span><span class="s2">&quot;enable&quot;</span><span class="p">],</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logging</span><span class="p">[</span><span class="s2">&quot;console&quot;</span><span class="p">][</span><span class="s2">&quot;level&quot;</span><span class="p">],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logging</span><span class="p">[</span><span class="s2">"console"</span><span class="p">][</span><span class="s2">"enable"</span><span class="p">],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logging</span><span class="p">[</span><span class="s2">"console"</span><span class="p">][</span><span class="s2">"level"</span><span class="p">],</span>
         <span class="p">)</span>
         <span class="n">logging_manager</span><span class="o">.</span><span class="n">configure_file_log</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logging</span><span class="p">[</span><span class="s2">&quot;file&quot;</span><span class="p">][</span><span class="s2">&quot;enable&quot;</span><span class="p">],</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logging</span><span class="p">[</span><span class="s2">&quot;file&quot;</span><span class="p">][</span><span class="s2">&quot;level&quot;</span><span class="p">],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logging</span><span class="p">[</span><span class="s2">"file"</span><span class="p">][</span><span class="s2">"enable"</span><span class="p">],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logging</span><span class="p">[</span><span class="s2">"file"</span><span class="p">][</span><span class="s2">"level"</span><span class="p">],</span>
         <span class="p">)</span>
 
         <span class="c1"># Initialize farm quantities that depend on other objects</span>
@@ -1105,36 +1086,36 @@ window.runMermaid = runMermaid;</script>
         <span class="bp">self</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">set_awc_amplitudes_to_ref_amp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">n_findex</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">set_awc_frequencies_to_ref_freq</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">n_findex</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">solver</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;turbine_grid&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">solver</span><span class="p">[</span><span class="s2">"type"</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"turbine_grid"</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">grid</span> <span class="o">=</span> <span class="n">TurbineGrid</span><span class="p">(</span>
                 <span class="n">turbine_coordinates</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">coordinates</span><span class="p">,</span>
                 <span class="n">turbine_diameters</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">rotor_diameters</span><span class="p">,</span>
                 <span class="n">wind_directions</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">wind_directions</span><span class="p">,</span>
-                <span class="n">grid_resolution</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">solver</span><span class="p">[</span><span class="s2">&quot;turbine_grid_points&quot;</span><span class="p">],</span>
+                <span class="n">grid_resolution</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">solver</span><span class="p">[</span><span class="s2">"turbine_grid_points"</span><span class="p">],</span>
             <span class="p">)</span>
-        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">solver</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;turbine_cubature_grid&quot;</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">solver</span><span class="p">[</span><span class="s2">"type"</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"turbine_cubature_grid"</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">grid</span> <span class="o">=</span> <span class="n">TurbineCubatureGrid</span><span class="p">(</span>
                 <span class="n">turbine_coordinates</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">coordinates</span><span class="p">,</span>
                 <span class="n">turbine_diameters</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">rotor_diameters</span><span class="p">,</span>
                 <span class="n">wind_directions</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">wind_directions</span><span class="p">,</span>
-                <span class="n">grid_resolution</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">solver</span><span class="p">[</span><span class="s2">&quot;turbine_grid_points&quot;</span><span class="p">],</span>
+                <span class="n">grid_resolution</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">solver</span><span class="p">[</span><span class="s2">"turbine_grid_points"</span><span class="p">],</span>
             <span class="p">)</span>
-        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">solver</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;flow_field_planar_grid&quot;</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">solver</span><span class="p">[</span><span class="s2">"type"</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"flow_field_planar_grid"</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">grid</span> <span class="o">=</span> <span class="n">FlowFieldPlanarGrid</span><span class="p">(</span>
                 <span class="n">turbine_coordinates</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">coordinates</span><span class="p">,</span>
                 <span class="n">turbine_diameters</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">rotor_diameters</span><span class="p">,</span>
                 <span class="n">wind_directions</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">wind_directions</span><span class="p">,</span>
-                <span class="n">normal_vector</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">solver</span><span class="p">[</span><span class="s2">&quot;normal_vector&quot;</span><span class="p">],</span>
-                <span class="n">planar_coordinate</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">solver</span><span class="p">[</span><span class="s2">&quot;planar_coordinate&quot;</span><span class="p">],</span>
-                <span class="n">grid_resolution</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">solver</span><span class="p">[</span><span class="s2">&quot;flow_field_grid_points&quot;</span><span class="p">],</span>
-                <span class="n">x1_bounds</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">solver</span><span class="p">[</span><span class="s2">&quot;flow_field_bounds&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
-                <span class="n">x2_bounds</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">solver</span><span class="p">[</span><span class="s2">&quot;flow_field_bounds&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span>
+                <span class="n">normal_vector</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">solver</span><span class="p">[</span><span class="s2">"normal_vector"</span><span class="p">],</span>
+                <span class="n">planar_coordinate</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">solver</span><span class="p">[</span><span class="s2">"planar_coordinate"</span><span class="p">],</span>
+                <span class="n">grid_resolution</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">solver</span><span class="p">[</span><span class="s2">"flow_field_grid_points"</span><span class="p">],</span>
+                <span class="n">x1_bounds</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">solver</span><span class="p">[</span><span class="s2">"flow_field_bounds"</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+                <span class="n">x2_bounds</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">solver</span><span class="p">[</span><span class="s2">"flow_field_bounds"</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span>
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;Supported solver types are &quot;</span>
-                <span class="s2">&quot;[turbine_grid, turbine_cubature_grid, flow_field_grid, flow_field_planar_grid], &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;but type given was </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">solver</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="s2">"Supported solver types are "</span>
+                <span class="s2">"[turbine_grid, turbine_cubature_grid, flow_field_grid, flow_field_planar_grid], "</span>
+                <span class="sa">f</span><span class="s2">"but type given was </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">solver</span><span class="p">[</span><span class="s1">'type'</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="p">,</span> <span class="p">(</span><span class="n">TurbineGrid</span><span class="p">,</span> <span class="n">TurbineCubatureGrid</span><span class="p">)):</span>
@@ -1146,7 +1127,7 @@ window.runMermaid = runMermaid;</script>
 <div class="viewcode-block" id="Core.initialize_domain">
 <a class="viewcode-back" href="../../../_autosummary/floris.core.core.html#floris.core.core.Core.initialize_domain">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">initialize_domain</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize solution space prior to wake calculations&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Initialize solution space prior to wake calculations"""</span>
 
         <span class="c1"># Initialize field quantities; doing this immediately prior to doing</span>
         <span class="c1"># the calculation step allows for manipulating inputs in a script</span>
@@ -1162,41 +1143,41 @@ window.runMermaid = runMermaid;</script>
 <div class="viewcode-block" id="Core.steady_state_atmospheric_condition">
 <a class="viewcode-back" href="../../../_autosummary/floris.core.core.html#floris.core.core.Core.steady_state_atmospheric_condition">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">steady_state_atmospheric_condition</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Perform the steady-state wind farm wake calculations. Note that</span>
-<span class="sd">        initialize_domain() is required to be called before this function.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Perform the steady-state wind farm wake calculations. Note that</span>
+<span class="sd">        initialize_domain() is required to be called before this function."""</span>
 
-        <span class="n">vel_model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wake</span><span class="o">.</span><span class="n">model_strings</span><span class="p">[</span><span class="s2">&quot;velocity_model&quot;</span><span class="p">]</span>
+        <span class="n">vel_model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wake</span><span class="o">.</span><span class="n">model_strings</span><span class="p">[</span><span class="s2">"velocity_model"</span><span class="p">]</span>
 
-        <span class="k">if</span> <span class="n">vel_model</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;empirical_gauss&quot;</span><span class="p">]</span> <span class="ow">and</span> \
+        <span class="k">if</span> <span class="n">vel_model</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">"empirical_gauss"</span><span class="p">]</span> <span class="ow">and</span> \
             <span class="bp">self</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">correct_cp_ct_for_tilt</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                <span class="s2">&quot;The current model does not account for vertical wake deflection due to &quot;</span> <span class="o">+</span>
-                <span class="s2">&quot;tilt. Corrections to power and thrust coefficient can be included, but no &quot;</span> <span class="o">+</span>
-                <span class="s2">&quot;vertical wake deflection will occur.&quot;</span>
+                <span class="s2">"The current model does not account for vertical wake deflection due to "</span> <span class="o">+</span>
+                <span class="s2">"tilt. Corrections to power and thrust coefficient can be included, but no "</span> <span class="o">+</span>
+                <span class="s2">"vertical wake deflection will occur."</span>
             <span class="p">)</span>
 
         <span class="n">operation_model_awc</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">for</span> <span class="n">td</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_definitions</span><span class="p">:</span>
-            <span class="k">if</span> <span class="s2">&quot;operation_model&quot;</span> <span class="ow">in</span> <span class="n">td</span> <span class="ow">and</span> <span class="n">td</span><span class="p">[</span><span class="s2">&quot;operation_model&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;awc&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s2">"operation_model"</span> <span class="ow">in</span> <span class="n">td</span> <span class="ow">and</span> <span class="n">td</span><span class="p">[</span><span class="s2">"operation_model"</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"awc"</span><span class="p">:</span>
                 <span class="n">operation_model_awc</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="k">if</span> <span class="n">vel_model</span> <span class="o">!=</span> <span class="s2">&quot;empirical_gauss&quot;</span> <span class="ow">and</span> <span class="n">operation_model_awc</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">vel_model</span> <span class="o">!=</span> <span class="s2">"empirical_gauss"</span> <span class="ow">and</span> <span class="n">operation_model_awc</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;The current model `</span><span class="si">{</span><span class="n">vel_model</span><span class="si">}</span><span class="s2">` does not account for additional wake mixing &quot;</span> <span class="o">+</span>
-                <span class="s2">&quot;due to active wake control. Corrections to power and thrust coefficient can &quot;</span> <span class="o">+</span>
-                <span class="s2">&quot;be included, but no enhanced wake recovery will occur.&quot;</span>
+                <span class="sa">f</span><span class="s2">"The current model `</span><span class="si">{</span><span class="n">vel_model</span><span class="si">}</span><span class="s2">` does not account for additional wake mixing "</span> <span class="o">+</span>
+                <span class="s2">"due to active wake control. Corrections to power and thrust coefficient can "</span> <span class="o">+</span>
+                <span class="s2">"be included, but no enhanced wake recovery will occur."</span>
             <span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">vel_model</span><span class="o">==</span><span class="s2">&quot;cc&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">vel_model</span><span class="o">==</span><span class="s2">"cc"</span><span class="p">:</span>
             <span class="n">cc_solver</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">farm</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">flow_field</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">wake</span>
             <span class="p">)</span>
-        <span class="k">elif</span> <span class="n">vel_model</span><span class="o">==</span><span class="s2">&quot;turbopark&quot;</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="n">vel_model</span><span class="o">==</span><span class="s2">"turbopark"</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                <span class="s2">&quot;The turbopark model has been superseded by the turboparkgauss model. We &quot;</span> <span class="o">+</span>
-                <span class="s2">&quot;recommend using `velocity_model: turboparkgauss` instead.&quot;</span>
+                <span class="s2">"The turbopark model has been superseded by the turboparkgauss model. We "</span> <span class="o">+</span>
+                <span class="s2">"recommend using `velocity_model: turboparkgauss` instead."</span>
             <span class="p">)</span>
             <span class="n">turbopark_solver</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">farm</span><span class="p">,</span>
@@ -1204,7 +1185,7 @@ window.runMermaid = runMermaid;</script>
                 <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">wake</span>
             <span class="p">)</span>
-        <span class="k">elif</span> <span class="n">vel_model</span><span class="o">==</span><span class="s2">&quot;empirical_gauss&quot;</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="n">vel_model</span><span class="o">==</span><span class="s2">"empirical_gauss"</span><span class="p">:</span>
             <span class="n">empirical_gauss_solver</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">farm</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">flow_field</span><span class="p">,</span>
@@ -1233,13 +1214,13 @@ window.runMermaid = runMermaid;</script>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">initialize_velocity_field</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="p">)</span>
 
-        <span class="n">vel_model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wake</span><span class="o">.</span><span class="n">model_strings</span><span class="p">[</span><span class="s2">&quot;velocity_model&quot;</span><span class="p">]</span>
+        <span class="n">vel_model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wake</span><span class="o">.</span><span class="n">model_strings</span><span class="p">[</span><span class="s2">"velocity_model"</span><span class="p">]</span>
 
-        <span class="k">if</span> <span class="n">vel_model</span><span class="o">==</span><span class="s2">&quot;cc&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">vel_model</span><span class="o">==</span><span class="s2">"cc"</span><span class="p">:</span>
             <span class="n">full_flow_cc_solver</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">farm</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">flow_field</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">wake</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">vel_model</span><span class="o">==</span><span class="s2">&quot;turbopark&quot;</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="n">vel_model</span><span class="o">==</span><span class="s2">"turbopark"</span><span class="p">:</span>
             <span class="n">full_flow_turbopark_solver</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">farm</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">flow_field</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">wake</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">vel_model</span><span class="o">==</span><span class="s2">&quot;empirical_gauss&quot;</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="n">vel_model</span><span class="o">==</span><span class="s2">"empirical_gauss"</span><span class="p">:</span>
             <span class="n">full_flow_empirical_gauss_solver</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">farm</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">flow_field</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">wake</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">full_flow_sequential_solver</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">farm</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">flow_field</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">wake</span><span class="p">)</span></div>
@@ -1269,16 +1250,16 @@ window.runMermaid = runMermaid;</script>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">initialize_velocity_field</span><span class="p">(</span><span class="n">field_grid</span><span class="p">)</span>
 
-        <span class="n">vel_model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wake</span><span class="o">.</span><span class="n">model_strings</span><span class="p">[</span><span class="s2">&quot;velocity_model&quot;</span><span class="p">]</span>
+        <span class="n">vel_model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wake</span><span class="o">.</span><span class="n">model_strings</span><span class="p">[</span><span class="s2">"velocity_model"</span><span class="p">]</span>
 
-        <span class="k">if</span> <span class="n">vel_model</span> <span class="o">==</span> <span class="s2">&quot;turbopark&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">vel_model</span> <span class="o">==</span> <span class="s2">"turbopark"</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
-                <span class="s2">&quot;solve_for_points is not available for the legacy </span><span class="se">\&#39;</span><span class="s2">turbopark</span><span class="se">\&#39;</span><span class="s2"> model. &quot;</span>
-                <span class="s2">&quot;However, it is available for </span><span class="se">\&#39;</span><span class="s2">turboparkgauss</span><span class="se">\&#39;</span><span class="s2">.&quot;</span>
+                <span class="s2">"solve_for_points is not available for the legacy </span><span class="se">\'</span><span class="s2">turbopark</span><span class="se">\'</span><span class="s2"> model. "</span>
+                <span class="s2">"However, it is available for </span><span class="se">\'</span><span class="s2">turboparkgauss</span><span class="se">\'</span><span class="s2">."</span>
             <span class="p">)</span>
-        <span class="k">elif</span> <span class="n">vel_model</span> <span class="o">==</span> <span class="s2">&quot;empirical_gauss&quot;</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="n">vel_model</span> <span class="o">==</span> <span class="s2">"empirical_gauss"</span><span class="p">:</span>
             <span class="n">full_flow_empirical_gauss_solver</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">farm</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">flow_field</span><span class="p">,</span> <span class="n">field_grid</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">wake</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">vel_model</span> <span class="o">==</span> <span class="s2">&quot;cc&quot;</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="n">vel_model</span> <span class="o">==</span> <span class="s2">"cc"</span><span class="p">:</span>
             <span class="n">full_flow_cc_solver</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">farm</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">flow_field</span><span class="p">,</span> <span class="n">field_grid</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">wake</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">full_flow_sequential_solver</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">farm</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">flow_field</span><span class="p">,</span> <span class="n">field_grid</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">wake</span><span class="p">)</span>
@@ -1300,15 +1281,15 @@ window.runMermaid = runMermaid;</script>
         <span class="n">y_start</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
         <span class="n">reference_height</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Extract velocity deficit profiles. See</span>
 <span class="sd">        :py:meth:`~floris.floris_model.FlorisModel.sample_velocity_deficit_profiles`</span>
 <span class="sd">        for more details.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-            <span class="s2">&quot;Velocity deficit profiles will move to a Numpy data structure in the next release. &quot;</span>
-            <span class="s2">&quot;See https://github.com/NatLabRockies/floris/pull/1194.&quot;</span>
+            <span class="s2">"Velocity deficit profiles will move to a Numpy data structure in the next release. "</span>
+            <span class="s2">"See https://github.com/NatLabRockies/floris/pull/1194."</span>
         <span class="p">)</span>
 
         <span class="c1"># Create a grid that contains coordinates for all the sample points in all profiles.</span>
@@ -1325,10 +1306,10 @@ window.runMermaid = runMermaid;</script>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">single_line</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">profile_range</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">profile_range</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">resolution</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">direction</span> <span class="o">==</span> <span class="s1">&#39;cross-stream&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">direction</span> <span class="o">==</span> <span class="s1">'cross-stream'</span><span class="p">:</span>
             <span class="n">x2</span> <span class="o">=</span> <span class="n">single_line</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">n_lines</span><span class="p">,</span> <span class="n">resolution</span><span class="p">))</span>
             <span class="n">x3</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_lines</span><span class="p">,</span> <span class="n">resolution</span><span class="p">))</span>
-        <span class="k">elif</span> <span class="n">direction</span> <span class="o">==</span> <span class="s1">&#39;vertical&#39;</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="n">direction</span> <span class="o">==</span> <span class="s1">'vertical'</span><span class="p">:</span>
             <span class="n">x3</span> <span class="o">=</span> <span class="n">single_line</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">n_lines</span><span class="p">,</span> <span class="n">resolution</span><span class="p">))</span>
             <span class="n">x2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_lines</span><span class="p">,</span> <span class="n">resolution</span><span class="p">))</span>
 
@@ -1355,13 +1336,13 @@ window.runMermaid = runMermaid;</script>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_lines</span><span class="p">):</span>
             <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
                 <span class="p">{</span>
-                    <span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
-                    <span class="s1">&#39;y&#39;</span><span class="p">:</span> <span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
-                    <span class="s1">&#39;z&#39;</span><span class="p">:</span> <span class="n">z</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
-                    <span class="s1">&#39;x1/D&#39;</span><span class="p">:</span> <span class="n">x1</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">/</span><span class="n">ref_rotor_diameter</span><span class="p">,</span>
-                    <span class="s1">&#39;x2/D&#39;</span><span class="p">:</span> <span class="n">x2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">/</span><span class="n">ref_rotor_diameter</span><span class="p">,</span>
-                    <span class="s1">&#39;x3/D&#39;</span><span class="p">:</span> <span class="n">x3</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">/</span><span class="n">ref_rotor_diameter</span><span class="p">,</span>
-                    <span class="s1">&#39;velocity_deficit&#39;</span><span class="p">:</span> <span class="n">velocity_deficit</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+                    <span class="s1">'x'</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+                    <span class="s1">'y'</span><span class="p">:</span> <span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+                    <span class="s1">'z'</span><span class="p">:</span> <span class="n">z</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+                    <span class="s1">'x1/D'</span><span class="p">:</span> <span class="n">x1</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">/</span><span class="n">ref_rotor_diameter</span><span class="p">,</span>
+                    <span class="s1">'x2/D'</span><span class="p">:</span> <span class="n">x2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">/</span><span class="n">ref_rotor_diameter</span><span class="p">,</span>
+                    <span class="s1">'x3/D'</span><span class="p">:</span> <span class="n">x3</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">/</span><span class="n">ref_rotor_diameter</span><span class="p">,</span>
+                    <span class="s1">'velocity_deficit'</span><span class="p">:</span> <span class="n">velocity_deficit</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
                 <span class="p">}</span>
             <span class="p">)</span>
             <span class="n">velocity_deficit_profiles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
@@ -1385,7 +1366,7 @@ window.runMermaid = runMermaid;</script>
 <a class="viewcode-back" href="../../../_autosummary/floris.core.core.html#floris.core.core.Core.from_file">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_file</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">input_file_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Core</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Creates a `Floris` instance from an input file. Must be filetype YAML.</span>
+<span class="w">        </span><span class="sd">"""Creates a `Floris` instance from an input file. Must be filetype YAML.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            input_file_path (str): The relative or absolute file path and name to the</span>
@@ -1393,7 +1374,7 @@ window.runMermaid = runMermaid;</script>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            Floris: The class object instance.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">input_dict</span> <span class="o">=</span> <span class="n">load_yaml</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">input_file_path</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">())</span>
         <span class="n">check_input_file_for_v3_keys</span><span class="p">(</span><span class="n">input_dict</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">Core</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">input_dict</span><span class="p">)</span></div>
@@ -1402,12 +1383,12 @@ window.runMermaid = runMermaid;</script>
 <div class="viewcode-block" id="Core.to_file">
 <a class="viewcode-back" href="../../../_autosummary/floris.core.core.html#floris.core.core.Core.to_file">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">to_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Converts the `Floris` object to an input-ready YAML file at `output_file_path`.</span>
+<span class="w">        </span><span class="sd">"""Converts the `Floris` object to an input-ready YAML file at `output_file_path`.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            output_file_path (str): The full path and filename for where to save the file.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_file_path</span><span class="p">,</span> <span class="s2">&quot;w+&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+<span class="sd">        """</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_file_path</span><span class="p">,</span> <span class="s2">"w+"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">as_dict</span><span class="p">(),</span>
                 <span class="n">f</span><span class="p">,</span>
@@ -1420,36 +1401,36 @@ window.runMermaid = runMermaid;</script>
 <div class="viewcode-block" id="check_input_file_for_v3_keys">
 <a class="viewcode-back" href="../../../_autosummary/floris.core.core.html#floris.core.core.check_input_file_for_v3_keys">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">check_input_file_for_v3_keys</span><span class="p">(</span><span class="n">input_dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Checks if any FLORIS v3 keys are present in the input file and raises special errors if</span>
 <span class="sd">    the extra keys belong to a v3 definition of the input_dct.</span>
 <span class="sd">    and raises special errors if the extra arguments belong to a v3 definition of the class.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        input_dict (dict): The input dictionary to be checked for v3 keys.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">v3_deprecation_msg</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="s2">&quot;Consider using the convert_floris_input_v3_to_v4.py utility in floris/tools &quot;</span>
-        <span class="s2">&quot;to convert from a FLORIS v3 input file to FLORIS v4. &quot;</span>
-        <span class="s2">&quot;See https://natlabrockies.github.io/floris/upgrade_guides/v3_to_v4.html &quot;</span>
-        <span class="s2">&quot;for more information.&quot;</span>
+        <span class="s2">"Consider using the convert_floris_input_v3_to_v4.py utility in floris/tools "</span>
+        <span class="s2">"to convert from a FLORIS v3 input file to FLORIS v4. "</span>
+        <span class="s2">"See https://natlabrockies.github.io/floris/upgrade_guides/v3_to_v4.html "</span>
+        <span class="s2">"for more information."</span>
     <span class="p">)</span>
-    <span class="k">if</span> <span class="s2">&quot;turbulence_intensity&quot;</span> <span class="ow">in</span> <span class="n">input_dict</span><span class="p">[</span><span class="s2">&quot;flow_field&quot;</span><span class="p">]:</span>
+    <span class="k">if</span> <span class="s2">"turbulence_intensity"</span> <span class="ow">in</span> <span class="n">input_dict</span><span class="p">[</span><span class="s2">"flow_field"</span><span class="p">]:</span>
         <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span>
-            <span class="s2">&quot;turbulence_intensity has been updated to turbulence_intensities in FLORIS v4. &quot;</span>
+            <span class="s2">"turbulence_intensity has been updated to turbulence_intensities in FLORIS v4. "</span>
             <span class="o">+</span> <span class="n">v3_deprecation_msg</span>
         <span class="p">)</span>
-    <span class="k">elif</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">input_dict</span><span class="p">[</span><span class="s2">&quot;flow_field&quot;</span><span class="p">][</span><span class="s2">&quot;turbulence_intensities&quot;</span><span class="p">],</span> <span class="s2">&quot;__len__&quot;</span><span class="p">):</span>
+    <span class="k">elif</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">input_dict</span><span class="p">[</span><span class="s2">"flow_field"</span><span class="p">][</span><span class="s2">"turbulence_intensities"</span><span class="p">],</span> <span class="s2">"__len__"</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span>
-            <span class="s2">&quot;turbulence_intensities must be a list of floats in FLORIS v4. &quot;</span>
+            <span class="s2">"turbulence_intensities must be a list of floats in FLORIS v4. "</span>
             <span class="o">+</span> <span class="n">v3_deprecation_msg</span>
         <span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">input_dict</span><span class="p">[</span><span class="s2">&quot;wake&quot;</span><span class="p">][</span><span class="s2">&quot;model_strings&quot;</span><span class="p">][</span><span class="s2">&quot;velocity_model&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;multidim_cp_ct&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">input_dict</span><span class="p">[</span><span class="s2">"wake"</span><span class="p">][</span><span class="s2">"model_strings"</span><span class="p">][</span><span class="s2">"velocity_model"</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"multidim_cp_ct"</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span>
-            <span class="s2">&quot;Dedicated &#39;multidim_cp_ct&#39; velocity model has been removed in FLORIS v4 in favor of &quot;</span>
-            <span class="o">+</span> <span class="s2">&quot;supporting all available wake models. To recover previous operation, set &quot;</span>
-            <span class="o">+</span> <span class="s2">&quot;velocity_model to gauss. &quot;</span>
+            <span class="s2">"Dedicated 'multidim_cp_ct' velocity model has been removed in FLORIS v4 in favor of "</span>
+            <span class="o">+</span> <span class="s2">"supporting all available wake models. To recover previous operation, set "</span>
+            <span class="o">+</span> <span class="s2">"velocity_model to gauss. "</span>
             <span class="o">+</span> <span class="n">v3_deprecation_msg</span>
         <span class="p">)</span></div>
 
@@ -1515,8 +1496,8 @@ By National Laboratory of the Rockies
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
-<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb"></script>
 
   <footer class="bd-footer">
   </footer>

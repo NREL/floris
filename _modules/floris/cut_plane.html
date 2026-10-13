@@ -26,8 +26,8 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
-<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+  <link href="../../_static/styles/theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
@@ -38,10 +38,10 @@
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- So that users can add custom icons -->
-  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="../../_static/scripts/fontawesome.js?digest=55c26ed414f5f8a31ebb"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
-<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
     <script src="../../_static/documentation_options.js?v=30a733bc"></script>
     <script src="../../_static/doctools.js?v=9a2dae69"></script>
@@ -59,6 +59,12 @@
     <script>
                 window.dataLayer = window.dataLayer || [];
                 function gtag(){ dataLayer.push(arguments); }
+                gtag('consent', 'default', {
+                    'ad_storage': 'denied',
+                    'ad_user_data': 'denied',
+                    'ad_personalization': 'denied',
+                    'analytics_storage': 'denied'
+                });
                 gtag('js', new Date());
                 gtag('config', 'G-JV2SK7CNPR');
             </script>
@@ -68,11 +74,16 @@
     <script>
                 window.dataLayer = window.dataLayer || [];
                 function gtag(){ dataLayer.push(arguments); }
+                gtag('consent', 'default', {
+                    'ad_storage': 'denied',
+                    'ad_user_data': 'denied',
+                    'ad_personalization': 'denied',
+                    'analytics_storage': 'denied'
+                });
                 gtag('js', new Date());
                 gtag('config', 'G-JV2SK7CNPR');
             </script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
-    <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
     <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10.8/dist/mermaid.esm.min.mjs";
 
 
@@ -81,173 +92,11 @@
 
 const initStyles = () => {
     const defaultStyle = document.createElement('style');
-    defaultStyle.textContent = `pre.mermaid {
-    /* Same as .mermaid-container > pre */
-    display: block;
-    width: 100%;
-}
-
-pre.mermaid > svg {
-    /* Same as .mermaid-container > pre > svg */
-    height: 500px;
-    width: 100%;
-    max-width: 100% !important;
-}`;
+    defaultStyle.textContent = "pre.mermaid {\n    /* Same as .mermaid-container > pre */\n    display: block;\n    width: 100%;\n}\n\npre.mermaid > svg {\n    /* Same as .mermaid-container > pre > svg */\n    height: 500px;\n    width: 100%;\n    max-width: 100% !important;\n}";
     document.head.appendChild(defaultStyle);
 
     const fullscreenStyle = document.createElement('style');
-    fullscreenStyle.textContent = `.mermaid-container {
-    display: flex;
-    flex-direction: row;
-    width: 100%;
-}
-
-.mermaid-container > pre {
-    display: block;
-    width: 100%;
-}
-
-.mermaid-container > pre > svg {
-    height: 500px;
-    width: 100%;
-    max-width: 100% !important;
-}
-
-.mermaid-fullscreen-btn {
-    width: 28px;
-    height: 28px;
-    background: rgba(255, 255, 255, 0.95);
-    border: 1px solid rgba(0, 0, 0, 0.3);
-    border-radius: 4px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-    font-size: 14px;
-    line-height: 1;
-    padding: 0;
-    color: #333;
-}
-
-.mermaid-fullscreen-btn:hover {
-    opacity: 100% !important;
-    background: rgba(255, 255, 255, 1);
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
-    transform: scale(1.1);
-}
-
-.mermaid-fullscreen-btn.dark-theme {
-    background: rgba(50, 50, 50, 0.95);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    color: #e0e0e0;
-}
-
-.mermaid-fullscreen-btn.dark-theme:hover {
-    background: rgba(60, 60, 60, 1);
-    box-shadow: 0 3px 10px rgba(255, 255, 255, 0.2);
-}
-
-.mermaid-fullscreen-modal {
-    display: none;
-    position: fixed !important;
-    top: 0 !important;
-    left: 0 !important;
-    width: 95vw;
-    height: 100vh;
-    background: rgba(255, 255, 255, 0.98);
-    z-index: 9999;
-    padding: 20px;
-    overflow: auto;
-}
-
-.mermaid-fullscreen-modal.dark-theme {
-    background: rgba(0, 0, 0, 0.98);
-}
-
-.mermaid-fullscreen-modal.active {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.mermaid-container-fullscreen {
-    position: relative;
-    width: 95vw;
-    height: 90vh;
-    max-width: 95vw;
-    max-height: 90vh;
-    background: white;
-    border-radius: 8px;
-    padding: 20px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-    overflow: auto;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.mermaid-container-fullscreen.dark-theme {
-    background: #1a1a1a;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
-}
-
-.mermaid-container-fullscreen pre.mermaid {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.mermaid-container-fullscreen .mermaid svg {
-    height: 100% !important;
-    width: 100% !important;
-    cursor: grab;
-}
-
-.mermaid-fullscreen-close {
-    position: fixed !important;
-    top: 20px !important;
-    right: 20px !important;
-    width: 40px;
-    height: 40px;
-    background: rgba(255, 255, 255, 0.95);
-    border: 1px solid rgba(0, 0, 0, 0.2);
-    border-radius: 50%;
-    cursor: pointer;
-    z-index: 10000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-    transition: all 0.2s;
-    font-size: 24px;
-    line-height: 1;
-    color: #333;
-}
-
-.mermaid-fullscreen-close:hover {
-    background: white;
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
-    transform: scale(1.1);
-}
-
-.mermaid-fullscreen-close.dark-theme {
-    background: rgba(50, 50, 50, 0.95);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    color: #e0e0e0;
-}
-
-.mermaid-fullscreen-close.dark-theme:hover {
-    background: rgba(60, 60, 60, 1);
-    box-shadow: 0 6px 16px rgba(255, 255, 255, 0.2);
-}
-
-.mermaid-fullscreen-modal .mermaid-fullscreen-btn {
-    display: none !important;
-}`;
+    fullscreenStyle.textContent = ".mermaid-container {\n    position: relative;\n    display: flex;\n    flex-direction: row;\n    width: 100%;\n}\n\n.mermaid-container > pre {\n    display: block;\n    width: 100%;\n}\n\n.mermaid-container > pre > svg {\n    height: 500px;\n    width: 100%;\n    max-width: 100% !important;\n}\n\n.mermaid-fullscreen-btn {\n    position: absolute;\n    width: 28px;\n    height: 28px;\n    background: rgba(255, 255, 255, 0.95);\n    border: 1px solid rgba(0, 0, 0, 0.3);\n    border-radius: 4px;\n    cursor: pointer;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n    transition: all 0.2s;\n    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);\n    font-size: 14px;\n    line-height: 1;\n    padding: 0;\n    color: #333;\n}\n\n.mermaid-fullscreen-btn:hover {\n    opacity: 100% !important;\n    background: rgba(255, 255, 255, 1);\n    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);\n    transform: scale(1.1);\n}\n\n.mermaid-fullscreen-btn.dark-theme {\n    background: rgba(50, 50, 50, 0.95);\n    border: 1px solid rgba(255, 255, 255, 0.3);\n    color: #e0e0e0;\n}\n\n.mermaid-fullscreen-btn.dark-theme:hover {\n    background: rgba(60, 60, 60, 1);\n    box-shadow: 0 3px 10px rgba(255, 255, 255, 0.2);\n}\n\n.mermaid-fullscreen-modal {\n    display: none;\n    position: fixed !important;\n    top: 0 !important;\n    left: 0 !important;\n    width: 95vw;\n    height: 100vh;\n    background: rgba(255, 255, 255, 0.98);\n    z-index: 9999;\n    padding: 20px;\n    overflow: auto;\n}\n\n.mermaid-fullscreen-modal.dark-theme {\n    background: rgba(0, 0, 0, 0.98);\n}\n\n.mermaid-fullscreen-modal.active {\n    display: flex;\n    align-items: center;\n    justify-content: center;\n}\n\n.mermaid-container-fullscreen {\n    position: relative;\n    width: 95vw;\n    height: 90vh;\n    max-width: 95vw;\n    max-height: 90vh;\n    background: white;\n    border-radius: 8px;\n    padding: 20px;\n    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);\n    overflow: auto;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n}\n\n.mermaid-container-fullscreen.dark-theme {\n    background: #1a1a1a;\n    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);\n}\n\n.mermaid-container-fullscreen pre.mermaid {\n    width: 100%;\n    height: 100%;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n}\n\n.mermaid-container-fullscreen .mermaid svg {\n    height: 100% !important;\n    width: 100% !important;\n    cursor: grab;\n}\n\n.mermaid-fullscreen-close {\n    position: fixed !important;\n    top: 20px !important;\n    right: 20px !important;\n    width: 40px;\n    height: 40px;\n    background: rgba(255, 255, 255, 0.95);\n    border: 1px solid rgba(0, 0, 0, 0.2);\n    border-radius: 50%;\n    cursor: pointer;\n    z-index: 10000;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);\n    transition: all 0.2s;\n    font-size: 24px;\n    line-height: 1;\n    color: #333;\n}\n\n.mermaid-fullscreen-close:hover {\n    background: white;\n    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);\n    transform: scale(1.1);\n}\n\n.mermaid-fullscreen-close.dark-theme {\n    background: rgba(50, 50, 50, 0.95);\n    border: 1px solid rgba(255, 255, 255, 0.2);\n    color: #e0e0e0;\n}\n\n.mermaid-fullscreen-close.dark-theme:hover {\n    background: rgba(60, 60, 60, 1);\n    box-shadow: 0 6px 16px rgba(255, 255, 255, 0.2);\n}\n\n.mermaid-fullscreen-modal .mermaid-fullscreen-btn {\n    display: none !important;\n}";
     document.head.appendChild(fullscreenStyle);
 }
 
@@ -292,6 +141,32 @@ let darkTheme = isDarkTheme();
 let modal = null;
 let modalContent = null;
 let previousScrollOffset = [window.scrollX, window.scrollY];
+let _lazyObserver = null;
+let _renderQueue = Promise.resolve();
+let closeModal = () => {};
+
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal?.classList.contains('active')) {
+        closeModal();
+    }
+});
+
+// Apply d3 zoom to each SVG. Idempotent: an SVG already wrapped is skipped,
+// so this is safe to call both for the initial batch and for diagrams that
+// render lazily once they become visible.
+const addZoomToSvgs = (svgs) => {
+    svgs.each(function() {
+        if (this.getAttribute('data-zoom-applied') === 'true') return;
+        var svg = d3.select(this);
+        svg.html("<g class='wrapper'>" + svg.html() + "</g>");
+        var inner = svg.select("g");
+        var zoom = d3.zoom().on("zoom", function(event) {
+            inner.attr("transform", event.transform);
+        });
+        svg.call(zoom);
+        this.setAttribute('data-zoom-applied', 'true');
+    });
+};
 
 const runMermaid = async (rerun) => {
     console.log("Running mermaid diagrams, rerun =", rerun);
@@ -299,7 +174,15 @@ const runMermaid = async (rerun) => {
     let all_mermaids = document.querySelectorAll(".mermaid");
 
     if (rerun) {
+        // Disconnect any previous lazy rendering observer
+        if (_lazyObserver) {
+            _lazyObserver.disconnect();
+            _lazyObserver = null;
+        }
+
         all_mermaids.forEach((el) => {
+            el.removeAttribute('data-mermaid-deferred');
+            el.removeAttribute('data-mermaid-render-failed');
             if(!el.hasAttribute("data-original-code")) {
                 // store original code
                 // console.log(`Storing original code for first run: `, el.innerHTML);
@@ -316,42 +199,100 @@ const runMermaid = async (rerun) => {
                 el.setAttribute('data-original-code', el.innerHTML);
             }
         });
-        await mermaid.run();
+
+        // Separate visible and hidden elements. Mermaid's layout engine measures
+        // text dimensions via the DOM, which fails for elements hidden by a parent
+        // (e.g., Reveal.js non-active slides, sphinx-design unopened tabs),
+        // producing broken SVGs. Render visible elements now, defer hidden ones.
+        const visible = [];
+        const hidden = [];
+        all_mermaids.forEach((el) => {
+            // offsetParent is null for display:none ancestors.
+            // getClientRects().length > 0 catches position:fixed elements
+            // (which also have null offsetParent but are still visible).
+            if (el.offsetParent !== null || el.getClientRects().length > 0) {
+                visible.push(el);
+            } else {
+                hidden.push(el);
+                el.setAttribute('data-mermaid-deferred', 'true');
+            }
+        });
+
+        if (visible.length > 0) {
+            try {
+                await mermaid.run({ nodes: visible });
+            } catch (e) {
+                console.error("Mermaid rendering failed:", e);
+            }
+        }
+
+        // Lazily render hidden elements when they become visible.
+        // Uses a promise chain (_renderQueue) to serialize rendering,
+        // since IntersectionObserver may report multiple entries at once
+        // and mermaid.run() is not safe to call concurrently.
+        if (hidden.length > 0) {
+            if (typeof IntersectionObserver === 'undefined') {
+                console.warn("IntersectionObserver not available; hidden mermaid diagrams will not render.");
+            } else {
+                _renderQueue = Promise.resolve();
+                _lazyObserver = new IntersectionObserver((entries) => {
+                    for (const entry of entries) {
+                        if (entry.isIntersecting && entry.target.getAttribute("data-processed") !== "true") {
+                            _lazyObserver.unobserve(entry.target);
+                            const el = entry.target;
+                            _renderQueue = _renderQueue.then(async () => {
+                                try {
+                                    await mermaid.run({ nodes: [el] });
+                                    el.removeAttribute('data-mermaid-deferred');
+                                    // Apply zoom to the now-rendered diagram, matching
+                                    // the decoration visible diagrams receive.
+                                    if (false) {
+                                        addZoomToSvgs(d3.selectAll("").select(function() {
+                                            return this.querySelector("svg");
+                                        }));
+                                    }
+                                } catch (e) {
+                                    console.error("Mermaid deferred rendering failed:", e);
+                                    el.removeAttribute('data-mermaid-deferred');
+                                    el.setAttribute('data-mermaid-render-failed', 'true');
+                                }
+                            });
+                        }
+                    }
+                });
+                hidden.forEach((el) => _lazyObserver.observe(el));
+            }
+        }
     }
 
     all_mermaids = document.querySelectorAll(".mermaid");
-    const mermaids_processed = document.querySelectorAll(".mermaid[data-processed='true']");
+    // Exclude deferred (hidden) and render-failed elements from completion checks
+    const mermaids_active = document.querySelectorAll(".mermaid:not([data-mermaid-deferred]):not([data-mermaid-render-failed])");
+    const mermaids_processed = document.querySelectorAll(".mermaid:not([data-mermaid-deferred]):not([data-mermaid-render-failed])[data-processed='true']");
 
-    if ("False" === "True") {
-        const mermaids_to_add_zoom = -1 === -1 ? all_mermaids.length : -1;
+    if (false) {
+        const mermaids_to_add_zoom = 0 === -1 ? mermaids_active.length : 0;
         if(mermaids_to_add_zoom > 0) {
-            var svgs = d3.selectAll("");
-            if(all_mermaids.length !== mermaids_processed.length) {
+            var svgs = d3.selectAll("").select(function() {
+                return this.querySelector("svg");
+            });
+            // Wait until every active (visible) diagram has rendered. Deferred
+            // diagrams are excluded, so a fixed d3_node_count that counts a
+            // hidden diagram no longer loops forever waiting for its SVG.
+            if(mermaids_active.length !== mermaids_processed.length) {
                 setTimeout(() => runMermaid(false), 200);
                 return;
-            } else if(svgs.size() !== mermaids_to_add_zoom) {
-                setTimeout(() => runMermaid(false), 200);
-                return;
-            } else {
-                svgs.each(function() {
-                    var svg = d3.select(this);
-                    svg.html("<g class='wrapper'>" + svg.html() + "</g>");
-                    var inner = svg.select("g");
-                    var zoom = d3.zoom().on("zoom", function(event) {
-                        inner.attr("transform", event.transform);
-                    });
-                    svg.call(zoom);
-                });
             }
+            addZoomToSvgs(svgs);
         }
-    } else if(all_mermaids.length !== mermaids_processed.length) {
+    } else if(mermaids_active.length !== mermaids_processed.length) {
         // Wait for mermaid to process all diagrams
         setTimeout(() => runMermaid(false), 200);
         return;
     }
 
     // Stop here if not adding fullscreen capability
-    if ("True" !== "True") return;
+    if (!true) return;
 
     if (modal !== null ) {
         // Destroy existing modal
@@ -374,7 +315,7 @@ const runMermaid = async (rerun) => {
     modalContent = modal.querySelector('.mermaid-container-fullscreen');
     const closeBtn = modal.querySelector('.mermaid-fullscreen-close');
 
-    const closeModal = () => {
+    closeModal = () => {
         modal.classList.remove('active');
         modalContent.innerHTML = '';
         document.body.style.overflow = ''
@@ -385,12 +326,6 @@ const runMermaid = async (rerun) => {
     modal.addEventListener('click', (e) => {
         if (e.target === modal) closeModal();
     });
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && modal.classList.contains('active')) {
-            closeModal();
-        }
-    });
-
     document.querySelectorAll('.mermaid').forEach((mermaidDiv) => {
         if (mermaidDiv.parentNode.classList.contains('mermaid-container') ||
             mermaidDiv.closest('.mermaid-fullscreen-modal')) {
@@ -410,8 +345,8 @@ const runMermaid = async (rerun) => {
         const fullscreenBtn = document.createElement('button');
         fullscreenBtn.className = 'mermaid-fullscreen-btn' + (darkTheme ? ' dark-theme' : '');
         fullscreenBtn.setAttribute('aria-label', 'View diagram in fullscreen');
-        fullscreenBtn.textContent = '⛶';
-        fullscreenBtn.style.opacity = '50%';
+        fullscreenBtn.textContent = "\u26f6";
+        fullscreenBtn.style.opacity = "50%";
 
         // Calculate dynamic position based on diagram's margin and padding
         const diagramStyle = window.getComputedStyle(mermaidDiv);
@@ -423,7 +358,7 @@ const runMermaid = async (rerun) => {
         fullscreenBtn.style.right = `${marginRight + paddingRight + 4}px`;
 
         fullscreenBtn.addEventListener('click', () => {
-            previousScrollOffset = [window.scroll, window.scrollY];
+            previousScrollOffset = [window.scrollX, window.scrollY];
             const clone = mermaidDiv.cloneNode(true);
             modalContent.innerHTML = '';
             modalContent.appendChild(clone);
@@ -435,9 +370,9 @@ const runMermaid = async (rerun) => {
                 svg.style.width = '100%';
                 svg.style.height = 'auto';
                 svg.style.maxWidth = '100%';
-                svg.style.sdisplay = 'block';
+                svg.style.display = 'block';
 
-                if ("False" === "True") {
+                if (false) {
                     setTimeout(() => {
                         const g = svg.querySelector('g');
                         if (g) {
@@ -460,8 +395,11 @@ const runMermaid = async (rerun) => {
     });
 };
 
+
+
 const load = async () => {
     initStyles();
+
 
     await runMermaid(true);
 
@@ -471,10 +409,8 @@ const load = async () => {
             darkTheme = newDarkTheme;
             console.log("Theme change detected, re-running mermaid with", darkTheme ? "dark" : "default", "theme");
             await mermaid.initialize(
-                {...JSON.parse(
-                    `{"startOnLoad": false}`
-                ),
-                ...{ darkMode: darkTheme, theme: darkTheme ? 'dark' : 'default' },
+                {...{"startOnLoad": false},
+                ...{ darkMode: darkTheme, theme: darkTheme ? "dark" : "default" },
                 }
             );
             await runMermaid(true);
@@ -499,35 +435,40 @@ const load = async () => {
 
 console.log("Initializing mermaid with", darkTheme ? "dark" : "default", "theme");
 mermaid.initialize(
-    {...JSON.parse(
-        `{"startOnLoad": false}`
-    ),
-    ...{ darkMode: darkTheme, theme: darkTheme ? 'dark' : 'default' },
+    {...{"startOnLoad": false},
+    ...{ darkMode: darkTheme, theme: darkTheme ? "dark" : "default" },
     }
 );
 
 window.addEventListener("load", load);
 window.runMermaid = runMermaid;</script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/floris/cut_plane';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="python"/>
   <meta name="docsearch:version" content="" />
+  
+    
+    <script src="../../_static/searchtools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script src="../../searchindex.js"></script>
+  
   </head>
-  
-  
-  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
-
+  <body data-default-mode="">
   
   
   <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
   
   <div id="pst-scroll-pixel-helper"></div>
   
   <button type="button" class="btn rounded-pill" id="pst-back-to-top">
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
-
+  
+  
+  
   
   <dialog id="pst-search-dialog">
     
@@ -553,7 +494,47 @@ window.runMermaid = runMermaid;</script>
 </div>
 
   
-    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
     </header>
   
 
@@ -1025,7 +1006,7 @@ window.runMermaid = runMermaid;</script>
 <div class="viewcode-block" id="nudge_outward">
 <a class="viewcode-back" href="../../_autosummary/floris.cut_plane.html#floris.cut_plane.nudge_outward">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">nudge_outward</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Avoid numerical issue in grid data by slightly expanding input x.</span>
 <span class="sd">    TODO: expand this description</span>
 <span class="sd">    - What numerical issues?</span>
@@ -1036,7 +1017,7 @@ window.runMermaid = runMermaid;</script>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        np.array: Expanded vector.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">nudge_val</span> <span class="o">=</span> <span class="mf">0.001</span>
     <span class="n">min_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
     <span class="n">max_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
@@ -1048,8 +1029,8 @@ window.runMermaid = runMermaid;</script>
 
 <div class="viewcode-block" id="get_plane_from_flow_data">
 <a class="viewcode-back" href="../../_autosummary/floris.cut_plane.html#floris.cut_plane.get_plane_from_flow_data">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">get_plane_from_flow_data</span><span class="p">(</span><span class="n">flow_data</span><span class="p">,</span> <span class="n">normal_vector</span><span class="o">=</span><span class="s2">&quot;z&quot;</span><span class="p">,</span> <span class="n">x3_value</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_plane_from_flow_data</span><span class="p">(</span><span class="n">flow_data</span><span class="p">,</span> <span class="n">normal_vector</span><span class="o">=</span><span class="s2">"z"</span><span class="p">,</span> <span class="n">x3_value</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Get a plane of data, in form of DataFrame, from a :py:class:`~.FlowData`</span>
 <span class="sd">    object. This is used to get planes from SOWFA results and FLORIS</span>
 <span class="sd">    simulations with fixed grids, i.e. curl.</span>
@@ -1064,19 +1045,19 @@ window.runMermaid = runMermaid;</script>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        pandas.DataFrame: Extracted data.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">order</span> <span class="o">=</span> <span class="s2">&quot;f&quot;</span>
-    <span class="k">if</span> <span class="n">normal_vector</span> <span class="o">==</span> <span class="s2">&quot;z&quot;</span><span class="p">:</span>
+<span class="sd">    """</span>
+    <span class="n">order</span> <span class="o">=</span> <span class="s2">"f"</span>
+    <span class="k">if</span> <span class="n">normal_vector</span> <span class="o">==</span> <span class="s2">"z"</span><span class="p">:</span>
         <span class="n">x1_array</span> <span class="o">=</span> <span class="n">flow_data</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">flatten</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="n">order</span><span class="p">)</span>
         <span class="n">x2_array</span> <span class="o">=</span> <span class="n">flow_data</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">flatten</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="n">order</span><span class="p">)</span>
         <span class="n">x3_array</span> <span class="o">=</span> <span class="n">flow_data</span><span class="o">.</span><span class="n">z</span><span class="o">.</span><span class="n">flatten</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="n">order</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">normal_vector</span> <span class="o">==</span> <span class="s2">&quot;x&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">normal_vector</span> <span class="o">==</span> <span class="s2">"x"</span><span class="p">:</span>
         <span class="n">x3_array</span> <span class="o">=</span> <span class="n">flow_data</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">flatten</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="n">order</span><span class="p">)</span>
         <span class="n">x1_array</span> <span class="o">=</span> <span class="n">flow_data</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">flatten</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="n">order</span><span class="p">)</span>
         <span class="n">x2_array</span> <span class="o">=</span> <span class="n">flow_data</span><span class="o">.</span><span class="n">z</span><span class="o">.</span><span class="n">flatten</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="n">order</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">normal_vector</span> <span class="o">==</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">normal_vector</span> <span class="o">==</span> <span class="s2">"y"</span><span class="p">:</span>
         <span class="n">x3_array</span> <span class="o">=</span> <span class="n">flow_data</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">flatten</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="n">order</span><span class="p">)</span>
         <span class="n">x1_array</span> <span class="o">=</span> <span class="n">flow_data</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">flatten</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="n">order</span><span class="p">)</span>
         <span class="n">x2_array</span> <span class="o">=</span> <span class="n">flow_data</span><span class="o">.</span><span class="n">z</span><span class="o">.</span><span class="n">flatten</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="n">order</span><span class="p">)</span>
@@ -1088,7 +1069,7 @@ window.runMermaid = runMermaid;</script>
     <span class="n">search_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">x3_array</span><span class="p">)))</span>
     <span class="n">nearest_idx</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">search_values</span> <span class="o">-</span> <span class="n">x3_value</span><span class="p">))</span><span class="o">.</span><span class="n">argmin</span><span class="p">()</span>
     <span class="n">nearest_value</span> <span class="o">=</span> <span class="n">search_values</span><span class="p">[</span><span class="n">nearest_idx</span><span class="p">]</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Nearest value to </span><span class="si">%.2f</span><span class="s2"> is </span><span class="si">%.2f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">x3_value</span><span class="p">,</span> <span class="n">nearest_value</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"Nearest value to </span><span class="si">%.2f</span><span class="s2"> is </span><span class="si">%.2f</span><span class="s2">"</span> <span class="o">%</span> <span class="p">(</span><span class="n">x3_value</span><span class="p">,</span> <span class="n">nearest_value</span><span class="p">))</span>
 
     <span class="c1"># Select down the data</span>
     <span class="n">x3_select_mask</span> <span class="o">=</span> <span class="n">x3_array</span> <span class="o">==</span> <span class="n">nearest_value</span>
@@ -1101,7 +1082,7 @@ window.runMermaid = runMermaid;</script>
     <span class="n">v</span> <span class="o">=</span> <span class="n">v</span><span class="p">[</span><span class="n">x3_select_mask</span><span class="p">]</span>
     <span class="n">w</span> <span class="o">=</span> <span class="n">w</span><span class="p">[</span><span class="n">x3_select_mask</span><span class="p">]</span>
 
-    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s2">&quot;x1&quot;</span><span class="p">:</span> <span class="n">x1</span><span class="p">,</span> <span class="s2">&quot;x2&quot;</span><span class="p">:</span> <span class="n">x2</span><span class="p">,</span> <span class="s2">&quot;x3&quot;</span><span class="p">:</span> <span class="n">x3</span><span class="p">,</span> <span class="s2">&quot;u&quot;</span><span class="p">:</span> <span class="n">u</span><span class="p">,</span> <span class="s2">&quot;v&quot;</span><span class="p">:</span> <span class="n">v</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">:</span> <span class="n">w</span><span class="p">})</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s2">"x1"</span><span class="p">:</span> <span class="n">x1</span><span class="p">,</span> <span class="s2">"x2"</span><span class="p">:</span> <span class="n">x2</span><span class="p">,</span> <span class="s2">"x3"</span><span class="p">:</span> <span class="n">x3</span><span class="p">,</span> <span class="s2">"u"</span><span class="p">:</span> <span class="n">u</span><span class="p">,</span> <span class="s2">"v"</span><span class="p">:</span> <span class="n">v</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">:</span> <span class="n">w</span><span class="p">})</span>
     <span class="k">return</span> <span class="n">df</span></div>
 
 
@@ -1109,28 +1090,28 @@ window.runMermaid = runMermaid;</script>
 <div class="viewcode-block" id="CutPlane">
 <a class="viewcode-back" href="../../_autosummary/floris.cut_plane.html#floris.cut_plane.CutPlane">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">CutPlane</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    A CutPlane object represents a 2D slice through the flow of a</span>
 <span class="sd">    FLORIS simulation, or other such as SOWFA result.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">x1_resolution</span><span class="p">,</span> <span class="n">x2_resolution</span><span class="p">,</span> <span class="n">normal_vector</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Initialize CutPlane object, storing the DataFrame and resolution.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            df (pandas.DataFrame): Pandas DataFrame of data with</span>
 <span class="sd">                columns x1, x2, u, v, w.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="n">df</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">normal_vector</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">normal_vector</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">resolution</span> <span class="o">=</span> <span class="p">(</span><span class="n">x1_resolution</span><span class="p">,</span> <span class="n">x2_resolution</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">set_index</span><span class="p">([</span><span class="s2">&quot;x1&quot;</span><span class="p">,</span> <span class="s2">&quot;x2&quot;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">set_index</span><span class="p">([</span><span class="s2">"x1"</span><span class="p">,</span> <span class="s2">"x2"</span><span class="p">])</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__sub__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">normal_vector</span> <span class="o">!=</span> <span class="n">other</span><span class="o">.</span><span class="n">normal_vector</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Operands must have consistent normal vectors.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Operands must have consistent normal vectors."</span><span class="p">)</span>
 
         <span class="c1"># if self.normal_vector.df.</span>
         <span class="c1"># DF must be of the same size</span>
@@ -1139,9 +1120,9 @@ window.runMermaid = runMermaid;</script>
         <span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="n">other_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="n">other</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
-        <span class="n">df</span><span class="p">[</span><span class="s1">&#39;u&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;u&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">other_df</span><span class="p">[</span><span class="s1">&#39;u&#39;</span><span class="p">]</span>
-        <span class="n">df</span><span class="p">[</span><span class="s1">&#39;v&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;v&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">other_df</span><span class="p">[</span><span class="s1">&#39;v&#39;</span><span class="p">]</span>
-        <span class="n">df</span><span class="p">[</span><span class="s1">&#39;w&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;w&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">other_df</span><span class="p">[</span><span class="s1">&#39;w&#39;</span><span class="p">]</span>
+        <span class="n">df</span><span class="p">[</span><span class="s1">'u'</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="s1">'u'</span><span class="p">]</span> <span class="o">-</span> <span class="n">other_df</span><span class="p">[</span><span class="s1">'u'</span><span class="p">]</span>
+        <span class="n">df</span><span class="p">[</span><span class="s1">'v'</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="s1">'v'</span><span class="p">]</span> <span class="o">-</span> <span class="n">other_df</span><span class="p">[</span><span class="s1">'v'</span><span class="p">]</span>
+        <span class="n">df</span><span class="p">[</span><span class="s1">'w'</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="s1">'w'</span><span class="p">]</span> <span class="o">-</span> <span class="n">other_df</span><span class="p">[</span><span class="s1">'w'</span><span class="p">]</span>
 
         <span class="k">return</span> <span class="n">CutPlane</span><span class="p">(</span>
             <span class="n">df</span><span class="p">,</span>
@@ -1156,7 +1137,7 @@ window.runMermaid = runMermaid;</script>
 <div class="viewcode-block" id="set_origin">
 <a class="viewcode-back" href="../../_autosummary/floris.cut_plane.html#floris.cut_plane.set_origin">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">set_origin</span><span class="p">(</span><span class="n">cut_plane</span><span class="p">,</span> <span class="n">center_x1</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">center_x2</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Establish the origin of a CutPlane object.</span>
 
 <span class="sd">    Args:</span>
@@ -1170,7 +1151,7 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">    Returns:</span>
 <span class="sd">        cut_plane (:py:class:`~.tools.cut_plane.CutPlane`):</span>
 <span class="sd">            Updated plane of data.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># Store the un-interpolated input arrays at this slice</span>
     <span class="n">cut_plane</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">x1</span> <span class="o">=</span> <span class="n">cut_plane</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">x1</span> <span class="o">-</span> <span class="n">center_x1</span>
     <span class="n">cut_plane</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">x2</span> <span class="o">=</span> <span class="n">cut_plane</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">x2</span> <span class="o">-</span> <span class="n">center_x2</span>
@@ -1182,7 +1163,7 @@ window.runMermaid = runMermaid;</script>
 <div class="viewcode-block" id="change_resolution">
 <a class="viewcode-back" href="../../_autosummary/floris.cut_plane.html#floris.cut_plane.change_resolution">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">change_resolution</span><span class="p">(</span><span class="n">cut_plane</span><span class="p">,</span> <span class="n">resolution</span><span class="o">=</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">)):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Modify default resolution of a CutPlane object.</span>
 
 <span class="sd">    Args:</span>
@@ -1194,7 +1175,7 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">    Returns:</span>
 <span class="sd">        cut_plane (:py:class:`~.tools.cut_plane.CutPlane`):</span>
 <span class="sd">            Updated plane of data.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="c1"># Linearize the data</span>
     <span class="n">x1_lin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">cut_plane</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">x1</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">cut_plane</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">x1</span><span class="p">),</span> <span class="n">resolution</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
@@ -1212,7 +1193,7 @@ window.runMermaid = runMermaid;</script>
         <span class="p">),</span>
         <span class="n">cut_plane</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">u</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
         <span class="p">(</span><span class="n">x1_mesh</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">x2_mesh</span><span class="o">.</span><span class="n">flatten</span><span class="p">()),</span>
-        <span class="n">method</span><span class="o">=</span><span class="s2">&quot;cubic&quot;</span><span class="p">,</span>
+        <span class="n">method</span><span class="o">=</span><span class="s2">"cubic"</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">v_mesh</span> <span class="o">=</span> <span class="n">griddata</span><span class="p">(</span>
         <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">(</span>
@@ -1220,7 +1201,7 @@ window.runMermaid = runMermaid;</script>
         <span class="p">),</span>
         <span class="n">cut_plane</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">v</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
         <span class="p">(</span><span class="n">x1_mesh</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">x2_mesh</span><span class="o">.</span><span class="n">flatten</span><span class="p">()),</span>
-        <span class="n">method</span><span class="o">=</span><span class="s2">&quot;cubic&quot;</span><span class="p">,</span>
+        <span class="n">method</span><span class="o">=</span><span class="s2">"cubic"</span><span class="p">,</span>
     <span class="p">)</span>
 
     <span class="n">w_mesh</span> <span class="o">=</span> <span class="n">griddata</span><span class="p">(</span>
@@ -1229,18 +1210,18 @@ window.runMermaid = runMermaid;</script>
         <span class="p">),</span>
         <span class="n">cut_plane</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">w</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
         <span class="p">(</span><span class="n">x1_mesh</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">x2_mesh</span><span class="o">.</span><span class="n">flatten</span><span class="p">()),</span>
-        <span class="n">method</span><span class="o">=</span><span class="s2">&quot;cubic&quot;</span><span class="p">,</span>
+        <span class="n">method</span><span class="o">=</span><span class="s2">"cubic"</span><span class="p">,</span>
     <span class="p">)</span>
 
     <span class="c1"># Assign back to df</span>
     <span class="n">cut_plane</span><span class="o">.</span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
         <span class="p">{</span>
-            <span class="s2">&quot;x1&quot;</span><span class="p">:</span> <span class="n">x1_mesh</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span>
-            <span class="s2">&quot;x2&quot;</span><span class="p">:</span> <span class="n">x2_mesh</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span>
-            <span class="s2">&quot;x3&quot;</span><span class="p">:</span> <span class="n">x3_mesh</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span>
-            <span class="s2">&quot;u&quot;</span><span class="p">:</span> <span class="n">u_mesh</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span>
-            <span class="s2">&quot;v&quot;</span><span class="p">:</span> <span class="n">v_mesh</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span>
-            <span class="s2">&quot;w&quot;</span><span class="p">:</span> <span class="n">w_mesh</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span>
+            <span class="s2">"x1"</span><span class="p">:</span> <span class="n">x1_mesh</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span>
+            <span class="s2">"x2"</span><span class="p">:</span> <span class="n">x2_mesh</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span>
+            <span class="s2">"x3"</span><span class="p">:</span> <span class="n">x3_mesh</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span>
+            <span class="s2">"u"</span><span class="p">:</span> <span class="n">u_mesh</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span>
+            <span class="s2">"v"</span><span class="p">:</span> <span class="n">v_mesh</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span>
+            <span class="s2">"w"</span><span class="p">:</span> <span class="n">w_mesh</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span>
         <span class="p">}</span>
     <span class="p">)</span>
 
@@ -1255,7 +1236,7 @@ window.runMermaid = runMermaid;</script>
 <div class="viewcode-block" id="interpolate_onto_array">
 <a class="viewcode-back" href="../../_autosummary/floris.cut_plane.html#floris.cut_plane.interpolate_onto_array">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">interpolate_onto_array</span><span class="p">(</span><span class="n">cut_plane_in</span><span class="p">,</span> <span class="n">x1_array</span><span class="p">,</span> <span class="n">x2_array</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Interpolate a CutPlane object onto specified coordinate arrays.</span>
 
 <span class="sd">    Args:</span>
@@ -1267,7 +1248,7 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">    Returns:</span>
 <span class="sd">        cut_plane (:py:class:`~.tools.cut_plane.CutPlane`):</span>
 <span class="sd">            Updated plane of data.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">cut_plane</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">cut_plane_in</span><span class="p">)</span>
 
     <span class="c1"># Linearize the data</span>
@@ -1288,7 +1269,7 @@ window.runMermaid = runMermaid;</script>
         <span class="p">),</span>
         <span class="n">cut_plane</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">u</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
         <span class="p">(</span><span class="n">x1_mesh</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">x2_mesh</span><span class="o">.</span><span class="n">flatten</span><span class="p">()),</span>
-        <span class="n">method</span><span class="o">=</span><span class="s2">&quot;cubic&quot;</span><span class="p">,</span>
+        <span class="n">method</span><span class="o">=</span><span class="s2">"cubic"</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">v_mesh</span> <span class="o">=</span> <span class="n">griddata</span><span class="p">(</span>
         <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">(</span>
@@ -1296,7 +1277,7 @@ window.runMermaid = runMermaid;</script>
         <span class="p">),</span>
         <span class="n">cut_plane</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">v</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
         <span class="p">(</span><span class="n">x1_mesh</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">x2_mesh</span><span class="o">.</span><span class="n">flatten</span><span class="p">()),</span>
-        <span class="n">method</span><span class="o">=</span><span class="s2">&quot;cubic&quot;</span><span class="p">,</span>
+        <span class="n">method</span><span class="o">=</span><span class="s2">"cubic"</span><span class="p">,</span>
     <span class="p">)</span>
 
     <span class="n">w_mesh</span> <span class="o">=</span> <span class="n">griddata</span><span class="p">(</span>
@@ -1305,18 +1286,18 @@ window.runMermaid = runMermaid;</script>
         <span class="p">),</span>
         <span class="n">cut_plane</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">w</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
         <span class="p">(</span><span class="n">x1_mesh</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">x2_mesh</span><span class="o">.</span><span class="n">flatten</span><span class="p">()),</span>
-        <span class="n">method</span><span class="o">=</span><span class="s2">&quot;cubic&quot;</span><span class="p">,</span>
+        <span class="n">method</span><span class="o">=</span><span class="s2">"cubic"</span><span class="p">,</span>
     <span class="p">)</span>
 
     <span class="c1"># Assign back to df</span>
     <span class="n">cut_plane</span><span class="o">.</span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
         <span class="p">{</span>
-            <span class="s2">&quot;x1&quot;</span><span class="p">:</span> <span class="n">x1_mesh</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span>
-            <span class="s2">&quot;x2&quot;</span><span class="p">:</span> <span class="n">x2_mesh</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span>
-            <span class="s2">&quot;x3&quot;</span><span class="p">:</span> <span class="n">x3_mesh</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span>
-            <span class="s2">&quot;u&quot;</span><span class="p">:</span> <span class="n">u_mesh</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span>
-            <span class="s2">&quot;v&quot;</span><span class="p">:</span> <span class="n">v_mesh</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span>
-            <span class="s2">&quot;w&quot;</span><span class="p">:</span> <span class="n">w_mesh</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span>
+            <span class="s2">"x1"</span><span class="p">:</span> <span class="n">x1_mesh</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span>
+            <span class="s2">"x2"</span><span class="p">:</span> <span class="n">x2_mesh</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span>
+            <span class="s2">"x3"</span><span class="p">:</span> <span class="n">x3_mesh</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span>
+            <span class="s2">"u"</span><span class="p">:</span> <span class="n">u_mesh</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span>
+            <span class="s2">"v"</span><span class="p">:</span> <span class="n">v_mesh</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span>
+            <span class="s2">"w"</span><span class="p">:</span> <span class="n">w_mesh</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span>
         <span class="p">}</span>
     <span class="p">)</span>
 
@@ -1328,7 +1309,7 @@ window.runMermaid = runMermaid;</script>
 <div class="viewcode-block" id="rescale_axis">
 <a class="viewcode-back" href="../../_autosummary/floris.cut_plane.html#floris.cut_plane.rescale_axis">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">rescale_axis</span><span class="p">(</span><span class="n">cut_plane</span><span class="p">,</span> <span class="n">x1_factor</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">x2_factor</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Stretch or compress CutPlane coordinates.</span>
 
 <span class="sd">    Args:</span>
@@ -1340,7 +1321,7 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">    Returns:</span>
 <span class="sd">        cut_plane (:py:class:`~.tools.cut_plane.CutPlane`):</span>
 <span class="sd">            Updated plane of data.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># Store the un-interpolated input arrays at this slice</span>
     <span class="n">cut_plane</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">x1</span> <span class="o">=</span> <span class="n">cut_plane</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">x1</span> <span class="o">/</span> <span class="n">x1_factor</span>
     <span class="n">cut_plane</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">x2</span> <span class="o">=</span> <span class="n">cut_plane</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">x2</span> <span class="o">/</span> <span class="n">x2_factor</span>
@@ -1352,7 +1333,7 @@ window.runMermaid = runMermaid;</script>
 <div class="viewcode-block" id="project_onto">
 <a class="viewcode-back" href="../../_autosummary/floris.cut_plane.html#floris.cut_plane.project_onto">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">project_onto</span><span class="p">(</span><span class="n">cut_plane_a</span><span class="p">,</span> <span class="n">cut_plane_b</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Project cut_plane_a onto the x1, x2 of cut_plane_b</span>
 
 <span class="sd">    Args:</span>
@@ -1363,8 +1344,8 @@ window.runMermaid = runMermaid;</script>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        cut_plane (:py:class:`~.tools.cut_plane.CutPlane`):</span>
-<span class="sd">            Cut_plane_a projected onto cut_plane_b&#39;s axis.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">            Cut_plane_a projected onto cut_plane_b's axis.</span>
+<span class="sd">    """</span>
 
     <span class="k">return</span> <span class="n">interpolate_onto_array</span><span class="p">(</span>
         <span class="n">cut_plane_a</span><span class="p">,</span> <span class="n">cut_plane_b</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">x1</span><span class="o">.</span><span class="n">unique</span><span class="p">(),</span> <span class="n">cut_plane_b</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">x2</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
@@ -1375,7 +1356,7 @@ window.runMermaid = runMermaid;</script>
 <div class="viewcode-block" id="calculate_wind_speed">
 <a class="viewcode-back" href="../../_autosummary/floris.cut_plane.html#floris.cut_plane.calculate_wind_speed">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">calculate_wind_speed</span><span class="p">(</span><span class="n">cross_plane</span><span class="p">,</span> <span class="n">x1_loc</span><span class="p">,</span> <span class="n">x2_loc</span><span class="p">,</span> <span class="n">R</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Calculate effective wind speed within specified range of a point.</span>
 
 <span class="sd">    Args:</span>
@@ -1387,13 +1368,13 @@ window.runMermaid = runMermaid;</script>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        (float): effective wind speed</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="c1"># Temp local copy</span>
     <span class="n">df</span> <span class="o">=</span> <span class="n">cross_plane</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
     <span class="c1"># Make a distance column</span>
-    <span class="n">df</span><span class="p">[</span><span class="s2">&quot;distance&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">df</span><span class="o">.</span><span class="n">x1</span> <span class="o">-</span> <span class="n">x1_loc</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">x2</span> <span class="o">-</span> <span class="n">x2_loc</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">df</span><span class="p">[</span><span class="s2">"distance"</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">df</span><span class="o">.</span><span class="n">x1</span> <span class="o">-</span> <span class="n">x1_loc</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">x2</span> <span class="o">-</span> <span class="n">x2_loc</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
 
     <span class="c1"># Return the cube-mean wind speed</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">cbrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">distance</span> <span class="o">&lt;</span> <span class="n">R</span><span class="p">]</span><span class="o">.</span><span class="n">u</span> <span class="o">**</span> <span class="mi">3</span><span class="p">))</span></div>
@@ -1420,7 +1401,7 @@ window.runMermaid = runMermaid;</script>
 <span class="k">def</span><span class="w"> </span><span class="nf">calculate_power</span><span class="p">(</span>
     <span class="n">cross_plane</span><span class="p">,</span> <span class="n">x1_loc</span><span class="p">,</span> <span class="n">x2_loc</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">ws_array</span><span class="p">,</span> <span class="n">cp_array</span><span class="p">,</span> <span class="n">air_density</span><span class="o">=</span><span class="mf">1.225</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Calculate maximum power available in a given cross plane.</span>
 
 <span class="sd">    Args:</span>
@@ -1435,7 +1416,7 @@ window.runMermaid = runMermaid;</script>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        float: Power!</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># Compute the ws</span>
     <span class="n">ws</span> <span class="o">=</span> <span class="n">calculate_wind_speed</span><span class="p">(</span><span class="n">cross_plane</span><span class="p">,</span> <span class="n">x1_loc</span><span class="p">,</span> <span class="n">x2_loc</span><span class="p">,</span> <span class="n">R</span><span class="p">)</span>
 
@@ -1484,54 +1465,54 @@ window.runMermaid = runMermaid;</script>
 
 <span class="c1"># # Define horizontal subclass</span>
 <span class="c1"># class HorPlane(_CutPlane):</span>
-<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#     """</span>
 <span class="c1">#     Subclass of _CutPlane. Shortcut to extracting a horizontal plane.</span>
-<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#     """</span>
 
 <span class="c1">#     def __init__(self, df):</span>
-<span class="c1">#         &quot;&quot;&quot;</span>
+<span class="c1">#         """</span>
 <span class="c1">#         Initialize horizontal CutPlane</span>
 
 <span class="c1">#         Args:</span>
 <span class="c1">#             flow_data (np.array): 3D vector field of velocity data</span>
 <span class="c1">#             z_value (float): vertical position through which to slice</span>
-<span class="c1">#         &quot;&quot;&quot;</span>
+<span class="c1">#         """</span>
 <span class="c1">#         # Set up call super</span>
 <span class="c1">#         super().__init__(df)</span>
 
 
 <span class="c1"># # Define cross plane subclass</span>
 <span class="c1"># class CrossPlane(_CutPlane):</span>
-<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#     """</span>
 <span class="c1">#     Subclass of _CutPlane. Shortcut to extracting a cross-stream plane.</span>
-<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#     """</span>
 
 <span class="c1">#     def __init__(self, df):</span>
-<span class="c1">#         &quot;&quot;&quot;</span>
+<span class="c1">#         """</span>
 <span class="c1">#         Initialize cross-stream CutPlane</span>
 
 <span class="c1">#         Args:</span>
 <span class="c1">#             flow_data (np.array): 3D vector field of velocity data</span>
 <span class="c1">#             x_value (float): streamwise position through which to slice</span>
-<span class="c1">#         &quot;&quot;&quot;</span>
+<span class="c1">#         """</span>
 <span class="c1">#         # Set up call super</span>
 <span class="c1">#         super().__init__(df)</span>
 
 
 <span class="c1"># # Define cross plane subclass</span>
 <span class="c1"># class VertPlane(_CutPlane):</span>
-<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#     """</span>
 <span class="c1">#     Subclass of _CutPlane. Shortcut to extracting a streamwise-vertical plane.</span>
-<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#     """</span>
 
 <span class="c1">#     def __init__(self, df):</span>
-<span class="c1">#         &quot;&quot;&quot;</span>
+<span class="c1">#         """</span>
 <span class="c1">#         Initialize streamwise-vertical  CutPlane</span>
 
 <span class="c1">#         Args:</span>
 <span class="c1">#             flow_data (np.array): 3D vector field of velocity data</span>
 <span class="c1">#             y_value (float): spanwise position through which to slice</span>
-<span class="c1">#         &quot;&quot;&quot;</span>
+<span class="c1">#         """</span>
 <span class="c1">#         # Set up call super</span>
 <span class="c1">#         super().__init__(df)</span>
 </pre></div>
@@ -1596,8 +1577,8 @@ By National Laboratory of the Rockies
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
-<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb"></script>
 
   <footer class="bd-footer">
   </footer>

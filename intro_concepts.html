@@ -27,8 +27,8 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
-<link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+  <link href="_static/styles/theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
@@ -39,10 +39,10 @@
     <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- So that users can add custom icons -->
-  <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="_static/scripts/fontawesome.js?digest=55c26ed414f5f8a31ebb"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
-<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
     <script src="_static/documentation_options.js?v=30a733bc"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
@@ -60,6 +60,12 @@
     <script>
                 window.dataLayer = window.dataLayer || [];
                 function gtag(){ dataLayer.push(arguments); }
+                gtag('consent', 'default', {
+                    'ad_storage': 'denied',
+                    'ad_user_data': 'denied',
+                    'ad_personalization': 'denied',
+                    'analytics_storage': 'denied'
+                });
                 gtag('js', new Date());
                 gtag('config', 'G-JV2SK7CNPR');
             </script>
@@ -69,11 +75,18 @@
     <script>
                 window.dataLayer = window.dataLayer || [];
                 function gtag(){ dataLayer.push(arguments); }
+                gtag('consent', 'default', {
+                    'ad_storage': 'denied',
+                    'ad_user_data': 'denied',
+                    'ad_personalization': 'denied',
+                    'analytics_storage': 'denied'
+                });
                 gtag('js', new Date());
                 gtag('config', 'G-JV2SK7CNPR');
             </script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'intro_concepts';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Wind Data Objects" href="wind_data_user.html" />
@@ -81,20 +94,26 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="python"/>
   <meta name="docsearch:version" content="" />
+  
+    
+    <script src="_static/searchtools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script src="searchindex.js"></script>
+  
   </head>
-  
-  
-  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
-
+  <body data-default-mode="">
   
   
   <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
   
   <div id="pst-scroll-pixel-helper"></div>
   
   <button type="button" class="btn rounded-pill" id="pst-back-to-top">
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
-
+  
+  
+  
   
   <dialog id="pst-search-dialog">
     
@@ -120,7 +139,51 @@
 </div>
 
   
-    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
     </header>
   
 
@@ -639,7 +702,7 @@
                 <h2> Contents </h2>
             </div>
             <nav aria-label="Page">
-                <ul class="visible nav section-nav flex-column">
+                <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#initialize-floris">Initialize Floris</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#build-the-model">Build the model</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#run-the-floris-wake-calculation">Run the Floris wake calculation</a></li>
@@ -699,12 +762,12 @@ inspect the data.</p>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">floris</span><span class="w"> </span><span class="kn">import</span> <span class="n">FlorisModel</span>
 
-<span class="n">fmodel</span> <span class="o">=</span> <span class="n">FlorisModel</span><span class="p">(</span><span class="s2">&quot;gch.yaml&quot;</span><span class="p">)</span>
+<span class="n">fmodel</span> <span class="o">=</span> <span class="n">FlorisModel</span><span class="p">(</span><span class="s2">"gch.yaml"</span><span class="p">)</span>
 <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">fmodel</span><span class="o">.</span><span class="n">get_turbine_layout</span><span class="p">()</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;     x       y&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"     x       y"</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">_x</span><span class="p">,</span> <span class="n">_y</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">_x</span><span class="si">:</span><span class="s2">6.1f</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">_y</span><span class="si">:</span><span class="s2">6.1f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">_x</span><span class="si">:</span><span class="s2">6.1f</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">_y</span><span class="si">:</span><span class="s2">6.1f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -737,9 +800,9 @@ initial 3x1 layout to a 2x2 rectangular layout.</p>
 
 <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">fmodel</span><span class="o">.</span><span class="n">get_turbine_layout</span><span class="p">()</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;     x       y&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"     x       y"</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">_x</span><span class="p">,</span> <span class="n">_y</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">_x</span><span class="si">:</span><span class="s2">6.1f</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">_y</span><span class="si">:</span><span class="s2">6.1f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">_x</span><span class="si">:</span><span class="s2">6.1f</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">_y</span><span class="si">:</span><span class="s2">6.1f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -801,11 +864,11 @@ the first wind condition. We can also plot all the grid points in
 space to get an idea of the overall form of our grid.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Dimensions of grid x-components&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">"Dimensions of grid x-components"</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">fmodel</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">x_sorted</span><span class="p">))</span>
 
 <span class="nb">print</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;3rd turbine x-components for first wind condition (at findex=0)&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"3rd turbine x-components for first wind condition (at findex=0)"</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">fmodel</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">x_sorted</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:])</span>
 
 <span class="n">x</span> <span class="o">=</span> <span class="n">fmodel</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">x_sorted</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="p">:]</span>
@@ -813,8 +876,8 @@ space to get an idea of the overall form of our grid.</p>
 <span class="n">z</span> <span class="o">=</span> <span class="n">fmodel</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">z_sorted</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="p">:]</span>
 
 <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
-<span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">,</span> <span class="n">projection</span><span class="o">=</span><span class="s2">&quot;3d&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">,</span> <span class="n">projection</span><span class="o">=</span><span class="s2">"3d"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">"."</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">set_zlim</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">150</span><span class="p">])</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
@@ -830,7 +893,7 @@ space to get an idea of the overall form of our grid.</p>
  [800. 800. 800.]]
 </pre></div>
 </div>
-<img alt="_images/81655e9a1b3fd0fcd2bf807a1c7c3b27452eb3069731979c1b9c8bf9614c5865.png" src="_images/81655e9a1b3fd0fcd2bf807a1c7c3b27452eb3069731979c1b9c8bf9614c5865.png" />
+<img alt="_images/aff51863fc641e7d39c3b2f867fde276a97fc8ac970b89e1e3cc9300d24480f9.png" src="_images/aff51863fc641e7d39c3b2f867fde276a97fc8ac970b89e1e3cc9300d24480f9.png" />
 </div>
 </div>
 </section>
@@ -857,20 +920,20 @@ we have configured the simulation with four wind conditions and four turbines.</
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">powers</span> <span class="o">=</span> <span class="n">fmodel</span><span class="o">.</span><span class="n">get_turbine_powers</span><span class="p">()</span> <span class="o">/</span> <span class="mf">1000.0</span>  <span class="c1"># calculated in Watts, so convert to kW</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Dimensions of `powers`&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Dimensions of `powers`"</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">powers</span><span class="p">)</span> <span class="p">)</span>
 
 <span class="n">N_TURBINES</span> <span class="o">=</span> <span class="n">fmodel</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">n_turbines</span>
 
 <span class="nb">print</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Turbine powers for 8 m/s&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Turbine powers for 8 m/s"</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Wind condition </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Wind condition </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N_TURBINES</span><span class="p">):</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Turbine </span><span class="si">{</span><span class="n">j</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="n">powers</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">]</span><span class="si">:</span><span class="s2">7,.2f</span><span class="si">}</span><span class="s2"> kW&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Turbine </span><span class="si">{</span><span class="n">j</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="n">powers</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">]</span><span class="si">:</span><span class="s2">7,.2f</span><span class="si">}</span><span class="s2"> kW"</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">()</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Turbine powers for all turbines at all wind conditions&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Turbine powers for all turbines at all wind conditions"</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">powers</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -918,10 +981,10 @@ turbine yaw settings, as shown below.</p>
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Recall that the previous `fmodel.set()` command set up four atmospheric conditions</span>
 <span class="c1"># and there are 4 turbines in the farm.  So, the yaw angles array must be 4x4.</span>
 <span class="n">yaw_angles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Yaw angle array initialized with 0&#39;s&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Yaw angle array initialized with 0's"</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">yaw_angles</span><span class="p">)</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;First turbine yawed 25 degrees for every atmospheric condition&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"First turbine yawed 25 degrees for every atmospheric condition"</span><span class="p">)</span>
 <span class="n">yaw_angles</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">25</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">yaw_angles</span><span class="p">)</span>
 
@@ -930,7 +993,7 @@ turbine yaw settings, as shown below.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Yaw angle array initialized with 0&#39;s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Yaw angle array initialized with 0's
 [[0. 0. 0. 0.]
  [0. 0. 0. 0.]
  [0. 0. 0. 0.]
@@ -961,7 +1024,7 @@ First turbine yawed 25 degrees for every atmospheric condition
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># 1. Load an input file</span>
-<span class="n">fmodel</span> <span class="o">=</span> <span class="n">FlorisModel</span><span class="p">(</span><span class="s2">&quot;gch.yaml&quot;</span><span class="p">)</span>
+<span class="n">fmodel</span> <span class="o">=</span> <span class="n">FlorisModel</span><span class="p">(</span><span class="s2">"gch.yaml"</span><span class="p">)</span>
 
 <span class="c1"># 2. Modify the inputs with a more complex wind turbine layout</span>
 <span class="n">D</span> <span class="o">=</span> <span class="mf">126.0</span>  <span class="c1"># Design the layout based on turbine diameter</span>
@@ -1005,9 +1068,9 @@ First turbine yawed 25 degrees for every atmospheric condition
 
 <span class="c1"># 8. Compare farm power with and without wake steering</span>
 <span class="n">difference</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="p">(</span><span class="n">farm_power_yaw</span> <span class="o">-</span> <span class="n">farm_power_baseline</span><span class="p">)</span> <span class="o">/</span> <span class="n">farm_power_baseline</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Power </span><span class="si">% d</span><span class="s2">ifference with yaw&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    270 degrees: </span><span class="si">{</span><span class="n">difference</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">4.2f</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    280 degrees: </span><span class="si">{</span><span class="n">difference</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">4.2f</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Power </span><span class="si">% d</span><span class="s2">ifference with yaw"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"    270 degrees: </span><span class="si">{</span><span class="n">difference</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">4.2f</span><span class="si">}</span><span class="s2">%"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"    280 degrees: </span><span class="si">{</span><span class="n">difference</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">4.2f</span><span class="si">}</span><span class="s2">%"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1046,12 +1109,12 @@ yaw settings included.</p>
 <span class="n">fmodel</span><span class="o">.</span><span class="n">reset_operation</span><span class="p">()</span>
 <span class="n">fmodel</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">wind_speeds</span><span class="o">=</span><span class="p">[</span><span class="n">ws</span><span class="p">],</span> <span class="n">wind_directions</span><span class="o">=</span><span class="p">[</span><span class="n">wd</span><span class="p">],</span> <span class="n">turbulence_intensities</span><span class="o">=</span><span class="p">[</span><span class="n">ti</span><span class="p">])</span>
 <span class="n">horizontal_plane</span> <span class="o">=</span> <span class="n">fmodel</span><span class="o">.</span><span class="n">calculate_horizontal_plane</span><span class="p">(</span><span class="n">height</span><span class="o">=</span><span class="mf">90.0</span><span class="p">)</span>
-<span class="n">visualize_cut_plane</span><span class="p">(</span><span class="n">horizontal_plane</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axarr</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;270 - Aligned&quot;</span><span class="p">)</span>
+<span class="n">visualize_cut_plane</span><span class="p">(</span><span class="n">horizontal_plane</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axarr</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">title</span><span class="o">=</span><span class="s2">"270 - Aligned"</span><span class="p">)</span>
 <span class="n">plot_turbine_labels</span><span class="p">(</span><span class="n">fmodel</span><span class="p">,</span> <span class="n">axarr</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>
 
 <span class="n">fmodel</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">yaw_angles</span><span class="o">=</span><span class="n">yaw_angles</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">])</span>
 <span class="n">horizontal_plane</span> <span class="o">=</span> <span class="n">fmodel</span><span class="o">.</span><span class="n">calculate_horizontal_plane</span><span class="p">(</span><span class="n">height</span><span class="o">=</span><span class="mf">90.0</span><span class="p">)</span>
-<span class="n">visualize_cut_plane</span><span class="p">(</span><span class="n">horizontal_plane</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axarr</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;270 - Yawed&quot;</span><span class="p">)</span>
+<span class="n">visualize_cut_plane</span><span class="p">(</span><span class="n">horizontal_plane</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axarr</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">title</span><span class="o">=</span><span class="s2">"270 - Yawed"</span><span class="p">)</span>
 <span class="n">plot_turbine_labels</span><span class="p">(</span><span class="n">fmodel</span><span class="p">,</span> <span class="n">axarr</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
 
 <span class="c1"># Plot the second wind condition</span>
@@ -1062,12 +1125,12 @@ yaw settings included.</p>
 <span class="n">fmodel</span><span class="o">.</span><span class="n">reset_operation</span><span class="p">()</span>
 <span class="n">fmodel</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">wind_speeds</span><span class="o">=</span><span class="p">[</span><span class="n">ws</span><span class="p">],</span> <span class="n">wind_directions</span><span class="o">=</span><span class="p">[</span><span class="n">wd</span><span class="p">],</span> <span class="n">turbulence_intensities</span><span class="o">=</span><span class="p">[</span><span class="n">ti</span><span class="p">])</span>
 <span class="n">horizontal_plane</span> <span class="o">=</span> <span class="n">fmodel</span><span class="o">.</span><span class="n">calculate_horizontal_plane</span><span class="p">(</span><span class="n">height</span><span class="o">=</span><span class="mf">90.0</span><span class="p">)</span>
-<span class="n">visualize_cut_plane</span><span class="p">(</span><span class="n">horizontal_plane</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axarr</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;280 - Aligned&quot;</span><span class="p">)</span>
+<span class="n">visualize_cut_plane</span><span class="p">(</span><span class="n">horizontal_plane</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axarr</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">title</span><span class="o">=</span><span class="s2">"280 - Aligned"</span><span class="p">)</span>
 <span class="n">plot_turbine_labels</span><span class="p">(</span><span class="n">fmodel</span><span class="p">,</span> <span class="n">axarr</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>
 
 <span class="n">fmodel</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">yaw_angles</span><span class="o">=</span><span class="n">yaw_angles</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">])</span>
 <span class="n">horizontal_plane</span> <span class="o">=</span> <span class="n">fmodel</span><span class="o">.</span><span class="n">calculate_horizontal_plane</span><span class="p">(</span><span class="n">height</span><span class="o">=</span><span class="mf">90.0</span><span class="p">)</span>
-<span class="n">visualize_cut_plane</span><span class="p">(</span><span class="n">horizontal_plane</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axarr</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;280 - Yawed&quot;</span><span class="p">)</span>
+<span class="n">visualize_cut_plane</span><span class="p">(</span><span class="n">horizontal_plane</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axarr</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">title</span><span class="o">=</span><span class="s2">"280 - Yawed"</span><span class="p">)</span>
 <span class="n">plot_turbine_labels</span><span class="p">(</span><span class="n">fmodel</span><span class="p">,</span> <span class="n">axarr</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
 
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
@@ -1075,7 +1138,7 @@ yaw settings included.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/acd263b892d5e3f7d135958a278c4c061a50fd7d88832a4a25d721a01216f4d5.png" src="_images/acd263b892d5e3f7d135958a278c4c061a50fd7d88832a4a25d721a01216f4d5.png" />
+<img alt="_images/e8b74d34e4393e5fbe59131c2d9aef5013eb00397b30aabcd3cb7ec025da1fca.png" src="_images/e8b74d34e4393e5fbe59131c2d9aef5013eb00397b30aabcd3cb7ec025da1fca.png" />
 </div>
 </div>
 <p>We can also plot the streamwise inflow velocities on the turbine rotor
@@ -1103,18 +1166,18 @@ simply plots any data given as the first argument, so in this case
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">floris.flow_visualization</span><span class="w"> </span><span class="kn">import</span> <span class="n">plot_rotor_values</span>
 
 <span class="n">fig</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">plot_rotor_values</span><span class="p">(</span><span class="n">fmodel</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">u</span><span class="p">,</span> <span class="n">findex</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">n_rows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_cols</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">return_fig_objects</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s2">&quot;Wind direction 270&quot;</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s2">"Wind direction 270"</span><span class="p">)</span>
 
 <span class="n">fig</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">plot_rotor_values</span><span class="p">(</span><span class="n">fmodel</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">u</span><span class="p">,</span> <span class="n">findex</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_rows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_cols</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">return_fig_objects</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s2">&quot;Wind direction 280&quot;</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s2">"Wind direction 280"</span><span class="p">)</span>
 
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/4e2fee591f5f39596c799d16ab35d9b15a1c74383f88919d09ed659aca091208.png" src="_images/4e2fee591f5f39596c799d16ab35d9b15a1c74383f88919d09ed659aca091208.png" />
-<img alt="_images/c4dbe8744615da3305cb5b2c6eb98d0004f981bedb6502ee35018a50e47f68fc.png" src="_images/c4dbe8744615da3305cb5b2c6eb98d0004f981bedb6502ee35018a50e47f68fc.png" />
+<img alt="_images/6486585202c5d43addc0a16c908648ef98a605a2f0b2cabdb51bdf1c3251f831.png" src="_images/6486585202c5d43addc0a16c908648ef98a605a2f0b2cabdb51bdf1c3251f831.png" />
+<img alt="_images/6f7fa476504f61333568c86517605436750ab267bafbcada02387fed0797cabf.png" src="_images/6f7fa476504f61333568c86517605436750ab267bafbcada02387fed0797cabf.png" />
 </div>
 </div>
 </section>
@@ -1136,8 +1199,8 @@ but retuning of some parameters might be required.</p>
 <span class="n">zs</span> <span class="o">=</span> <span class="n">fmodel</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">z_sorted</span>
 
 <span class="c1"># Consider the shape</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;shape of xs: </span><span class="si">{</span><span class="n">xs</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  2 wd x 2 ws x 4 turbines x 3 x 3 grid points&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"shape of xs: </span><span class="si">{</span><span class="n">xs</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"  2 wd x 2 ws x 4 turbines x 3 x 3 grid points"</span><span class="p">)</span>
 
 <span class="c1"># Lets plot just one wd/ws conditions</span>
 <span class="n">xs</span> <span class="o">=</span> <span class="n">xs</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="p">:]</span>
@@ -1145,8 +1208,8 @@ but retuning of some parameters might be required.</p>
 <span class="n">zs</span> <span class="o">=</span> <span class="n">zs</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="p">:]</span>
 
 <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
-<span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">,</span> <span class="n">projection</span><span class="o">=</span><span class="s2">&quot;3d&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">ys</span><span class="p">,</span> <span class="n">zs</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">,</span> <span class="n">projection</span><span class="o">=</span><span class="s2">"3d"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">ys</span><span class="p">,</span> <span class="n">zs</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">"."</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">set_zlim</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">150</span><span class="p">])</span>
 
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
@@ -1158,7 +1221,7 @@ but retuning of some parameters might be required.</p>
   2 wd x 2 ws x 4 turbines x 3 x 3 grid points
 </pre></div>
 </div>
-<img alt="_images/fb14f96f601cb7404b600162a8a571de3eeaaad596986cb067a38e769cddc86a.png" src="_images/fb14f96f601cb7404b600162a8a571de3eeaaad596986cb067a38e769cddc86a.png" />
+<img alt="_images/49ec17700f052fe70d47cb31b75a890cc4e191ab4a1060c785b852793a37b634.png" src="_images/49ec17700f052fe70d47cb31b75a890cc4e191ab4a1060c785b852793a37b634.png" />
 </div>
 </div>
 </section>
@@ -1183,15 +1246,15 @@ report the time required for the computation using the Python
 <span class="n">wind_directions</span><span class="p">,</span> <span class="n">wind_speeds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span>
     <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">360.0</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span>   <span class="c1"># wind directions 0 to 360 degrees (exclusive) in 5 degree increments</span>
     <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">8.0</span><span class="p">,</span> <span class="mf">12.0</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">),</span>  <span class="c1"># wind speeds from 8 to 12 m/s in 0.2 m/s increments</span>
-    <span class="n">indexing</span><span class="o">=</span><span class="s2">&quot;ij&quot;</span>
+    <span class="n">indexing</span><span class="o">=</span><span class="s2">"ij"</span>
 <span class="p">)</span>
-<span class="c1"># meshgrid returns arrays with shape (len(wind_speeds), len(wind_directions)), so we &quot;flatten&quot; them</span>
+<span class="c1"># meshgrid returns arrays with shape (len(wind_speeds), len(wind_directions)), so we "flatten" them</span>
 <span class="n">wind_directions</span> <span class="o">=</span> <span class="n">wind_directions</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
 <span class="n">wind_speeds</span> <span class="o">=</span> <span class="n">wind_speeds</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
 <span class="n">turbulence_intensities</span> <span class="o">=</span> <span class="mf">0.1</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">wind_speeds</span><span class="p">)</span>
 
 <span class="n">n_findex</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">wind_directions</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Calculating AEP for </span><span class="si">{</span><span class="n">n_findex</span><span class="si">}</span><span class="s2"> wind direction and speed combinations...&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Calculating AEP for </span><span class="si">{</span><span class="n">n_findex</span><span class="si">}</span><span class="s2"> wind direction and speed combinations..."</span><span class="p">)</span>
 
 <span class="c1"># Set up a square 25 turbine layout</span>
 <span class="n">N</span> <span class="o">=</span> <span class="mi">5</span>  <span class="c1"># Number of turbines per row and per column</span>
@@ -1204,12 +1267,12 @@ report the time required for the computation using the Python
 <span class="p">)</span>
 <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
 <span class="n">y</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Number of turbines = </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Number of turbines = </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
 <span class="c1"># Define several models</span>
-<span class="n">fmodel_jensen</span> <span class="o">=</span> <span class="n">FlorisModel</span><span class="p">(</span><span class="s2">&quot;jensen.yaml&quot;</span><span class="p">)</span>
-<span class="n">fmodel_gch</span> <span class="o">=</span> <span class="n">FlorisModel</span><span class="p">(</span><span class="s2">&quot;gch.yaml&quot;</span><span class="p">)</span>
-<span class="n">fmodel_cc</span> <span class="o">=</span> <span class="n">FlorisModel</span><span class="p">(</span><span class="s2">&quot;cc.yaml&quot;</span><span class="p">)</span>
+<span class="n">fmodel_jensen</span> <span class="o">=</span> <span class="n">FlorisModel</span><span class="p">(</span><span class="s2">"jensen.yaml"</span><span class="p">)</span>
+<span class="n">fmodel_gch</span> <span class="o">=</span> <span class="n">FlorisModel</span><span class="p">(</span><span class="s2">"gch.yaml"</span><span class="p">)</span>
+<span class="n">fmodel_cc</span> <span class="o">=</span> <span class="n">FlorisModel</span><span class="p">(</span><span class="s2">"cc.yaml"</span><span class="p">)</span>
 
 <span class="c1"># Assign the layouts, wind speeds and directions</span>
 <span class="n">fmodel_jensen</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
@@ -1235,7 +1298,7 @@ report the time required for the computation using the Python
 <span class="p">)</span>
 
 <span class="k">def</span><span class="w"> </span><span class="nf">time_model_calculation</span><span class="p">(</span><span class="n">model_fmodel</span><span class="p">:</span> <span class="n">FlorisModel</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    This function performs the wake calculation for a given</span>
 <span class="sd">    FlorisModel object and computes the AEP while</span>
 <span class="sd">    tracking the amount of wall-time required for both steps.</span>
@@ -1248,7 +1311,7 @@ report the time required for the computation using the Python
 <span class="sd">        tuple(float, float):</span>
 <span class="sd">            0: AEP</span>
 <span class="sd">            1: Wall-time for the computation</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
     <span class="n">model_fmodel</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
     <span class="n">aep</span> <span class="o">=</span> <span class="n">model_fmodel</span><span class="o">.</span><span class="n">get_farm_power</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="n">n_findex</span>  <span class="o">/</span> <span class="mf">1E9</span> <span class="o">*</span> <span class="mi">365</span> <span class="o">*</span> <span class="mi">24</span>
@@ -1259,10 +1322,10 @@ report the time required for the computation using the Python
 <span class="n">gch_aep</span><span class="p">,</span> <span class="n">gch_compute_time</span> <span class="o">=</span> <span class="n">time_model_calculation</span><span class="p">(</span><span class="n">fmodel_gch</span><span class="p">)</span>
 <span class="n">cc_aep</span><span class="p">,</span> <span class="n">cc_compute_time</span> <span class="o">=</span> <span class="n">time_model_calculation</span><span class="p">(</span><span class="n">fmodel_cc</span><span class="p">)</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Model    AEP (GWh)  Compute Time (s)&#39;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{:8s}</span><span class="s1"> </span><span class="si">{:&lt;10.3f}</span><span class="s1"> </span><span class="si">{:&lt;6.3f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;Jensen&quot;</span><span class="p">,</span> <span class="n">jensen_aep</span><span class="p">,</span> <span class="n">jensen_compute_time</span><span class="p">))</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{:8s}</span><span class="s1"> </span><span class="si">{:&lt;10.3f}</span><span class="s1"> </span><span class="si">{:&lt;6.3f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;GCH&quot;</span><span class="p">,</span> <span class="n">gch_aep</span><span class="p">,</span> <span class="n">gch_compute_time</span><span class="p">))</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{:8s}</span><span class="s1"> </span><span class="si">{:&lt;10.3f}</span><span class="s1"> </span><span class="si">{:&lt;6.3f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;CC&quot;</span><span class="p">,</span> <span class="n">cc_aep</span><span class="p">,</span> <span class="n">cc_compute_time</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Model    AEP (GWh)  Compute Time (s)'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'</span><span class="si">{:8s}</span><span class="s1"> </span><span class="si">{:&lt;10.3f}</span><span class="s1"> </span><span class="si">{:&lt;6.3f}</span><span class="s1">'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">"Jensen"</span><span class="p">,</span> <span class="n">jensen_aep</span><span class="p">,</span> <span class="n">jensen_compute_time</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'</span><span class="si">{:8s}</span><span class="s1"> </span><span class="si">{:&lt;10.3f}</span><span class="s1"> </span><span class="si">{:&lt;6.3f}</span><span class="s1">'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">"GCH"</span><span class="p">,</span> <span class="n">gch_aep</span><span class="p">,</span> <span class="n">gch_compute_time</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'</span><span class="si">{:8s}</span><span class="s1"> </span><span class="si">{:&lt;10.3f}</span><span class="s1"> </span><span class="si">{:&lt;6.3f}</span><span class="s1">'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">"CC"</span><span class="p">,</span> <span class="n">cc_aep</span><span class="p">,</span> <span class="n">cc_compute_time</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
@@ -1272,9 +1335,9 @@ Number of turbines = 25
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Model    AEP (GWh)  Compute Time (s)
-Jensen   661.838    0.663 
-GCH      683.869    2.843 
-CC       661.315    5.770 
+Jensen   661.838    0.684 
+GCH      683.869    2.926 
+CC       661.315    5.924 
 </pre></div>
 </div>
 </div>
@@ -1329,7 +1392,7 @@ CC       661.315    5.770
 <span class="n">end</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
 
 <span class="n">walltime</span> <span class="o">=</span> <span class="n">end</span> <span class="o">-</span> <span class="n">start</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Optimization wall time: </span><span class="si">{</span><span class="n">walltime</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> s&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Optimization wall time: </span><span class="si">{</span><span class="n">walltime</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> s"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1368,7 +1431,7 @@ CC       661.315    5.770
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[Serial Refine] Processing pass=1, turbine_depth=6 (92.9%)
-Optimization wall time: 3.046 s
+Optimization wall time: 3.073 s
 </pre></div>
 </div>
 </div>
@@ -1377,21 +1440,21 @@ Optimization wall time: 3.046 s
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Show the results</span>
-<span class="n">yaw_angles_opt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="n">df_opt</span><span class="p">[</span><span class="s2">&quot;yaw_angles_opt&quot;</span><span class="p">])</span>
+<span class="n">yaw_angles_opt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="n">df_opt</span><span class="p">[</span><span class="s2">"yaw_angles_opt"</span><span class="p">])</span>
 <span class="n">fig</span><span class="p">,</span> <span class="n">axarr</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="mi">1</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sharey</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)):</span>
-    <span class="n">axarr</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wind_directions</span><span class="p">,</span> <span class="n">yaw_angles_opt</span><span class="p">[:,</span> <span class="n">i</span><span class="p">],</span> <span class="s1">&#39;k-&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;T</span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">i</span><span class="p">)</span>
-    <span class="n">axarr</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Yaw (Deg)&#39;</span><span class="p">)</span>
+    <span class="n">axarr</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wind_directions</span><span class="p">,</span> <span class="n">yaw_angles_opt</span><span class="p">[:,</span> <span class="n">i</span><span class="p">],</span> <span class="s1">'k-'</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">'T</span><span class="si">%d</span><span class="s1">'</span> <span class="o">%</span> <span class="n">i</span><span class="p">)</span>
+    <span class="n">axarr</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">'Yaw (Deg)'</span><span class="p">)</span>
     <span class="n">axarr</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
     <span class="n">axarr</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">axarr</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Wind Direction (Deg)&#39;</span><span class="p">)</span>
+<span class="n">axarr</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">'Wind Direction (Deg)'</span><span class="p">)</span>
 
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/b4ee7d93637262d314c7bf75abbcac8135bc9707265fa326091ea9cc5ec65d19.png" src="_images/b4ee7d93637262d314c7bf75abbcac8135bc9707265fa326091ea9cc5ec65d19.png" />
+<img alt="_images/50633aa41549293d0939f7ff162d13ce63401cc7a80e3f80df5344ea98d23e2c.png" src="_images/50633aa41549293d0939f7ff162d13ce63401cc7a80e3f80df5344ea98d23e2c.png" />
 </div>
 </div>
 </section>
@@ -1462,7 +1525,7 @@ Optimization wall time: 3.046 s
     <i class="fa-solid fa-list"></i> Contents
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
-    <ul class="visible nav section-nav flex-column">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#initialize-floris">Initialize Floris</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#build-the-model">Build the model</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#run-the-floris-wake-calculation">Run the Floris wake calculation</a></li>
@@ -1521,8 +1584,8 @@ By National Laboratory of the Rockies
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
-<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb"></script>
 
   <footer class="bd-footer">
   </footer>

@@ -26,8 +26,8 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
-<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+  <link href="../../_static/styles/theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
@@ -38,10 +38,10 @@
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- So that users can add custom icons -->
-  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="../../_static/scripts/fontawesome.js?digest=55c26ed414f5f8a31ebb"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
-<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
     <script src="../../_static/documentation_options.js?v=30a733bc"></script>
     <script src="../../_static/doctools.js?v=9a2dae69"></script>
@@ -59,6 +59,12 @@
     <script>
                 window.dataLayer = window.dataLayer || [];
                 function gtag(){ dataLayer.push(arguments); }
+                gtag('consent', 'default', {
+                    'ad_storage': 'denied',
+                    'ad_user_data': 'denied',
+                    'ad_personalization': 'denied',
+                    'analytics_storage': 'denied'
+                });
                 gtag('js', new Date());
                 gtag('config', 'G-JV2SK7CNPR');
             </script>
@@ -68,11 +74,16 @@
     <script>
                 window.dataLayer = window.dataLayer || [];
                 function gtag(){ dataLayer.push(arguments); }
+                gtag('consent', 'default', {
+                    'ad_storage': 'denied',
+                    'ad_user_data': 'denied',
+                    'ad_personalization': 'denied',
+                    'analytics_storage': 'denied'
+                });
                 gtag('js', new Date());
                 gtag('config', 'G-JV2SK7CNPR');
             </script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
-    <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
     <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10.8/dist/mermaid.esm.min.mjs";
 
 
@@ -81,173 +92,11 @@
 
 const initStyles = () => {
     const defaultStyle = document.createElement('style');
-    defaultStyle.textContent = `pre.mermaid {
-    /* Same as .mermaid-container > pre */
-    display: block;
-    width: 100%;
-}
-
-pre.mermaid > svg {
-    /* Same as .mermaid-container > pre > svg */
-    height: 500px;
-    width: 100%;
-    max-width: 100% !important;
-}`;
+    defaultStyle.textContent = "pre.mermaid {\n    /* Same as .mermaid-container > pre */\n    display: block;\n    width: 100%;\n}\n\npre.mermaid > svg {\n    /* Same as .mermaid-container > pre > svg */\n    height: 500px;\n    width: 100%;\n    max-width: 100% !important;\n}";
     document.head.appendChild(defaultStyle);
 
     const fullscreenStyle = document.createElement('style');
-    fullscreenStyle.textContent = `.mermaid-container {
-    display: flex;
-    flex-direction: row;
-    width: 100%;
-}
-
-.mermaid-container > pre {
-    display: block;
-    width: 100%;
-}
-
-.mermaid-container > pre > svg {
-    height: 500px;
-    width: 100%;
-    max-width: 100% !important;
-}
-
-.mermaid-fullscreen-btn {
-    width: 28px;
-    height: 28px;
-    background: rgba(255, 255, 255, 0.95);
-    border: 1px solid rgba(0, 0, 0, 0.3);
-    border-radius: 4px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-    font-size: 14px;
-    line-height: 1;
-    padding: 0;
-    color: #333;
-}
-
-.mermaid-fullscreen-btn:hover {
-    opacity: 100% !important;
-    background: rgba(255, 255, 255, 1);
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
-    transform: scale(1.1);
-}
-
-.mermaid-fullscreen-btn.dark-theme {
-    background: rgba(50, 50, 50, 0.95);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    color: #e0e0e0;
-}
-
-.mermaid-fullscreen-btn.dark-theme:hover {
-    background: rgba(60, 60, 60, 1);
-    box-shadow: 0 3px 10px rgba(255, 255, 255, 0.2);
-}
-
-.mermaid-fullscreen-modal {
-    display: none;
-    position: fixed !important;
-    top: 0 !important;
-    left: 0 !important;
-    width: 95vw;
-    height: 100vh;
-    background: rgba(255, 255, 255, 0.98);
-    z-index: 9999;
-    padding: 20px;
-    overflow: auto;
-}
-
-.mermaid-fullscreen-modal.dark-theme {
-    background: rgba(0, 0, 0, 0.98);
-}
-
-.mermaid-fullscreen-modal.active {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.mermaid-container-fullscreen {
-    position: relative;
-    width: 95vw;
-    height: 90vh;
-    max-width: 95vw;
-    max-height: 90vh;
-    background: white;
-    border-radius: 8px;
-    padding: 20px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-    overflow: auto;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.mermaid-container-fullscreen.dark-theme {
-    background: #1a1a1a;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
-}
-
-.mermaid-container-fullscreen pre.mermaid {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.mermaid-container-fullscreen .mermaid svg {
-    height: 100% !important;
-    width: 100% !important;
-    cursor: grab;
-}
-
-.mermaid-fullscreen-close {
-    position: fixed !important;
-    top: 20px !important;
-    right: 20px !important;
-    width: 40px;
-    height: 40px;
-    background: rgba(255, 255, 255, 0.95);
-    border: 1px solid rgba(0, 0, 0, 0.2);
-    border-radius: 50%;
-    cursor: pointer;
-    z-index: 10000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-    transition: all 0.2s;
-    font-size: 24px;
-    line-height: 1;
-    color: #333;
-}
-
-.mermaid-fullscreen-close:hover {
-    background: white;
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
-    transform: scale(1.1);
-}
-
-.mermaid-fullscreen-close.dark-theme {
-    background: rgba(50, 50, 50, 0.95);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    color: #e0e0e0;
-}
-
-.mermaid-fullscreen-close.dark-theme:hover {
-    background: rgba(60, 60, 60, 1);
-    box-shadow: 0 6px 16px rgba(255, 255, 255, 0.2);
-}
-
-.mermaid-fullscreen-modal .mermaid-fullscreen-btn {
-    display: none !important;
-}`;
+    fullscreenStyle.textContent = ".mermaid-container {\n    position: relative;\n    display: flex;\n    flex-direction: row;\n    width: 100%;\n}\n\n.mermaid-container > pre {\n    display: block;\n    width: 100%;\n}\n\n.mermaid-container > pre > svg {\n    height: 500px;\n    width: 100%;\n    max-width: 100% !important;\n}\n\n.mermaid-fullscreen-btn {\n    position: absolute;\n    width: 28px;\n    height: 28px;\n    background: rgba(255, 255, 255, 0.95);\n    border: 1px solid rgba(0, 0, 0, 0.3);\n    border-radius: 4px;\n    cursor: pointer;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n    transition: all 0.2s;\n    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);\n    font-size: 14px;\n    line-height: 1;\n    padding: 0;\n    color: #333;\n}\n\n.mermaid-fullscreen-btn:hover {\n    opacity: 100% !important;\n    background: rgba(255, 255, 255, 1);\n    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);\n    transform: scale(1.1);\n}\n\n.mermaid-fullscreen-btn.dark-theme {\n    background: rgba(50, 50, 50, 0.95);\n    border: 1px solid rgba(255, 255, 255, 0.3);\n    color: #e0e0e0;\n}\n\n.mermaid-fullscreen-btn.dark-theme:hover {\n    background: rgba(60, 60, 60, 1);\n    box-shadow: 0 3px 10px rgba(255, 255, 255, 0.2);\n}\n\n.mermaid-fullscreen-modal {\n    display: none;\n    position: fixed !important;\n    top: 0 !important;\n    left: 0 !important;\n    width: 95vw;\n    height: 100vh;\n    background: rgba(255, 255, 255, 0.98);\n    z-index: 9999;\n    padding: 20px;\n    overflow: auto;\n}\n\n.mermaid-fullscreen-modal.dark-theme {\n    background: rgba(0, 0, 0, 0.98);\n}\n\n.mermaid-fullscreen-modal.active {\n    display: flex;\n    align-items: center;\n    justify-content: center;\n}\n\n.mermaid-container-fullscreen {\n    position: relative;\n    width: 95vw;\n    height: 90vh;\n    max-width: 95vw;\n    max-height: 90vh;\n    background: white;\n    border-radius: 8px;\n    padding: 20px;\n    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);\n    overflow: auto;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n}\n\n.mermaid-container-fullscreen.dark-theme {\n    background: #1a1a1a;\n    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);\n}\n\n.mermaid-container-fullscreen pre.mermaid {\n    width: 100%;\n    height: 100%;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n}\n\n.mermaid-container-fullscreen .mermaid svg {\n    height: 100% !important;\n    width: 100% !important;\n    cursor: grab;\n}\n\n.mermaid-fullscreen-close {\n    position: fixed !important;\n    top: 20px !important;\n    right: 20px !important;\n    width: 40px;\n    height: 40px;\n    background: rgba(255, 255, 255, 0.95);\n    border: 1px solid rgba(0, 0, 0, 0.2);\n    border-radius: 50%;\n    cursor: pointer;\n    z-index: 10000;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);\n    transition: all 0.2s;\n    font-size: 24px;\n    line-height: 1;\n    color: #333;\n}\n\n.mermaid-fullscreen-close:hover {\n    background: white;\n    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);\n    transform: scale(1.1);\n}\n\n.mermaid-fullscreen-close.dark-theme {\n    background: rgba(50, 50, 50, 0.95);\n    border: 1px solid rgba(255, 255, 255, 0.2);\n    color: #e0e0e0;\n}\n\n.mermaid-fullscreen-close.dark-theme:hover {\n    background: rgba(60, 60, 60, 1);\n    box-shadow: 0 6px 16px rgba(255, 255, 255, 0.2);\n}\n\n.mermaid-fullscreen-modal .mermaid-fullscreen-btn {\n    display: none !important;\n}";
     document.head.appendChild(fullscreenStyle);
 }
 
@@ -292,6 +141,32 @@ let darkTheme = isDarkTheme();
 let modal = null;
 let modalContent = null;
 let previousScrollOffset = [window.scrollX, window.scrollY];
+let _lazyObserver = null;
+let _renderQueue = Promise.resolve();
+let closeModal = () => {};
+
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal?.classList.contains('active')) {
+        closeModal();
+    }
+});
+
+// Apply d3 zoom to each SVG. Idempotent: an SVG already wrapped is skipped,
+// so this is safe to call both for the initial batch and for diagrams that
+// render lazily once they become visible.
+const addZoomToSvgs = (svgs) => {
+    svgs.each(function() {
+        if (this.getAttribute('data-zoom-applied') === 'true') return;
+        var svg = d3.select(this);
+        svg.html("<g class='wrapper'>" + svg.html() + "</g>");
+        var inner = svg.select("g");
+        var zoom = d3.zoom().on("zoom", function(event) {
+            inner.attr("transform", event.transform);
+        });
+        svg.call(zoom);
+        this.setAttribute('data-zoom-applied', 'true');
+    });
+};
 
 const runMermaid = async (rerun) => {
     console.log("Running mermaid diagrams, rerun =", rerun);
@@ -299,7 +174,15 @@ const runMermaid = async (rerun) => {
     let all_mermaids = document.querySelectorAll(".mermaid");
 
     if (rerun) {
+        // Disconnect any previous lazy rendering observer
+        if (_lazyObserver) {
+            _lazyObserver.disconnect();
+            _lazyObserver = null;
+        }
+
         all_mermaids.forEach((el) => {
+            el.removeAttribute('data-mermaid-deferred');
+            el.removeAttribute('data-mermaid-render-failed');
             if(!el.hasAttribute("data-original-code")) {
                 // store original code
                 // console.log(`Storing original code for first run: `, el.innerHTML);
@@ -316,42 +199,100 @@ const runMermaid = async (rerun) => {
                 el.setAttribute('data-original-code', el.innerHTML);
             }
         });
-        await mermaid.run();
+
+        // Separate visible and hidden elements. Mermaid's layout engine measures
+        // text dimensions via the DOM, which fails for elements hidden by a parent
+        // (e.g., Reveal.js non-active slides, sphinx-design unopened tabs),
+        // producing broken SVGs. Render visible elements now, defer hidden ones.
+        const visible = [];
+        const hidden = [];
+        all_mermaids.forEach((el) => {
+            // offsetParent is null for display:none ancestors.
+            // getClientRects().length > 0 catches position:fixed elements
+            // (which also have null offsetParent but are still visible).
+            if (el.offsetParent !== null || el.getClientRects().length > 0) {
+                visible.push(el);
+            } else {
+                hidden.push(el);
+                el.setAttribute('data-mermaid-deferred', 'true');
+            }
+        });
+
+        if (visible.length > 0) {
+            try {
+                await mermaid.run({ nodes: visible });
+            } catch (e) {
+                console.error("Mermaid rendering failed:", e);
+            }
+        }
+
+        // Lazily render hidden elements when they become visible.
+        // Uses a promise chain (_renderQueue) to serialize rendering,
+        // since IntersectionObserver may report multiple entries at once
+        // and mermaid.run() is not safe to call concurrently.
+        if (hidden.length > 0) {
+            if (typeof IntersectionObserver === 'undefined') {
+                console.warn("IntersectionObserver not available; hidden mermaid diagrams will not render.");
+            } else {
+                _renderQueue = Promise.resolve();
+                _lazyObserver = new IntersectionObserver((entries) => {
+                    for (const entry of entries) {
+                        if (entry.isIntersecting && entry.target.getAttribute("data-processed") !== "true") {
+                            _lazyObserver.unobserve(entry.target);
+                            const el = entry.target;
+                            _renderQueue = _renderQueue.then(async () => {
+                                try {
+                                    await mermaid.run({ nodes: [el] });
+                                    el.removeAttribute('data-mermaid-deferred');
+                                    // Apply zoom to the now-rendered diagram, matching
+                                    // the decoration visible diagrams receive.
+                                    if (false) {
+                                        addZoomToSvgs(d3.selectAll("").select(function() {
+                                            return this.querySelector("svg");
+                                        }));
+                                    }
+                                } catch (e) {
+                                    console.error("Mermaid deferred rendering failed:", e);
+                                    el.removeAttribute('data-mermaid-deferred');
+                                    el.setAttribute('data-mermaid-render-failed', 'true');
+                                }
+                            });
+                        }
+                    }
+                });
+                hidden.forEach((el) => _lazyObserver.observe(el));
+            }
+        }
     }
 
     all_mermaids = document.querySelectorAll(".mermaid");
-    const mermaids_processed = document.querySelectorAll(".mermaid[data-processed='true']");
+    // Exclude deferred (hidden) and render-failed elements from completion checks
+    const mermaids_active = document.querySelectorAll(".mermaid:not([data-mermaid-deferred]):not([data-mermaid-render-failed])");
+    const mermaids_processed = document.querySelectorAll(".mermaid:not([data-mermaid-deferred]):not([data-mermaid-render-failed])[data-processed='true']");
 
-    if ("False" === "True") {
-        const mermaids_to_add_zoom = -1 === -1 ? all_mermaids.length : -1;
+    if (false) {
+        const mermaids_to_add_zoom = 0 === -1 ? mermaids_active.length : 0;
         if(mermaids_to_add_zoom > 0) {
-            var svgs = d3.selectAll("");
-            if(all_mermaids.length !== mermaids_processed.length) {
+            var svgs = d3.selectAll("").select(function() {
+                return this.querySelector("svg");
+            });
+            // Wait until every active (visible) diagram has rendered. Deferred
+            // diagrams are excluded, so a fixed d3_node_count that counts a
+            // hidden diagram no longer loops forever waiting for its SVG.
+            if(mermaids_active.length !== mermaids_processed.length) {
                 setTimeout(() => runMermaid(false), 200);
                 return;
-            } else if(svgs.size() !== mermaids_to_add_zoom) {
-                setTimeout(() => runMermaid(false), 200);
-                return;
-            } else {
-                svgs.each(function() {
-                    var svg = d3.select(this);
-                    svg.html("<g class='wrapper'>" + svg.html() + "</g>");
-                    var inner = svg.select("g");
-                    var zoom = d3.zoom().on("zoom", function(event) {
-                        inner.attr("transform", event.transform);
-                    });
-                    svg.call(zoom);
-                });
             }
+            addZoomToSvgs(svgs);
         }
-    } else if(all_mermaids.length !== mermaids_processed.length) {
+    } else if(mermaids_active.length !== mermaids_processed.length) {
         // Wait for mermaid to process all diagrams
         setTimeout(() => runMermaid(false), 200);
         return;
     }
 
     // Stop here if not adding fullscreen capability
-    if ("True" !== "True") return;
+    if (!true) return;
 
     if (modal !== null ) {
         // Destroy existing modal
@@ -374,7 +315,7 @@ const runMermaid = async (rerun) => {
     modalContent = modal.querySelector('.mermaid-container-fullscreen');
     const closeBtn = modal.querySelector('.mermaid-fullscreen-close');
 
-    const closeModal = () => {
+    closeModal = () => {
         modal.classList.remove('active');
         modalContent.innerHTML = '';
         document.body.style.overflow = ''
@@ -385,12 +326,6 @@ const runMermaid = async (rerun) => {
     modal.addEventListener('click', (e) => {
         if (e.target === modal) closeModal();
     });
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && modal.classList.contains('active')) {
-            closeModal();
-        }
-    });
-
     document.querySelectorAll('.mermaid').forEach((mermaidDiv) => {
         if (mermaidDiv.parentNode.classList.contains('mermaid-container') ||
             mermaidDiv.closest('.mermaid-fullscreen-modal')) {
@@ -410,8 +345,8 @@ const runMermaid = async (rerun) => {
         const fullscreenBtn = document.createElement('button');
         fullscreenBtn.className = 'mermaid-fullscreen-btn' + (darkTheme ? ' dark-theme' : '');
         fullscreenBtn.setAttribute('aria-label', 'View diagram in fullscreen');
-        fullscreenBtn.textContent = '⛶';
-        fullscreenBtn.style.opacity = '50%';
+        fullscreenBtn.textContent = "\u26f6";
+        fullscreenBtn.style.opacity = "50%";
 
         // Calculate dynamic position based on diagram's margin and padding
         const diagramStyle = window.getComputedStyle(mermaidDiv);
@@ -423,7 +358,7 @@ const runMermaid = async (rerun) => {
         fullscreenBtn.style.right = `${marginRight + paddingRight + 4}px`;
 
         fullscreenBtn.addEventListener('click', () => {
-            previousScrollOffset = [window.scroll, window.scrollY];
+            previousScrollOffset = [window.scrollX, window.scrollY];
             const clone = mermaidDiv.cloneNode(true);
             modalContent.innerHTML = '';
             modalContent.appendChild(clone);
@@ -435,9 +370,9 @@ const runMermaid = async (rerun) => {
                 svg.style.width = '100%';
                 svg.style.height = 'auto';
                 svg.style.maxWidth = '100%';
-                svg.style.sdisplay = 'block';
+                svg.style.display = 'block';
 
-                if ("False" === "True") {
+                if (false) {
                     setTimeout(() => {
                         const g = svg.querySelector('g');
                         if (g) {
@@ -460,8 +395,11 @@ const runMermaid = async (rerun) => {
     });
 };
 
+
+
 const load = async () => {
     initStyles();
+
 
     await runMermaid(true);
 
@@ -471,10 +409,8 @@ const load = async () => {
             darkTheme = newDarkTheme;
             console.log("Theme change detected, re-running mermaid with", darkTheme ? "dark" : "default", "theme");
             await mermaid.initialize(
-                {...JSON.parse(
-                    `{"startOnLoad": false}`
-                ),
-                ...{ darkMode: darkTheme, theme: darkTheme ? 'dark' : 'default' },
+                {...{"startOnLoad": false},
+                ...{ darkMode: darkTheme, theme: darkTheme ? "dark" : "default" },
                 }
             );
             await runMermaid(true);
@@ -499,35 +435,40 @@ const load = async () => {
 
 console.log("Initializing mermaid with", darkTheme ? "dark" : "default", "theme");
 mermaid.initialize(
-    {...JSON.parse(
-        `{"startOnLoad": false}`
-    ),
-    ...{ darkMode: darkTheme, theme: darkTheme ? 'dark' : 'default' },
+    {...{"startOnLoad": false},
+    ...{ darkMode: darkTheme, theme: darkTheme ? "dark" : "default" },
     }
 );
 
 window.addEventListener("load", load);
 window.runMermaid = runMermaid;</script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/floris/uncertain_floris_model';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="python"/>
   <meta name="docsearch:version" content="" />
+  
+    
+    <script src="../../_static/searchtools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script src="../../searchindex.js"></script>
+  
   </head>
-  
-  
-  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
-
+  <body data-default-mode="">
   
   
   <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
   
   <div id="pst-scroll-pixel-helper"></div>
   
   <button type="button" class="btn rounded-pill" id="pst-back-to-top">
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
-
+  
+  
+  
   
   <dialog id="pst-search-dialog">
     
@@ -553,7 +494,47 @@ window.runMermaid = runMermaid;</script>
 </div>
 
   
-    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
     </header>
   
 
@@ -1049,7 +1030,7 @@ window.runMermaid = runMermaid;</script>
 <div class="viewcode-block" id="UncertainFlorisModel">
 <a class="viewcode-back" href="../../_autosummary/floris.uncertain_floris_model.html#floris.uncertain_floris_model.UncertainFlorisModel">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">UncertainFlorisModel</span><span class="p">(</span><span class="n">LoggingManager</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    An interface for handling uncertainty in wind farm simulations.</span>
 
 <span class="sd">    This class contains a FlorisModel object and adds functionality to handle</span>
@@ -1085,7 +1066,7 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">            direction such that the yaw misalignment changes depending on the sampled wind</span>
 <span class="sd">            direction.  Defaults to False.</span>
 <span class="sd">        verbose (bool, optional): Verbosity flag for printing messages. Defaults to False.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -1103,7 +1084,7 @@ window.runMermaid = runMermaid;</script>
     <span class="p">):</span>
         <span class="c1"># Check validity of inputs</span>
         <span class="k">if</span> <span class="n">wd_std</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;wd_std must be strictly greater than 0.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"wd_std must be strictly greater than 0."</span><span class="p">)</span>
 
         <span class="c1"># Save these inputs</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">wd_resolution</span> <span class="o">=</span> <span class="n">wd_resolution</span>
@@ -1142,7 +1123,7 @@ window.runMermaid = runMermaid;</script>
             <span class="bp">self</span><span class="o">.</span><span class="n">fmodel_unexpanded</span> <span class="o">=</span> <span class="n">FlorisModel</span><span class="p">(</span><span class="n">configuration</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;configuration must be a FlorisModel, ParFlorisModel, dict, str, or Path&quot;</span>
+                <span class="s2">"configuration must be a FlorisModel, ParFlorisModel, dict, str, or Path"</span>
             <span class="p">)</span>
 
         <span class="c1"># Call set at this point with no arguments so ready to run</span>
@@ -1155,14 +1136,14 @@ window.runMermaid = runMermaid;</script>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Set the wind farm conditions in the UncertainFlorisModel.</span>
 
 <span class="sd">        See FlorisModel.set() for details of the contents of kwargs.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            **kwargs: The wind farm conditions to set.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Call the nominal set function</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fmodel_unexpanded</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
@@ -1172,11 +1153,11 @@ window.runMermaid = runMermaid;</script>
     <span class="k">def</span><span class="w"> </span><span class="nf">_set_uncertain</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Sets the underlying wind direction (wd), wind speed (ws), turbulence intensity (ti),</span>
 <span class="sd">          yaw angle, and power setpoint for unique conditions, accounting for uncertainties.</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="c1"># Grab the unexpanded values of all arrays</span>
         <span class="c1"># These original dimensions are what is returned</span>
@@ -1230,9 +1211,9 @@ window.runMermaid = runMermaid;</script>
 
         <span class="c1"># Display info on sizes</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Original num rows: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_unexpanded</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Expanded num rows: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_expanded</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unique num rows: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_unique</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Original num rows: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_unexpanded</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Expanded num rows: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_expanded</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Unique num rows: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_unique</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
         <span class="c1"># Initiate the expanded FlorisModel</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fmodel_expanded</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fmodel_unexpanded</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
@@ -1258,9 +1239,9 @@ window.runMermaid = runMermaid;</script>
 <div class="viewcode-block" id="UncertainFlorisModel.reset_operation">
 <a class="viewcode-back" href="../../_autosummary/floris.uncertain_floris_model.html#floris.uncertain_floris_model.UncertainFlorisModel.reset_operation">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">reset_operation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Reset the operation of the underlying FlorisModel object.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fmodel_unexpanded</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
             <span class="n">wind_directions</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">wind_directions_unexpanded</span><span class="p">,</span>
             <span class="n">wind_speeds</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">wind_speeds_unexpanded</span><span class="p">,</span>
@@ -1275,9 +1256,9 @@ window.runMermaid = runMermaid;</script>
 <div class="viewcode-block" id="UncertainFlorisModel.run">
 <a class="viewcode-back" href="../../_autosummary/floris.uncertain_floris_model.html#floris.uncertain_floris_model.UncertainFlorisModel.run">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Run the simulation in the underlying FlorisModel object.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">fmodel_expanded</span><span class="o">.</span><span class="n">run</span><span class="p">()</span></div>
 
@@ -1285,15 +1266,15 @@ window.runMermaid = runMermaid;</script>
 <div class="viewcode-block" id="UncertainFlorisModel.run_no_wake">
 <a class="viewcode-back" href="../../_autosummary/floris.uncertain_floris_model.html#floris.uncertain_floris_model.UncertainFlorisModel.run_no_wake">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">run_no_wake</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Run the simulation in the underlying FlorisModel object without wakes.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">fmodel_expanded</span><span class="o">.</span><span class="n">run_no_wake</span><span class="p">()</span></div>
 
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_turbine_powers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculates the power at each turbine in the wind farm.</span>
+<span class="w">        </span><span class="sd">"""Calculates the power at each turbine in the wind farm.</span>
 
 <span class="sd">        This method calculates the power at each turbine in the wind farm, considering</span>
 <span class="sd">        the underlying turbine powers and applying a weighted sum to handle uncertainty.</span>
@@ -1301,7 +1282,7 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">        Returns:</span>
 <span class="sd">            NDArrayFloat: An array containing the powers at each turbine for each findex.</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="c1"># Pass to off-class function</span>
         <span class="n">result</span> <span class="o">=</span> <span class="n">map_turbine_values_uncertain</span><span class="p">(</span>
@@ -1318,13 +1299,13 @@ window.runMermaid = runMermaid;</script>
 <div class="viewcode-block" id="UncertainFlorisModel.get_turbine_powers">
 <a class="viewcode-back" href="../../_autosummary/floris.uncertain_floris_model.html#floris.uncertain_floris_model.UncertainFlorisModel.get_turbine_powers">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_turbine_powers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Calculate the power at each turbine in the wind farm.  If WindRose or</span>
 <span class="sd">           WindTIRose is passed in, result is reshaped to match</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            NDArrayFloat: An array containing the powers at each turbine for each findex.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="n">turbine_powers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_turbine_powers</span><span class="p">()</span>
 
@@ -1369,7 +1350,7 @@ window.runMermaid = runMermaid;</script>
 <div class="viewcode-block" id="UncertainFlorisModel.get_expected_turbine_powers">
 <a class="viewcode-back" href="../../_autosummary/floris.uncertain_floris_model.html#floris.uncertain_floris_model.UncertainFlorisModel.get_expected_turbine_powers">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_expected_turbine_powers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Compute the expected (mean) power of each turbine.</span>
 
 <span class="sd">        Args:</span>
@@ -1384,11 +1365,11 @@ window.runMermaid = runMermaid;</script>
 
 <span class="sd">                    These frequencies should typically sum across rows</span>
 <span class="sd">                up to 1.0 and are used to weigh the wind farm power for every</span>
-<span class="sd">                condition in calculating the wind farm&#39;s AEP. Defaults to None.</span>
-<span class="sd">                If None and a WindData object was supplied, the WindData object&#39;s</span>
+<span class="sd">                condition in calculating the wind farm's AEP. Defaults to None.</span>
+<span class="sd">                If None and a WindData object was supplied, the WindData object's</span>
 <span class="sd">                frequencies will be used. Otherwise, uniform frequencies are assumed</span>
 <span class="sd">                (i.e., a simple mean over the findices is computed).</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="n">turbine_powers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_turbine_powers</span><span class="p">()</span>
 
@@ -1412,14 +1393,14 @@ window.runMermaid = runMermaid;</script>
     <span class="p">):</span>
         <span class="k">if</span> <span class="n">use_turbulence_correction</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
-                <span class="s2">&quot;Turbulence correction is not yet implemented in the power calculation.&quot;</span>
+                <span class="s2">"Turbulence correction is not yet implemented in the power calculation."</span>
             <span class="p">)</span>
 
         <span class="c1"># Confirm run() has been run on the expanded fmodel</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">fmodel_expanded</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">state</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">State</span><span class="o">.</span><span class="n">USED</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
-                <span class="s2">&quot;Can&#39;t run function `FlorisModel.get_farm_power` without &quot;</span>
-                <span class="s2">&quot;first running `FlorisModel.run`.&quot;</span>
+                <span class="s2">"Can't run function `FlorisModel.get_farm_power` without "</span>
+                <span class="s2">"first running `FlorisModel.run`."</span>
             <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">turbine_weights</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -1448,7 +1429,7 @@ window.runMermaid = runMermaid;</script>
         <span class="n">turbine_weights</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">use_turbulence_correction</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Report wind plant power from instance of floris with uncertainty.</span>
 
 <span class="sd">        Args:</span>
@@ -1459,7 +1440,7 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">                modeling multiple wind farms in a single floris object. If you</span>
 <span class="sd">                only want to calculate the power production for one of those</span>
 <span class="sd">                farms and include the wake effects of the neighboring farms,</span>
-<span class="sd">                you can set the turbine_weights for the neighboring farms&#39;</span>
+<span class="sd">                you can set the turbine_weights for the neighboring farms'</span>
 <span class="sd">                turbines to 0.0. The array of turbine powers from floris</span>
 <span class="sd">                is multiplied with this array in the calculation of the</span>
 <span class="sd">                objective function. If None, this  is an array with all values</span>
@@ -1471,7 +1452,7 @@ window.runMermaid = runMermaid;</script>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            float: Sum of wind turbine powers in W.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">turbine_powers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_weighted_turbine_powers</span><span class="p">(</span>
             <span class="n">turbine_weights</span><span class="o">=</span><span class="n">turbine_weights</span><span class="p">,</span> <span class="n">use_turbulence_correction</span><span class="o">=</span><span class="n">use_turbulence_correction</span>
         <span class="p">)</span>
@@ -1485,7 +1466,7 @@ window.runMermaid = runMermaid;</script>
         <span class="n">turbine_weights</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">use_turbulence_correction</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Report wind plant power from instance of floris. Optionally includes</span>
 <span class="sd">        uncertainty in wind direction and yaw position when determining power.</span>
 <span class="sd">        Uncertainty is included by computing the mean wind farm power for a</span>
@@ -1500,7 +1481,7 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">                modeling multiple wind farms in a single floris object. If you</span>
 <span class="sd">                only want to calculate the power production for one of those</span>
 <span class="sd">                farms and include the wake effects of the neighboring farms,</span>
-<span class="sd">                you can set the turbine_weights for the neighboring farms&#39;</span>
+<span class="sd">                you can set the turbine_weights for the neighboring farms'</span>
 <span class="sd">                turbines to 0.0. The array of turbine powers from floris</span>
 <span class="sd">                is multiplied with this array in the calculation of the</span>
 <span class="sd">                objective function. If None, this  is an array with all values</span>
@@ -1512,7 +1493,7 @@ window.runMermaid = runMermaid;</script>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            float: Sum of wind turbine powers in W.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">farm_power</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_farm_power</span><span class="p">(</span><span class="n">turbine_weights</span><span class="p">,</span> <span class="n">use_turbulence_correction</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">fmodel_unexpanded</span><span class="o">.</span><span class="n">wind_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -1542,7 +1523,7 @@ window.runMermaid = runMermaid;</script>
         <span class="n">freq</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">turbine_weights</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Compute the expected (mean) power of the wind farm.</span>
 
 <span class="sd">        Args:</span>
@@ -1550,8 +1531,8 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">                with the frequencies of each wind direction and</span>
 <span class="sd">                wind speed combination. These frequencies should typically sum</span>
 <span class="sd">                up to 1.0 and are used to weigh the wind farm power for every</span>
-<span class="sd">                condition in calculating the wind farm&#39;s AEP. Defaults to None.</span>
-<span class="sd">                If None and a WindData object was supplied, the WindData object&#39;s</span>
+<span class="sd">                condition in calculating the wind farm's AEP. Defaults to None.</span>
+<span class="sd">                If None and a WindData object was supplied, the WindData object's</span>
 <span class="sd">                frequencies will be used. Otherwise, uniform frequencies are assumed</span>
 <span class="sd">                (i.e., a simple mean over the findices is computed).</span>
 <span class="sd">            turbine_weights (NDArrayFloat | list[float] | None, optional):</span>
@@ -1561,13 +1542,13 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">                modeling multiple wind farms in a single floris object. If you</span>
 <span class="sd">                only want to calculate the power production for one of those</span>
 <span class="sd">                farms and include the wake effects of the neighboring farms,</span>
-<span class="sd">                you can set the turbine_weights for the neighboring farms&#39;</span>
+<span class="sd">                you can set the turbine_weights for the neighboring farms'</span>
 <span class="sd">                turbines to 0.0. The array of turbine powers from floris</span>
 <span class="sd">                is multiplied with this array in the calculation of the</span>
 <span class="sd">                objective function. If None, this  is an array with all values</span>
 <span class="sd">                1.0 and with shape equal to (n_findex,</span>
 <span class="sd">                n_turbines). Defaults to None.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">if</span> <span class="n">freq</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">fmodel_unexpanded</span><span class="o">.</span><span class="n">wind_data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -1596,7 +1577,7 @@ window.runMermaid = runMermaid;</script>
         <span class="n">turbine_weights</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">hours_per_year</span><span class="o">=</span><span class="mi">8760</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Estimate annual energy production (AEP) for distributions of wind speed, wind</span>
 <span class="sd">        direction, frequency of occurrence, and yaw offset.</span>
 
@@ -1605,8 +1586,8 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">                with the frequencies of each wind direction and</span>
 <span class="sd">                wind speed combination. These frequencies should typically sum</span>
 <span class="sd">                up to 1.0 and are used to weigh the wind farm power for every</span>
-<span class="sd">                condition in calculating the wind farm&#39;s AEP. Defaults to None.</span>
-<span class="sd">                If None and a WindData object was supplied, the WindData object&#39;s</span>
+<span class="sd">                condition in calculating the wind farm's AEP. Defaults to None.</span>
+<span class="sd">                If None and a WindData object was supplied, the WindData object's</span>
 <span class="sd">                frequencies will be used. Otherwise, uniform frequencies are assumed.</span>
 <span class="sd">            turbine_weights (NDArrayFloat | list[float] | None, optional):</span>
 <span class="sd">                weighing terms that allow the user to emphasize power at</span>
@@ -1615,7 +1596,7 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">                modeling multiple wind farms in a single floris object. If you</span>
 <span class="sd">                only want to calculate the power production for one of those</span>
 <span class="sd">                farms and include the wake effects of the neighboring farms,</span>
-<span class="sd">                you can set the turbine_weights for the neighboring farms&#39;</span>
+<span class="sd">                you can set the turbine_weights for the neighboring farms'</span>
 <span class="sd">                turbines to 0.0. The array of turbine powers from floris</span>
 <span class="sd">                is multiplied with this array in the calculation of the</span>
 <span class="sd">                objective function. If None, this  is an array with all values</span>
@@ -1627,13 +1608,13 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">            float:</span>
 <span class="sd">                The Annual Energy Production (AEP) for the wind farm in</span>
 <span class="sd">                watt-hours.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="n">freq</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">fmodel_unexpanded</span><span class="o">.</span><span class="n">wind_data</span><span class="p">,</span> <span class="p">(</span><span class="n">WindRose</span><span class="p">,</span> <span class="n">WindRoseWRG</span><span class="p">,</span> <span class="n">WindTIRose</span><span class="p">)</span>
         <span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                <span class="s2">&quot;Computing AEP with uniform frequencies. Results results may not reflect annual &quot;</span>
-                <span class="s2">&quot;operation.&quot;</span>
+                <span class="s2">"Computing AEP with uniform frequencies. Results results may not reflect annual "</span>
+                <span class="s2">"operation."</span>
             <span class="p">)</span>
 
         <span class="k">return</span> <span class="p">(</span>
@@ -1650,7 +1631,7 @@ window.runMermaid = runMermaid;</script>
         <span class="n">values</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">turbine_weights</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Compute the expected (mean) value produced by the wind farm. This is</span>
 <span class="sd">        computed by multiplying the wind farm power for each wind condition by</span>
 <span class="sd">        the corresponding value of the power generated (e.g., electricity</span>
@@ -1662,16 +1643,16 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">                with the frequencies of each wind condition combination.</span>
 <span class="sd">                These frequencies should typically sum up to 1.0 and are used</span>
 <span class="sd">                to weigh the wind farm value for every condition in calculating</span>
-<span class="sd">                the wind farm&#39;s expected value. Defaults to None. If None and a</span>
-<span class="sd">                WindData object is supplied, the WindData object&#39;s frequencies</span>
+<span class="sd">                the wind farm's expected value. Defaults to None. If None and a</span>
+<span class="sd">                WindData object is supplied, the WindData object's frequencies</span>
 <span class="sd">                will be used. Otherwise, uniform frequencies are assumed (i.e.,</span>
 <span class="sd">                a simple mean over the findices is computed).</span>
 <span class="sd">            values (NDArrayFloat): NumPy array with shape (n_findex)</span>
 <span class="sd">                with the values corresponding to the power generated for each</span>
 <span class="sd">                wind condition combination. The wind farm power is multiplied</span>
-<span class="sd">                by the value for every condition in calculating the wind farm&#39;s</span>
+<span class="sd">                by the value for every condition in calculating the wind farm's</span>
 <span class="sd">                expected value. Defaults to None. If None and a WindData object</span>
-<span class="sd">                is supplied, the WindData object&#39;s values will be used.</span>
+<span class="sd">                is supplied, the WindData object's values will be used.</span>
 <span class="sd">                Otherwise, a value of 1 for all conditions is assumed (i.e.,</span>
 <span class="sd">                the expected farm value will be equivalent to the expected farm</span>
 <span class="sd">                power).</span>
@@ -1682,7 +1663,7 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">                modeling multiple wind farms in a single floris object. If you</span>
 <span class="sd">                only want to calculate the value production for one of those</span>
 <span class="sd">                farms and include the wake effects of the neighboring farms,</span>
-<span class="sd">                you can set the turbine_weights for the neighboring farms&#39;</span>
+<span class="sd">                you can set the turbine_weights for the neighboring farms'</span>
 <span class="sd">                turbines to 0.0. The array of turbine powers from floris</span>
 <span class="sd">                is multiplied with this array in the calculation of the</span>
 <span class="sd">                expected value. If None, this is an array with all values 1.0</span>
@@ -1691,7 +1672,7 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">        Returns:</span>
 <span class="sd">            float:</span>
 <span class="sd">                The expected value produced by the wind farm in units of value.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="n">freq</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">fmodel_unexpanded</span><span class="o">.</span><span class="n">wind_data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">freq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.0</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">fmodel_unexpanded</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">n_findex</span><span class="p">])</span>
@@ -1723,7 +1704,7 @@ window.runMermaid = runMermaid;</script>
         <span class="n">turbine_weights</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">hours_per_year</span><span class="o">=</span><span class="mi">8760</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Estimate annual value production (AVP) for distribution of wind</span>
 <span class="sd">        conditions, frequencies of occurrence, and corresponding values of</span>
 <span class="sd">        power generated (e.g., electricity price per unit of energy).</span>
@@ -1733,16 +1714,16 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">                with the frequencies of each wind condition combination.</span>
 <span class="sd">                These frequencies should typically sum up to 1.0 and are used</span>
 <span class="sd">                to weigh the wind farm value for every condition in calculating</span>
-<span class="sd">                the wind farm&#39;s AVP. Defaults to None. If None and a</span>
-<span class="sd">                WindData object is supplied, the WindData object&#39;s frequencies</span>
+<span class="sd">                the wind farm's AVP. Defaults to None. If None and a</span>
+<span class="sd">                WindData object is supplied, the WindData object's frequencies</span>
 <span class="sd">                will be used. Otherwise, uniform frequencies are assumed (i.e.,</span>
 <span class="sd">                a simple mean over the findices is computed).</span>
 <span class="sd">            values (NDArrayFloat): NumPy array with shape (n_findex)</span>
 <span class="sd">                with the values corresponding to the power generated for each</span>
 <span class="sd">                wind condition combination. The wind farm power is multiplied</span>
-<span class="sd">                by the value for every condition in calculating the wind farm&#39;s</span>
+<span class="sd">                by the value for every condition in calculating the wind farm's</span>
 <span class="sd">                AVP. Defaults to None. If None and a WindData object is</span>
-<span class="sd">                supplied, the WindData object&#39;s values will be used. Otherwise,</span>
+<span class="sd">                supplied, the WindData object's values will be used. Otherwise,</span>
 <span class="sd">                a value of 1 for all conditions is assumed (i.e., the AVP will</span>
 <span class="sd">                be equivalent to the AEP).</span>
 <span class="sd">            turbine_weights (NDArrayFloat | list[float] | None, optional):</span>
@@ -1752,7 +1733,7 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">                modeling multiple wind farms in a single floris object. If you</span>
 <span class="sd">                only want to calculate the value production for one of those</span>
 <span class="sd">                farms and include the wake effects of the neighboring farms,</span>
-<span class="sd">                you can set the turbine_weights for the neighboring farms&#39;</span>
+<span class="sd">                you can set the turbine_weights for the neighboring farms'</span>
 <span class="sd">                turbines to 0.0. The array of turbine powers from floris is</span>
 <span class="sd">                multiplied with this array in the calculation of the AVP. If</span>
 <span class="sd">                None, this is an array with all values 1.0 and with shape equal</span>
@@ -1764,7 +1745,7 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">            float:</span>
 <span class="sd">                The Annual Value Production (AVP) for the wind farm in units</span>
 <span class="sd">                of value.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="p">(</span>
             <span class="n">freq</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">fmodel_unexpanded</span><span class="o">.</span><span class="n">wind_data</span><span class="p">,</span>
@@ -1772,14 +1753,14 @@ window.runMermaid = runMermaid;</script>
             <span class="p">)</span>
         <span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                <span class="s2">&quot;Computing AVP with uniform frequencies. Results results may not reflect annual &quot;</span>
-                <span class="s2">&quot;operation.&quot;</span>
+                <span class="s2">"Computing AVP with uniform frequencies. Results results may not reflect annual "</span>
+                <span class="s2">"operation."</span>
             <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">values</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">fmodel_unexpanded</span><span class="o">.</span><span class="n">wind_data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                <span class="s2">&quot;Computing AVP with uniform value equal to 1. Results will be equivalent to &quot;</span>
-                <span class="s2">&quot;annual energy production.&quot;</span>
+                <span class="s2">"Computing AVP with uniform value equal to 1. Results will be equivalent to "</span>
+                <span class="s2">"annual energy production."</span>
             <span class="p">)</span>
 
         <span class="k">return</span> <span class="p">(</span>
@@ -1798,7 +1779,7 @@ window.runMermaid = runMermaid;</script>
         <span class="n">power_setpoint_resolution</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>  <span class="c1"># kW</span>
         <span class="n">awc_amplitude_resolution</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>  <span class="c1"># Deg</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Round the input array  specified resolutions.</span>
 
 <span class="sd">        Parameters:</span>
@@ -1820,7 +1801,7 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">            numpy.ndarray: A rounded array of wind turbine parameters with</span>
 <span class="sd">                    the same shape as input_array,</span>
 <span class="sd">                    where each parameter is rounded to the specified resolution.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="c1"># input_array is a nx5 numpy array whose columns are wd, ws, tu, yaw, power_setpoint</span>
         <span class="c1"># round each column by the respective resolution</span>
@@ -1878,7 +1859,7 @@ window.runMermaid = runMermaid;</script>
     <span class="k">def</span><span class="w"> </span><span class="nf">_expand_wind_directions</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">input_array</span><span class="p">,</span> <span class="n">wd_sample_points</span><span class="p">,</span> <span class="n">fix_yaw_to_nominal_direction</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">n_turbines</span><span class="o">=</span><span class="kc">None</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Expand wind direction data.</span>
 
 <span class="sd">        Args:</span>
@@ -1910,17 +1891,17 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">        direction column perturbed by each sample point, ensuring</span>
 <span class="sd">        the resultant values are within the range</span>
 <span class="sd">        of 0 to 360.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="c1"># Check if wd_sample_points is odd-length and the middle element is 0</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">wd_sample_points</span><span class="p">)</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;wd_sample_points must have an odd length.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"wd_sample_points must have an odd length."</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">wd_sample_points</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">wd_sample_points</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The middle element of wd_sample_points must be 0.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"The middle element of wd_sample_points must be 0."</span><span class="p">)</span>
 
         <span class="c1"># If fix_yaw_to_nominal_direction is True, n_turbines must be supplied</span>
         <span class="k">if</span> <span class="n">fix_yaw_to_nominal_direction</span> <span class="ow">and</span> <span class="n">n_turbines</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The number of turbines in the wind farm must be supplied&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"The number of turbines in the wind farm must be supplied"</span><span class="p">)</span>
 
         <span class="n">num_samples</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">wd_sample_points</span><span class="p">)</span>
         <span class="n">num_rows</span> <span class="o">=</span> <span class="n">input_array</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -1950,7 +1931,7 @@ window.runMermaid = runMermaid;</script>
         <span class="k">return</span> <span class="n">output_array</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_unique_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_array</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Finds unique rows in the input numpy array and constructs a mapping array</span>
 <span class="sd">        to reconstruct the input array from the unique rows.</span>
 
@@ -1968,13 +1949,13 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">                numpy.ndarray: A 1D array of indices mapping each row of the input_array</span>
 <span class="sd">                            to the corresponding row in the unique_inputs array.</span>
 <span class="sd">                            It represents how to reconstruct the input_array from the unique rows.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fmodel_unexpanded</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">multidim_conditions</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
            <span class="ow">and</span> <span class="ow">not</span> <span class="n">is_all_scalar_dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fmodel_unexpanded</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">multidim_conditions</span><span class="p">)</span>
         <span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Given non-scalar multidim conditions. Forcing all unique values &quot;</span>
-                                <span class="s2">&quot;for the uncertainty model, which may be slower to run.&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"Given non-scalar multidim conditions. Forcing all unique values "</span>
+                                <span class="s2">"for the uncertainty model, which may be slower to run."</span><span class="p">)</span>
             <span class="n">unique_inputs</span> <span class="o">=</span> <span class="n">input_array</span>
             <span class="n">map_to_expanded_inputs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">input_array</span><span class="p">))</span>
             <span class="k">return</span> <span class="n">unique_inputs</span><span class="p">,</span> <span class="n">map_to_expanded_inputs</span>
@@ -1986,7 +1967,7 @@ window.runMermaid = runMermaid;</script>
         <span class="k">return</span> <span class="n">unique_inputs</span><span class="p">,</span> <span class="n">map_to_expanded_inputs</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_weights</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wd_std</span><span class="p">,</span> <span class="n">wd_sample_points</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generates weights based on a Gaussian distribution sampled at specific x-locations.</span>
+<span class="w">        </span><span class="sd">"""Generates weights based on a Gaussian distribution sampled at specific x-locations.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            wd_std (float): The standard deviation of the Gaussian distribution.</span>
@@ -1997,7 +1978,7 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">                and standard deviation wd_std, sampled at the specified x-locations.</span>
 <span class="sd">                The weights are normalized so that they sum to 1.</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="c1"># Calculate the Gaussian function values at sample points</span>
         <span class="n">gaussian_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">wd_sample_points</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">wd_std</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
@@ -2010,13 +1991,13 @@ window.runMermaid = runMermaid;</script>
 <div class="viewcode-block" id="UncertainFlorisModel.get_operation_model">
 <a class="viewcode-back" href="../../_autosummary/floris.uncertain_floris_model.html#floris.uncertain_floris_model.UncertainFlorisModel.get_operation_model">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_operation_model</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the operation model of a FlorisModel.</span>
+<span class="w">        </span><span class="sd">"""Get the operation model of a FlorisModel.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            str: The operation_model.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">operation_models</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">fmodel_unexpanded</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_definitions</span><span class="p">[</span><span class="n">tindex</span><span class="p">][</span><span class="s2">&quot;operation_model&quot;</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fmodel_unexpanded</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_definitions</span><span class="p">[</span><span class="n">tindex</span><span class="p">][</span><span class="s2">"operation_model"</span><span class="p">]</span>
             <span class="k">for</span> <span class="n">tindex</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fmodel_unexpanded</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">n_turbines</span><span class="p">)</span>
         <span class="p">]</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">operation_models</span><span class="p">))</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
@@ -2028,16 +2009,16 @@ window.runMermaid = runMermaid;</script>
 <div class="viewcode-block" id="UncertainFlorisModel.set_operation_model">
 <a class="viewcode-back" href="../../_autosummary/floris.uncertain_floris_model.html#floris.uncertain_floris_model.UncertainFlorisModel.set_operation_model">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_operation_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">operation_model</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the turbine operation model(s).</span>
+<span class="w">        </span><span class="sd">"""Set the turbine operation model(s).</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            operation_model (str): The operation model to set.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">operation_model</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fmodel_unexpanded</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_type</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
                 <span class="c1"># Set a single one here, then, and return</span>
                 <span class="n">turbine_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fmodel_unexpanded</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_definitions</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-                <span class="n">turbine_type</span><span class="p">[</span><span class="s2">&quot;operation_model&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">operation_model</span>
+                <span class="n">turbine_type</span><span class="p">[</span><span class="s2">"operation_model"</span><span class="p">]</span> <span class="o">=</span> <span class="n">operation_model</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
                     <span class="n">turbine_type</span><span class="o">=</span><span class="p">[</span><span class="n">turbine_type</span><span class="p">],</span>
                     <span class="n">reference_wind_height</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">reference_wind_height</span>
@@ -2048,16 +2029,16 @@ window.runMermaid = runMermaid;</script>
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">operation_model</span><span class="p">)</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fmodel_unexpanded</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">n_turbines</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;The length of the operation_model list must be &quot;</span> <span class="s2">&quot;equal to the number of turbines.&quot;</span>
+                <span class="s2">"The length of the operation_model list must be "</span> <span class="s2">"equal to the number of turbines."</span>
             <span class="p">)</span>
 
         <span class="n">turbine_type_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fmodel_unexpanded</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_definitions</span>
 
         <span class="k">for</span> <span class="n">tindex</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fmodel_unexpanded</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">n_turbines</span><span class="p">):</span>
-            <span class="n">turbine_type_list</span><span class="p">[</span><span class="n">tindex</span><span class="p">][</span><span class="s2">&quot;turbine_type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="n">turbine_type_list</span><span class="p">[</span><span class="n">tindex</span><span class="p">][</span><span class="s2">&quot;turbine_type&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="n">operation_model</span><span class="p">[</span><span class="n">tindex</span><span class="p">]</span>
+            <span class="n">turbine_type_list</span><span class="p">[</span><span class="n">tindex</span><span class="p">][</span><span class="s2">"turbine_type"</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">turbine_type_list</span><span class="p">[</span><span class="n">tindex</span><span class="p">][</span><span class="s2">"turbine_type"</span><span class="p">]</span> <span class="o">+</span> <span class="s2">"_"</span> <span class="o">+</span> <span class="n">operation_model</span><span class="p">[</span><span class="n">tindex</span><span class="p">]</span>
             <span class="p">)</span>
-            <span class="n">turbine_type_list</span><span class="p">[</span><span class="n">tindex</span><span class="p">][</span><span class="s2">&quot;operation_model&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">operation_model</span><span class="p">[</span><span class="n">tindex</span><span class="p">]</span>
+            <span class="n">turbine_type_list</span><span class="p">[</span><span class="n">tindex</span><span class="p">][</span><span class="s2">"operation_model"</span><span class="p">]</span> <span class="o">=</span> <span class="n">operation_model</span><span class="p">[</span><span class="n">tindex</span><span class="p">]</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
             <span class="n">turbine_type</span><span class="o">=</span><span class="n">turbine_type_list</span><span class="p">,</span>
@@ -2068,20 +2049,20 @@ window.runMermaid = runMermaid;</script>
 <div class="viewcode-block" id="UncertainFlorisModel.copy">
 <a class="viewcode-back" href="../../_autosummary/floris.uncertain_floris_model.html#floris.uncertain_floris_model.UncertainFlorisModel.copy">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create an independent copy of the current UncertainFlorisModel object</span>
+<span class="w">        </span><span class="sd">"""Create an independent copy of the current UncertainFlorisModel object</span>
 
 <span class="sd">        When creating the copy, this method uses self.__class__(), rather than</span>
 <span class="sd">        UncertainFlorisModel() directly, so that subclasses of UncertainFlorisModel can inherit this</span>
 <span class="sd">        method and return instantiations of their own class, rather than the UncertainFlorisModel</span>
 <span class="sd">        class.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fmodel_unexpanded</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">secondary_init_kwargs</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="UncertainFlorisModel.get_param">
 <a class="viewcode-back" href="../../_autosummary/floris.uncertain_floris_model.html#floris.uncertain_floris_model.UncertainFlorisModel.get_param">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_param</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">param_idx</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a parameter from a FlorisModel object.</span>
+<span class="w">        </span><span class="sd">"""Get a parameter from a FlorisModel object.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            param (List[str]): A list of keys to traverse the FlorisModel dictionary.</span>
@@ -2090,7 +2071,7 @@ window.runMermaid = runMermaid;</script>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            Any: The value of the parameter.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">fm_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fmodel_unexpanded</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">as_dict</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="n">param_idx</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -2102,13 +2083,13 @@ window.runMermaid = runMermaid;</script>
 <div class="viewcode-block" id="UncertainFlorisModel.set_param">
 <a class="viewcode-back" href="../../_autosummary/floris.uncertain_floris_model.html#floris.uncertain_floris_model.UncertainFlorisModel.set_param">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_param</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">param_idx</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set a parameter in a FlorisModel object.</span>
+<span class="w">        </span><span class="sd">"""Set a parameter in a FlorisModel object.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            param (List[str]): A list of keys to traverse the FlorisModel dictionary.</span>
 <span class="sd">            value (Any): The value to set.</span>
 <span class="sd">            param_idx (Optional[int], optional): The index to set the value at. Defaults to None.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">fm_dict_mod</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fmodel_unexpanded</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">as_dict</span><span class="p">()</span>
         <span class="n">nested_set</span><span class="p">(</span><span class="n">fm_dict_mod</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">param_idx</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fmodel_unexpanded</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">fm_dict_mod</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">fmodel_unexpanded</span><span class="o">.</span><span class="n">secondary_init_kwargs</span><span class="p">)</span>
@@ -2117,110 +2098,110 @@ window.runMermaid = runMermaid;</script>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">secondary_init_kwargs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        UncertainFlorisModel secondary keyword arguments (after configuration).</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="p">{</span>
-            <span class="s2">&quot;wd_resolution&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">wd_resolution</span><span class="p">,</span>
-            <span class="s2">&quot;ws_resolution&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ws_resolution</span><span class="p">,</span>
-            <span class="s2">&quot;ti_resolution&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ti_resolution</span><span class="p">,</span>
-            <span class="s2">&quot;yaw_resolution&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">yaw_resolution</span><span class="p">,</span>
-            <span class="s2">&quot;power_setpoint_resolution&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">power_setpoint_resolution</span><span class="p">,</span>
-            <span class="s2">&quot;awc_amplitude_resolution&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">awc_amplitude_resolution</span><span class="p">,</span>
-            <span class="s2">&quot;wd_std&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">wd_std</span><span class="p">,</span>
-            <span class="s2">&quot;wd_sample_points&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">wd_sample_points</span><span class="p">,</span>
-            <span class="s2">&quot;fix_yaw_to_nominal_direction&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">fix_yaw_to_nominal_direction</span><span class="p">,</span>
-            <span class="s2">&quot;verbose&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">,</span>
+            <span class="s2">"wd_resolution"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">wd_resolution</span><span class="p">,</span>
+            <span class="s2">"ws_resolution"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ws_resolution</span><span class="p">,</span>
+            <span class="s2">"ti_resolution"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ti_resolution</span><span class="p">,</span>
+            <span class="s2">"yaw_resolution"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">yaw_resolution</span><span class="p">,</span>
+            <span class="s2">"power_setpoint_resolution"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">power_setpoint_resolution</span><span class="p">,</span>
+            <span class="s2">"awc_amplitude_resolution"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">awc_amplitude_resolution</span><span class="p">,</span>
+            <span class="s2">"wd_std"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">wd_std</span><span class="p">,</span>
+            <span class="s2">"wd_sample_points"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">wd_sample_points</span><span class="p">,</span>
+            <span class="s2">"fix_yaw_to_nominal_direction"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">fix_yaw_to_nominal_direction</span><span class="p">,</span>
+            <span class="s2">"verbose"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">,</span>
         <span class="p">}</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">layout_x</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Wind turbine coordinate information.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            np.array: Wind turbine x-coordinate.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fmodel_unexpanded</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">layout_x</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">layout_y</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Wind turbine coordinate information.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            np.array: Wind turbine y-coordinate.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fmodel_unexpanded</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">layout_y</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">wind_directions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Wind direction information.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            np.array: Wind direction.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fmodel_unexpanded</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">wind_directions</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">wind_speeds</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Wind speed information.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            np.array: Wind speed.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fmodel_unexpanded</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">wind_speeds</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">turbulence_intensities</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Turbulence intensity information.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            np.array: Turbulence intensity.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fmodel_unexpanded</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">turbulence_intensities</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">n_findex</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Number of unique wind conditions.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            int: Number of unique wind conditions.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fmodel_unexpanded</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">n_findex</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">n_turbines</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Number of turbines in the wind farm.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            int: Number of turbines in the wind farm.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fmodel_unexpanded</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">n_turbines</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">reference_wind_height</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Reference wind height.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            float: Reference wind height.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fmodel_unexpanded</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">reference_wind_height</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">core</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Returns the core of the unexpanded model.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            Floris: The core of the unexpanded model.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fmodel_unexpanded</span><span class="o">.</span><span class="n">core</span>
 
     <span class="nd">@property</span>
@@ -2256,11 +2237,11 @@ window.runMermaid = runMermaid;</script>
     <span class="n">n_sample_points</span><span class="p">,</span>
     <span class="n">n_turbines</span><span class="p">,</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Alias for map_turbine_values_uncertain.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># Deprecation warning</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;map_turbine_powers_uncertain is deprecated, use map_turbine_values_uncertain instead.&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"map_turbine_powers_uncertain is deprecated, use map_turbine_values_uncertain instead."</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">map_turbine_values_uncertain</span><span class="p">(</span>
         <span class="n">unique_turbine_values</span><span class="o">=</span><span class="n">unique_turbine_powers</span><span class="p">,</span>
         <span class="n">map_to_expanded_inputs</span><span class="o">=</span><span class="n">map_to_expanded_inputs</span><span class="p">,</span>
@@ -2281,7 +2262,7 @@ window.runMermaid = runMermaid;</script>
     <span class="n">n_sample_points</span><span class="p">,</span>
     <span class="n">n_turbines</span><span class="p">,</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculates values at each turbine in the wind farm based on uncertainty weights.</span>
+<span class="w">    </span><span class="sd">"""Calculates values at each turbine in the wind farm based on uncertainty weights.</span>
 
 <span class="sd">    This function calculates the values (e.g. power, velocity) at each turbine in the wind farm,</span>
 <span class="sd">    considering the underlying turbine values and applying a weighted sum to handle uncertainty.</span>
@@ -2299,7 +2280,7 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">    Returns:</span>
 <span class="sd">        NDArrayFloat: An array containing the values at each turbine for each findex.</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="c1"># Expand back to the expanded value</span>
     <span class="n">expanded_turbine_values</span> <span class="o">=</span> <span class="n">unique_turbine_values</span><span class="p">[</span><span class="n">map_to_expanded_inputs</span><span class="p">]</span>
@@ -2311,7 +2292,7 @@ window.runMermaid = runMermaid;</script>
     <span class="n">blocks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
         <span class="n">expanded_turbine_values</span><span class="p">,</span>
         <span class="p">(</span><span class="n">n_unexpanded</span><span class="p">,</span> <span class="n">n_sample_points</span><span class="p">,</span> <span class="n">n_turbines</span><span class="p">),</span>
-        <span class="n">order</span><span class="o">=</span><span class="s2">&quot;F&quot;</span><span class="p">,</span>
+        <span class="n">order</span><span class="o">=</span><span class="s2">"F"</span><span class="p">,</span>
     <span class="p">)</span>
 
     <span class="c1"># Multiply each block by the corresponding weight</span>
@@ -2327,13 +2308,13 @@ window.runMermaid = runMermaid;</script>
 <div class="viewcode-block" id="ApproxFlorisModel">
 <a class="viewcode-back" href="../../_autosummary/floris.uncertain_floris_model.html#floris.uncertain_floris_model.ApproxFlorisModel">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ApproxFlorisModel</span><span class="p">(</span><span class="n">UncertainFlorisModel</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    The ApproxFlorisModel overloads the UncertainFlorisModel with the special case that</span>
 <span class="sd">    the wd_sample_points = [0].  This is a special case where no uncertainty is added</span>
 <span class="sd">    but the resolution of the values wind direction, wind speed etc are still reduced</span>
 <span class="sd">    by the specified resolution.  This allows for cases to be reused and a faster approximate</span>
 <span class="sd">    result computed</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -2369,17 +2350,17 @@ window.runMermaid = runMermaid;</script>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">secondary_init_kwargs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        ApproxFlorisModel secondary keyword arguments (after configuration).</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="p">{</span>
-            <span class="s2">&quot;wd_resolution&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">wd_resolution</span><span class="p">,</span>
-            <span class="s2">&quot;ws_resolution&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ws_resolution</span><span class="p">,</span>
-            <span class="s2">&quot;ti_resolution&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ti_resolution</span><span class="p">,</span>
-            <span class="s2">&quot;yaw_resolution&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">yaw_resolution</span><span class="p">,</span>
-            <span class="s2">&quot;power_setpoint_resolution&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">power_setpoint_resolution</span><span class="p">,</span>
-            <span class="s2">&quot;awc_amplitude_resolution&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">awc_amplitude_resolution</span><span class="p">,</span>
-            <span class="s2">&quot;verbose&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">,</span>
+            <span class="s2">"wd_resolution"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">wd_resolution</span><span class="p">,</span>
+            <span class="s2">"ws_resolution"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ws_resolution</span><span class="p">,</span>
+            <span class="s2">"ti_resolution"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ti_resolution</span><span class="p">,</span>
+            <span class="s2">"yaw_resolution"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">yaw_resolution</span><span class="p">,</span>
+            <span class="s2">"power_setpoint_resolution"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">power_setpoint_resolution</span><span class="p">,</span>
+            <span class="s2">"awc_amplitude_resolution"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">awc_amplitude_resolution</span><span class="p">,</span>
+            <span class="s2">"verbose"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">,</span>
         <span class="p">}</span></div>
 
 </pre></div>
@@ -2444,8 +2425,8 @@ By National Laboratory of the Rockies
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
-<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb"></script>
 
   <footer class="bd-footer">
   </footer>

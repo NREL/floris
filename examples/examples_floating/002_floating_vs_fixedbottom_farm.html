@@ -27,8 +27,8 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
-<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+  <link href="../../_static/styles/theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
@@ -39,10 +39,10 @@
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- So that users can add custom icons -->
-  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="../../_static/scripts/fontawesome.js?digest=55c26ed414f5f8a31ebb"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
-<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
     <script src="../../_static/documentation_options.js?v=30a733bc"></script>
     <script src="../../_static/doctools.js?v=9a2dae69"></script>
@@ -60,6 +60,12 @@
     <script>
                 window.dataLayer = window.dataLayer || [];
                 function gtag(){ dataLayer.push(arguments); }
+                gtag('consent', 'default', {
+                    'ad_storage': 'denied',
+                    'ad_user_data': 'denied',
+                    'ad_personalization': 'denied',
+                    'analytics_storage': 'denied'
+                });
                 gtag('js', new Date());
                 gtag('config', 'G-JV2SK7CNPR');
             </script>
@@ -69,11 +75,18 @@
     <script>
                 window.dataLayer = window.dataLayer || [];
                 function gtag(){ dataLayer.push(arguments); }
+                gtag('consent', 'default', {
+                    'ad_storage': 'denied',
+                    'ad_user_data': 'denied',
+                    'ad_personalization': 'denied',
+                    'analytics_storage': 'denied'
+                });
                 gtag('js', new Date());
                 gtag('config', 'G-JV2SK7CNPR');
             </script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'examples/examples_floating/002_floating_vs_fixedbottom_farm';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="Example: Tilt-driven vertical wake deflection" href="003_tilt_driven_vertical_wake_deflection.html" />
@@ -81,20 +94,26 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="python"/>
   <meta name="docsearch:version" content="" />
+  
+    
+    <script src="../../_static/searchtools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script src="../../searchindex.js"></script>
+  
   </head>
-  
-  
-  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
-
+  <body data-default-mode="">
   
   
   <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
   
   <div id="pst-scroll-pixel-helper"></div>
   
   <button type="button" class="btn rounded-pill" id="pst-back-to-top">
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
-
+  
+  
+  
   
   <dialog id="pst-search-dialog">
     
@@ -120,7 +139,47 @@
 </div>
 
   
-    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
     </header>
   
 
@@ -646,7 +705,7 @@
 <h1>Example: Floating vs fixed-bottom farm<a class="headerlink" href="#example-floating-vs-fixed-bottom-farm" title="Link to this heading">#</a></h1>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Example: Floating vs fixed-bottom farm</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="sd">"""Example: Floating vs fixed-bottom farm</span>
 <span class="sd">This example demonstrates the impact of floating on turbine power and thrust</span>
 <span class="sd">and wake behavior. A floating turbine in FLORIS is defined by including a</span>
 <span class="sd">`floating_tilt_table` in the turbine input yaml which sets the steady tilt</span>
@@ -667,7 +726,7 @@
 
 <span class="sd">fmodel_fixed: Fixed bottom turbine (no tilt variation with wind speed)</span>
 <span class="sd">fmodel_floating: Floating turbine (tilt varies with wind speed)</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
@@ -678,8 +737,8 @@
 
 
 <span class="c1"># Declare the Floris Interface for fixed bottom, provide layout</span>
-<span class="n">fmodel_fixed</span> <span class="o">=</span> <span class="n">FlorisModel</span><span class="p">(</span><span class="s2">&quot;../inputs_floating/emgauss_fixed.yaml&quot;</span><span class="p">)</span>
-<span class="n">fmodel_floating</span> <span class="o">=</span> <span class="n">FlorisModel</span><span class="p">(</span><span class="s2">&quot;../inputs_floating/emgauss_floating.yaml&quot;</span><span class="p">)</span>
+<span class="n">fmodel_fixed</span> <span class="o">=</span> <span class="n">FlorisModel</span><span class="p">(</span><span class="s2">"../inputs_floating/emgauss_fixed.yaml"</span><span class="p">)</span>
+<span class="n">fmodel_floating</span> <span class="o">=</span> <span class="n">FlorisModel</span><span class="p">(</span><span class="s2">"../inputs_floating/emgauss_floating.yaml"</span><span class="p">)</span>
 <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="o">*</span><span class="mf">630.</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="o">*</span><span class="mf">630.</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
 <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
 <span class="n">y</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
@@ -703,22 +762,22 @@
 
 <span class="c1"># Show the power differences</span>
 <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="s1">&#39;equal&#39;</span><span class="p">,</span> <span class="n">adjustable</span><span class="o">=</span><span class="s1">&#39;box&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="s1">'equal'</span><span class="p">,</span> <span class="n">adjustable</span><span class="o">=</span><span class="s1">'box'</span><span class="p">)</span>
 <span class="n">sc</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>
     <span class="n">x</span><span class="p">,</span>
     <span class="n">y</span><span class="p">,</span>
     <span class="n">c</span><span class="o">=</span><span class="n">power_difference</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span><span class="o">/</span><span class="mi">1000</span><span class="p">,</span>
-    <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;PuOr&quot;</span><span class="p">,</span>
+    <span class="n">cmap</span><span class="o">=</span><span class="s2">"PuOr"</span><span class="p">,</span>
     <span class="n">vmin</span><span class="o">=-</span><span class="mi">30</span><span class="p">,</span>
     <span class="n">vmax</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
     <span class="n">s</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;x coordinate [m]&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;y coordinate [m]&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Power increase due to floating for each turbine.&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">sc</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Increase (kW)&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"x coordinate [m]"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"y coordinate [m]"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"Power increase due to floating for each turbine."</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">sc</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Increase (kW)"</span><span class="p">)</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Power increase from floating over farm (10m/s, 270deg winds): </span><span class="si">{0:.2f}</span><span class="s2"> kW&quot;</span><span class="o">.</span>\
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Power increase from floating over farm (10m/s, 270deg winds): </span><span class="si">{0:.2f}</span><span class="s2"> kW"</span><span class="o">.</span>\
     <span class="nb">format</span><span class="p">(</span><span class="n">power_difference</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">/</span><span class="mi">1000</span><span class="p">))</span>
 
 <span class="c1"># Visualize flows (see also 02_visualizations.py)</span>
@@ -743,20 +802,20 @@
 <span class="c1"># Create the plots</span>
 <span class="n">fig</span><span class="p">,</span> <span class="n">ax_list</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
 <span class="n">ax_list</span> <span class="o">=</span> <span class="n">ax_list</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
-<span class="n">flowviz</span><span class="o">.</span><span class="n">visualize_cut_plane</span><span class="p">(</span><span class="n">horizontal_planes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax_list</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Horizontal&quot;</span><span class="p">)</span>
-<span class="n">flowviz</span><span class="o">.</span><span class="n">visualize_cut_plane</span><span class="p">(</span><span class="n">y_planes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax_list</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Streamwise profile&quot;</span><span class="p">)</span>
-<span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s2">&quot;Fixed-bottom farm&quot;</span><span class="p">)</span>
+<span class="n">flowviz</span><span class="o">.</span><span class="n">visualize_cut_plane</span><span class="p">(</span><span class="n">horizontal_planes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax_list</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">title</span><span class="o">=</span><span class="s2">"Horizontal"</span><span class="p">)</span>
+<span class="n">flowviz</span><span class="o">.</span><span class="n">visualize_cut_plane</span><span class="p">(</span><span class="n">y_planes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax_list</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">title</span><span class="o">=</span><span class="s2">"Streamwise profile"</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s2">"Fixed-bottom farm"</span><span class="p">)</span>
 
 <span class="n">fig</span><span class="p">,</span> <span class="n">ax_list</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
 <span class="n">ax_list</span> <span class="o">=</span> <span class="n">ax_list</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
-<span class="n">flowviz</span><span class="o">.</span><span class="n">visualize_cut_plane</span><span class="p">(</span><span class="n">horizontal_planes</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax_list</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Horizontal&quot;</span><span class="p">)</span>
-<span class="n">flowviz</span><span class="o">.</span><span class="n">visualize_cut_plane</span><span class="p">(</span><span class="n">y_planes</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax_list</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Streamwise profile&quot;</span><span class="p">)</span>
-<span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s2">&quot;Floating farm&quot;</span><span class="p">)</span>
+<span class="n">flowviz</span><span class="o">.</span><span class="n">visualize_cut_plane</span><span class="p">(</span><span class="n">horizontal_planes</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax_list</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">title</span><span class="o">=</span><span class="s2">"Horizontal"</span><span class="p">)</span>
+<span class="n">flowviz</span><span class="o">.</span><span class="n">visualize_cut_plane</span><span class="p">(</span><span class="n">y_planes</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax_list</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">title</span><span class="o">=</span><span class="s2">"Streamwise profile"</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s2">"Floating farm"</span><span class="p">)</span>
 
 <span class="c1"># Compute AEP</span>
 <span class="c1"># Load the wind rose from csv as in example 003</span>
 <span class="n">wind_rose</span> <span class="o">=</span> <span class="n">WindRose</span><span class="o">.</span><span class="n">read_csv_long</span><span class="p">(</span>
-    <span class="s2">&quot;../inputs/wind_rose.csv&quot;</span><span class="p">,</span> <span class="n">wd_col</span><span class="o">=</span><span class="s2">&quot;wd&quot;</span><span class="p">,</span> <span class="n">ws_col</span><span class="o">=</span><span class="s2">&quot;ws&quot;</span><span class="p">,</span> <span class="n">freq_col</span><span class="o">=</span><span class="s2">&quot;freq_val&quot;</span><span class="p">,</span> <span class="n">ti_col_or_value</span><span class="o">=</span><span class="mf">0.06</span>
+    <span class="s2">"../inputs/wind_rose.csv"</span><span class="p">,</span> <span class="n">wd_col</span><span class="o">=</span><span class="s2">"wd"</span><span class="p">,</span> <span class="n">ws_col</span><span class="o">=</span><span class="s2">"ws"</span><span class="p">,</span> <span class="n">freq_col</span><span class="o">=</span><span class="s2">"freq_val"</span><span class="p">,</span> <span class="n">ti_col_or_value</span><span class="o">=</span><span class="mf">0.06</span>
 <span class="p">)</span>
 
 
@@ -769,16 +828,16 @@
 <span class="c1"># Compute the AEP</span>
 <span class="n">aep_fixed</span> <span class="o">=</span> <span class="n">fmodel_fixed</span><span class="o">.</span><span class="n">get_farm_AEP</span><span class="p">()</span>
 <span class="n">aep_floating</span> <span class="o">=</span> <span class="n">fmodel_floating</span><span class="o">.</span><span class="n">get_farm_AEP</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Farm AEP (fixed bottom): </span><span class="si">{:.3f}</span><span class="s2"> GWh&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">aep_fixed</span> <span class="o">/</span> <span class="mf">1.0e9</span><span class="p">))</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Farm AEP (floating): </span><span class="si">{:.3f}</span><span class="s2"> GWh&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">aep_floating</span> <span class="o">/</span> <span class="mf">1.0e9</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Farm AEP (fixed bottom): </span><span class="si">{:.3f}</span><span class="s2"> GWh"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">aep_fixed</span> <span class="o">/</span> <span class="mf">1.0e9</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Farm AEP (floating): </span><span class="si">{:.3f}</span><span class="s2"> GWh"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">aep_floating</span> <span class="o">/</span> <span class="mf">1.0e9</span><span class="p">))</span>
 <span class="nb">print</span><span class="p">(</span>
-    <span class="s2">&quot;Floating AEP increase: </span><span class="si">{0:.3f}</span><span class="s2"> GWh (</span><span class="si">{1:.2f}</span><span class="s2">%)&quot;</span><span class="o">.</span>\
+    <span class="s2">"Floating AEP increase: </span><span class="si">{0:.3f}</span><span class="s2"> GWh (</span><span class="si">{1:.2f}</span><span class="s2">%)"</span><span class="o">.</span>\
     <span class="nb">format</span><span class="p">((</span><span class="n">aep_floating</span> <span class="o">-</span> <span class="n">aep_fixed</span><span class="p">)</span> <span class="o">/</span> <span class="mf">1.0e9</span><span class="p">,</span> <span class="p">(</span><span class="n">aep_floating</span> <span class="o">-</span> <span class="n">aep_fixed</span><span class="p">)</span><span class="o">/</span><span class="n">aep_fixed</span><span class="o">*</span><span class="mi">100</span><span class="p">)</span>
 <span class="p">)</span>
 
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
-<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">'ignore'</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -791,9 +850,9 @@ Farm AEP (floating): 357.747 GWh
 Floating AEP increase: -1.114 GWh (-0.31%)
 </pre></div>
 </div>
-<img alt="../../_images/35a6e2ba0ab085fb5572655a20ea076a78e58f61760756b4bf0da3e5d339b2c6.png" src="../../_images/35a6e2ba0ab085fb5572655a20ea076a78e58f61760756b4bf0da3e5d339b2c6.png" />
-<img alt="../../_images/1c3f09d6614be121432299abb9c7dfd135e079618538d157fe8e2b22d05f2d27.png" src="../../_images/1c3f09d6614be121432299abb9c7dfd135e079618538d157fe8e2b22d05f2d27.png" />
-<img alt="../../_images/f3ac823b1fbf3cc99eeafb583b32b496b35cde99229ebcaa701c173aa490518f.png" src="../../_images/f3ac823b1fbf3cc99eeafb583b32b496b35cde99229ebcaa701c173aa490518f.png" />
+<img alt="../../_images/18df756de9efd4a4068f7312805f9b67efe8dd839a171926ac3a0247466085b7.png" src="../../_images/18df756de9efd4a4068f7312805f9b67efe8dd839a171926ac3a0247466085b7.png" />
+<img alt="../../_images/c249be384a252b7e826ec981e19997625acb6281685368ef4701b5b3231e37cc.png" src="../../_images/c249be384a252b7e826ec981e19997625acb6281685368ef4701b5b3231e37cc.png" />
+<img alt="../../_images/604a487dfc74bec28669e58a6e822dd3991b95083c3ef4adb01fb9f7557f1459.png" src="../../_images/604a487dfc74bec28669e58a6e822dd3991b95083c3ef4adb01fb9f7557f1459.png" />
 </div>
 </div>
 </section>
@@ -896,8 +955,8 @@ By National Laboratory of the Rockies
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
-<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb"></script>
 
   <footer class="bd-footer">
   </footer>

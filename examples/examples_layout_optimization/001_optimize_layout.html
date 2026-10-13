@@ -27,8 +27,8 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
-<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+  <link href="../../_static/styles/theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
@@ -39,10 +39,10 @@
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- So that users can add custom icons -->
-  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="../../_static/scripts/fontawesome.js?digest=55c26ed414f5f8a31ebb"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
-<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
     <script src="../../_static/documentation_options.js?v=30a733bc"></script>
     <script src="../../_static/doctools.js?v=9a2dae69"></script>
@@ -60,6 +60,12 @@
     <script>
                 window.dataLayer = window.dataLayer || [];
                 function gtag(){ dataLayer.push(arguments); }
+                gtag('consent', 'default', {
+                    'ad_storage': 'denied',
+                    'ad_user_data': 'denied',
+                    'ad_personalization': 'denied',
+                    'analytics_storage': 'denied'
+                });
                 gtag('js', new Date());
                 gtag('config', 'G-JV2SK7CNPR');
             </script>
@@ -69,11 +75,18 @@
     <script>
                 window.dataLayer = window.dataLayer || [];
                 function gtag(){ dataLayer.push(arguments); }
+                gtag('consent', 'default', {
+                    'ad_storage': 'denied',
+                    'ad_user_data': 'denied',
+                    'ad_personalization': 'denied',
+                    'analytics_storage': 'denied'
+                });
                 gtag('js', new Date());
                 gtag('config', 'G-JV2SK7CNPR');
             </script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'examples/examples_layout_optimization/001_optimize_layout';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="Example: Layout optimization with heterogeneous inflow" href="002_optimize_layout_with_heterogeneity.html" />
@@ -81,20 +94,26 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="python"/>
   <meta name="docsearch:version" content="" />
+  
+    
+    <script src="../../_static/searchtools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script src="../../searchindex.js"></script>
+  
   </head>
-  
-  
-  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
-
+  <body data-default-mode="">
   
   
   <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
   
   <div id="pst-scroll-pixel-helper"></div>
   
   <button type="button" class="btn rounded-pill" id="pst-back-to-top">
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
-
+  
+  
+  
   
   <dialog id="pst-search-dialog">
     
@@ -120,7 +139,47 @@
 </div>
 
   
-    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
     </header>
   
 
@@ -646,7 +705,7 @@
 <h1>Example: Optimize Layout<a class="headerlink" href="#example-optimize-layout" title="Link to this heading">#</a></h1>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Example: Optimize Layout</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="sd">"""Example: Optimize Layout</span>
 <span class="sd">This example shows a simple layout optimization using the python module Scipy, optimizing for both</span>
 <span class="sd">annual energy production (AEP) and annual value production (AVP).</span>
 
@@ -666,7 +725,7 @@
 <span class="sd">close in the y direction to avoid wake interactions for northerly and southerly winds. Although the</span>
 <span class="sd">layout results in large wake losses when the wind is from the east or west, these losses do not</span>
 <span class="sd">significantly impact the objective function because of the low value for those wind directions.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
@@ -682,15 +741,15 @@
 
 <span class="c1"># Define scipy optimization parameters</span>
 <span class="n">opt_options</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;maxiter&quot;</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span>
-    <span class="s2">&quot;disp&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-    <span class="s2">&quot;iprint&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
-    <span class="s2">&quot;ftol&quot;</span><span class="p">:</span> <span class="mf">1e-12</span><span class="p">,</span>
-    <span class="s2">&quot;eps&quot;</span><span class="p">:</span> <span class="mf">0.05</span><span class="p">,</span>
+    <span class="s2">"maxiter"</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span>
+    <span class="s2">"disp"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="s2">"iprint"</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="s2">"ftol"</span><span class="p">:</span> <span class="mf">1e-12</span><span class="p">,</span>
+    <span class="s2">"eps"</span><span class="p">:</span> <span class="mf">0.05</span><span class="p">,</span>
 <span class="p">}</span>
 
 <span class="c1"># Initialize the FLORIS interface fi</span>
-<span class="n">fmodel</span> <span class="o">=</span> <span class="n">FlorisModel</span><span class="p">(</span><span class="s1">&#39;../inputs/gch.yaml&#39;</span><span class="p">)</span>
+<span class="n">fmodel</span> <span class="o">=</span> <span class="n">FlorisModel</span><span class="p">(</span><span class="s1">'../inputs/gch.yaml'</span><span class="p">)</span>
 
 <span class="c1"># Setup 72 wind directions with a 1 wind speed and frequency distribution</span>
 <span class="n">wind_directions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">360.0</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">)</span>
@@ -737,7 +796,7 @@
 <span class="n">sol</span> <span class="o">=</span> <span class="n">layout_opt</span><span class="o">.</span><span class="n">optimize</span><span class="p">()</span>
 
 <span class="c1"># Get the resulting improvement in AEP</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;... calculating improvement in AEP&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'... calculating improvement in AEP'</span><span class="p">)</span>
 <span class="n">fmodel</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 <span class="n">base_aep</span> <span class="o">=</span> <span class="n">fmodel</span><span class="o">.</span><span class="n">get_farm_AEP</span><span class="p">()</span> <span class="o">/</span> <span class="mf">1e6</span>
 <span class="n">fmodel</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">layout_x</span><span class="o">=</span><span class="n">sol</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">layout_y</span><span class="o">=</span><span class="n">sol</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
@@ -747,10 +806,10 @@
 <span class="n">percent_gain</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="p">(</span><span class="n">opt_aep</span> <span class="o">-</span> <span class="n">base_aep</span><span class="p">)</span> <span class="o">/</span> <span class="n">base_aep</span>
 
 <span class="c1"># Print and plot the results</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Optimal layout: </span><span class="si">{</span><span class="n">sol</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Optimal layout: </span><span class="si">{</span><span class="n">sol</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span>
-    <span class="sa">f</span><span class="s1">&#39;Optimal layout improves AEP by </span><span class="si">{</span><span class="n">percent_gain</span><span class="si">:</span><span class="s1">.1f</span><span class="si">}</span><span class="s1">% &#39;</span>
-    <span class="sa">f</span><span class="s1">&#39;from </span><span class="si">{</span><span class="n">base_aep</span><span class="si">:</span><span class="s1">.1f</span><span class="si">}</span><span class="s1"> MWh to </span><span class="si">{</span><span class="n">opt_aep</span><span class="si">:</span><span class="s1">.1f</span><span class="si">}</span><span class="s1"> MWh&#39;</span>
+    <span class="sa">f</span><span class="s1">'Optimal layout improves AEP by </span><span class="si">{</span><span class="n">percent_gain</span><span class="si">:</span><span class="s1">.1f</span><span class="si">}</span><span class="s1">% '</span>
+    <span class="sa">f</span><span class="s1">'from </span><span class="si">{</span><span class="n">base_aep</span><span class="si">:</span><span class="s1">.1f</span><span class="si">}</span><span class="s1"> MWh to </span><span class="si">{</span><span class="n">opt_aep</span><span class="si">:</span><span class="s1">.1f</span><span class="si">}</span><span class="s1"> MWh'</span>
 <span class="p">)</span>
 <span class="n">layout_opt</span><span class="o">.</span><span class="n">plot_layout_opt_results</span><span class="p">()</span>
 
@@ -765,7 +824,7 @@
 <span class="n">sol</span> <span class="o">=</span> <span class="n">layout_opt</span><span class="o">.</span><span class="n">optimize</span><span class="p">()</span>
 
 <span class="c1"># Get the resulting improvement in AVP</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;... calculating improvement in annual value production (AVP)&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'... calculating improvement in annual value production (AVP)'</span><span class="p">)</span>
 <span class="n">fmodel</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 <span class="n">base_avp</span> <span class="o">=</span> <span class="n">fmodel</span><span class="o">.</span><span class="n">get_farm_AVP</span><span class="p">()</span> <span class="o">/</span> <span class="mf">1e6</span>
 <span class="n">fmodel</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">layout_x</span><span class="o">=</span><span class="n">sol</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">layout_y</span><span class="o">=</span><span class="n">sol</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
@@ -775,16 +834,16 @@
 <span class="n">percent_gain</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="p">(</span><span class="n">opt_avp</span> <span class="o">-</span> <span class="n">base_avp</span><span class="p">)</span> <span class="o">/</span> <span class="n">base_avp</span>
 
 <span class="c1"># Print and plot the results</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Optimal layout: </span><span class="si">{</span><span class="n">sol</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Optimal layout: </span><span class="si">{</span><span class="n">sol</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span>
-    <span class="sa">f</span><span class="s1">&#39;Optimal layout improves AVP by </span><span class="si">{</span><span class="n">percent_gain</span><span class="si">:</span><span class="s1">.1f</span><span class="si">}</span><span class="s1">% &#39;</span>
-    <span class="sa">f</span><span class="s1">&#39;from </span><span class="si">{</span><span class="n">base_avp</span><span class="si">:</span><span class="s1">.1f</span><span class="si">}</span><span class="s1"> dollars to </span><span class="si">{</span><span class="n">opt_avp</span><span class="si">:</span><span class="s1">.1f</span><span class="si">}</span><span class="s1"> dollars&#39;</span>
+    <span class="sa">f</span><span class="s1">'Optimal layout improves AVP by </span><span class="si">{</span><span class="n">percent_gain</span><span class="si">:</span><span class="s1">.1f</span><span class="si">}</span><span class="s1">% '</span>
+    <span class="sa">f</span><span class="s1">'from </span><span class="si">{</span><span class="n">base_avp</span><span class="si">:</span><span class="s1">.1f</span><span class="si">}</span><span class="s1"> dollars to </span><span class="si">{</span><span class="n">opt_avp</span><span class="si">:</span><span class="s1">.1f</span><span class="si">}</span><span class="s1"> dollars'</span>
 <span class="p">)</span>
 <span class="n">layout_opt</span><span class="o">.</span><span class="n">plot_layout_opt_results</span><span class="p">()</span>
 
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
-<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">'ignore'</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -963,8 +1022,8 @@ Optimal layout: [[np.float64(4.349185250586373e-14), np.float64(219.013730415521
 Optimal layout improves AVP by 25.2% from 1527164.8 dollars to 1912695.1 dollars
 </pre></div>
 </div>
-<img alt="../../_images/fdb1b99d28a0abd57b42f7900f47fe945aecd3b646bdcc2cd0ccc3be0037053f.png" src="../../_images/fdb1b99d28a0abd57b42f7900f47fe945aecd3b646bdcc2cd0ccc3be0037053f.png" />
-<img alt="../../_images/6a1b981964b7538b566fd6e18c7d2990c467681ab7879248223b2c10700670e7.png" src="../../_images/6a1b981964b7538b566fd6e18c7d2990c467681ab7879248223b2c10700670e7.png" />
+<img alt="../../_images/6ea0157f7d532e74d1fb6910aa211b87e6f3d0406ea95c0078f1765c59f1cb42.png" src="../../_images/6ea0157f7d532e74d1fb6910aa211b87e6f3d0406ea95c0078f1765c59f1cb42.png" />
+<img alt="../../_images/937d5b8f4e6834e1b368943f8009a5c4cae3285bbe10c606cd82ce14bd84ab11.png" src="../../_images/937d5b8f4e6834e1b368943f8009a5c4cae3285bbe10c606cd82ce14bd84ab11.png" />
 </div>
 </div>
 </section>
@@ -1067,8 +1126,8 @@ By National Laboratory of the Rockies
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
-<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb"></script>
 
   <footer class="bd-footer">
   </footer>

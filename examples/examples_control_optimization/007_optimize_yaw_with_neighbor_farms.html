@@ -27,8 +27,8 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
-<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+  <link href="../../_static/styles/theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
@@ -39,10 +39,10 @@
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- So that users can add custom icons -->
-  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="../../_static/scripts/fontawesome.js?digest=55c26ed414f5f8a31ebb"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
-<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
     <script src="../../_static/documentation_options.js?v=30a733bc"></script>
     <script src="../../_static/doctools.js?v=9a2dae69"></script>
@@ -60,6 +60,12 @@
     <script>
                 window.dataLayer = window.dataLayer || [];
                 function gtag(){ dataLayer.push(arguments); }
+                gtag('consent', 'default', {
+                    'ad_storage': 'denied',
+                    'ad_user_data': 'denied',
+                    'ad_personalization': 'denied',
+                    'analytics_storage': 'denied'
+                });
                 gtag('js', new Date());
                 gtag('config', 'G-JV2SK7CNPR');
             </script>
@@ -69,11 +75,18 @@
     <script>
                 window.dataLayer = window.dataLayer || [];
                 function gtag(){ dataLayer.push(arguments); }
+                gtag('consent', 'default', {
+                    'ad_storage': 'denied',
+                    'ad_user_data': 'denied',
+                    'ad_personalization': 'denied',
+                    'analytics_storage': 'denied'
+                });
                 gtag('js', new Date());
                 gtag('config', 'G-JV2SK7CNPR');
             </script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'examples/examples_control_optimization/007_optimize_yaw_with_neighbor_farms';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="Example: Optimizing yaw angles with disabled turbines" href="008_optimize_yaw_with_disabled_turbines.html" />
@@ -81,20 +94,26 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="python"/>
   <meta name="docsearch:version" content="" />
+  
+    
+    <script src="../../_static/searchtools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script src="../../searchindex.js"></script>
+  
   </head>
-  
-  
-  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
-
+  <body data-default-mode="">
   
   
   <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
   
   <div id="pst-scroll-pixel-helper"></div>
   
   <button type="button" class="btn rounded-pill" id="pst-back-to-top">
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
-
+  
+  
+  
   
   <dialog id="pst-search-dialog">
     
@@ -120,7 +139,47 @@
 </div>
 
   
-    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
     </header>
   
 
@@ -646,7 +705,7 @@
 <h1>Example: Optimize yaw with neighbor farm<a class="headerlink" href="#example-optimize-yaw-with-neighbor-farm" title="Link to this heading">#</a></h1>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Example: Optimize yaw with neighbor farm</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="sd">"""Example: Optimize yaw with neighbor farm</span>
 
 <span class="sd">This example demonstrates how to optimize the yaw angles of a subset of turbines</span>
 <span class="sd">in order to maximize the annual energy production (AEP) of a wind farm.  In this</span>
@@ -658,7 +717,7 @@
 <span class="sd">from FLORIS for the optimization.  The AEP is then calculated for the optimized</span>
 <span class="sd">yaw angles (accounting for and not accounting for the neighboring farm) and compared</span>
 <span class="sd">to the baseline AEP.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
@@ -673,11 +732,11 @@
 
 <span class="c1"># Load the wind rose from csv</span>
 <span class="n">wind_rose</span> <span class="o">=</span> <span class="n">WindRose</span><span class="o">.</span><span class="n">read_csv_long</span><span class="p">(</span>
-    <span class="s2">&quot;../inputs/wind_rose.csv&quot;</span><span class="p">,</span> <span class="n">wd_col</span><span class="o">=</span><span class="s2">&quot;wd&quot;</span><span class="p">,</span> <span class="n">ws_col</span><span class="o">=</span><span class="s2">&quot;ws&quot;</span><span class="p">,</span> <span class="n">freq_col</span><span class="o">=</span><span class="s2">&quot;freq_val&quot;</span><span class="p">,</span> <span class="n">ti_col_or_value</span><span class="o">=</span><span class="mf">0.06</span>
+    <span class="s2">"../inputs/wind_rose.csv"</span><span class="p">,</span> <span class="n">wd_col</span><span class="o">=</span><span class="s2">"wd"</span><span class="p">,</span> <span class="n">ws_col</span><span class="o">=</span><span class="s2">"ws"</span><span class="p">,</span> <span class="n">freq_col</span><span class="o">=</span><span class="s2">"freq_val"</span><span class="p">,</span> <span class="n">ti_col_or_value</span><span class="o">=</span><span class="mf">0.06</span>
 <span class="p">)</span>
 
 <span class="c1"># Load FLORIS</span>
-<span class="n">fmodel</span> <span class="o">=</span> <span class="n">FlorisModel</span><span class="p">(</span><span class="s2">&quot;../inputs/gch.yaml&quot;</span><span class="p">)</span>
+<span class="n">fmodel</span> <span class="o">=</span> <span class="n">FlorisModel</span><span class="p">(</span><span class="s2">"../inputs/gch.yaml"</span><span class="p">)</span>
 
 <span class="c1"># Specify a layout of turbines in which only the first 10 turbines are part</span>
 <span class="c1"># of the farm to be optimized, while the others belong to a neighboring farm</span>
@@ -763,19 +822,19 @@
 
 <span class="c1"># And visualize the floris layout</span>
 <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">turbine_weights</span> <span class="o">==</span> <span class="mi">0</span><span class="p">],</span> <span class="n">Y</span><span class="p">[</span><span class="n">turbine_weights</span> <span class="o">==</span> <span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;ro&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Neighboring farms&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">turbine_weights</span> <span class="o">==</span> <span class="mi">1</span><span class="p">],</span> <span class="n">Y</span><span class="p">[</span><span class="n">turbine_weights</span> <span class="o">==</span> <span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;go&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Farm subset&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">turbine_weights</span> <span class="o">==</span> <span class="mi">0</span><span class="p">],</span> <span class="n">Y</span><span class="p">[</span><span class="n">turbine_weights</span> <span class="o">==</span> <span class="mi">0</span><span class="p">],</span> <span class="s2">"ro"</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Neighboring farms"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">turbine_weights</span> <span class="o">==</span> <span class="mi">1</span><span class="p">],</span> <span class="n">Y</span><span class="p">[</span><span class="n">turbine_weights</span> <span class="o">==</span> <span class="mi">1</span><span class="p">],</span> <span class="s2">"go"</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Farm subset"</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;x coordinate (m)&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;y coordinate (m)&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"x coordinate (m)"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"y coordinate (m)"</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
 
 <span class="c1"># Indicate turbine 0 in the plot above with an annotation arrow</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span>
-    <span class="s2">&quot;Turbine 0&quot;</span><span class="p">,</span>
+    <span class="s2">"Turbine 0"</span><span class="p">,</span>
     <span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">Y</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
     <span class="n">xytext</span><span class="o">=</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">100</span><span class="p">,</span> <span class="n">Y</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">100</span><span class="p">),</span>
-    <span class="n">arrowprops</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;facecolor&quot;</span><span class="p">:</span> <span class="s2">&quot;black&quot;</span><span class="p">,</span> <span class="s2">&quot;shrink&quot;</span><span class="p">:</span> <span class="mf">0.05</span><span class="p">},</span>
+    <span class="n">arrowprops</span><span class="o">=</span><span class="p">{</span><span class="s2">"facecolor"</span><span class="p">:</span> <span class="s2">"black"</span><span class="p">,</span> <span class="s2">"shrink"</span><span class="p">:</span> <span class="mf">0.05</span><span class="p">},</span>
 <span class="p">)</span>
 
 <span class="c1"># Optimize the yaw angles.  This could be done for every wind direction and wind speed</span>
@@ -789,7 +848,7 @@
 <span class="c1"># CASE 1: Optimize the yaw angles of the included farm while accounting for the</span>
 <span class="c1"># wake effects of the neighboring farm by using turbine weights</span>
 
-<span class="c1"># It&#39;s important here to do two things:</span>
+<span class="c1"># It's important here to do two things:</span>
 <span class="c1"># 1. Exclude the downstream turbines from the power optimization goal via</span>
 <span class="c1">#    turbine_weights</span>
 <span class="c1"># 2. Prevent the optimizer from changing the yaw angles of the turbines in the</span>
@@ -852,7 +911,7 @@
 
 <span class="c1"># Grab wind speeds and wind directions from the fmodel.  Note that we do this because the</span>
 <span class="c1"># yaw angles will need to be n_findex long, and accounting for the fact that some wind</span>
-<span class="c1"># directions and wind speeds may not be present in the wind rose (0 frequency) and aren&#39;t</span>
+<span class="c1"># directions and wind speeds may not be present in the wind rose (0 frequency) and aren't</span>
 <span class="c1"># included in the fmodel</span>
 <span class="n">wind_directions</span> <span class="o">=</span> <span class="n">fmodel</span><span class="o">.</span><span class="n">wind_directions</span>
 <span class="n">wind_speeds</span> <span class="o">=</span> <span class="n">fmodel</span><span class="o">.</span><span class="n">wind_speeds</span>
@@ -865,15 +924,15 @@
     <span class="n">wind_direction</span> <span class="o">=</span> <span class="n">wind_directions</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
 
     <span class="c1"># Interpolate the optimal yaw angles for this wind direction from df_opt</span>
-    <span class="n">id_opt_with_neighbor</span> <span class="o">=</span> <span class="n">df_opt_with_neighbor</span><span class="p">[</span><span class="s2">&quot;wind_direction&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">wind_direction</span>
-    <span class="n">id_opt_without_neighbor</span> <span class="o">=</span> <span class="n">df_opt_without_neighbor</span><span class="p">[</span><span class="s2">&quot;wind_direction&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">wind_direction</span>
+    <span class="n">id_opt_with_neighbor</span> <span class="o">=</span> <span class="n">df_opt_with_neighbor</span><span class="p">[</span><span class="s2">"wind_direction"</span><span class="p">]</span> <span class="o">==</span> <span class="n">wind_direction</span>
+    <span class="n">id_opt_without_neighbor</span> <span class="o">=</span> <span class="n">df_opt_without_neighbor</span><span class="p">[</span><span class="s2">"wind_direction"</span><span class="p">]</span> <span class="o">==</span> <span class="n">wind_direction</span>
 
     <span class="c1"># Get the yaw angles for this wind direction</span>
     <span class="n">yaw_opt_full_with_neighbor</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
-        <span class="n">df_opt_with_neighbor</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">id_opt_with_neighbor</span><span class="p">,</span> <span class="s2">&quot;yaw_angles_opt&quot;</span><span class="p">]</span>
+        <span class="n">df_opt_with_neighbor</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">id_opt_with_neighbor</span><span class="p">,</span> <span class="s2">"yaw_angles_opt"</span><span class="p">]</span>
     <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">yaw_opt_full_without_neighbor</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
-        <span class="n">df_opt_without_neighbor</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">id_opt_without_neighbor</span><span class="p">,</span> <span class="s2">&quot;yaw_angles_opt&quot;</span><span class="p">]</span>
+        <span class="n">df_opt_without_neighbor</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">id_opt_without_neighbor</span><span class="p">,</span> <span class="s2">"yaw_angles_opt"</span><span class="p">]</span>
     <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
     <span class="c1"># Extend the yaw angles from 10 turbine to n_turbine by filling with 0s</span>
@@ -941,36 +1000,36 @@
 <span class="n">aep_uplift_without_neighbor</span> <span class="o">=</span> <span class="mf">100.0</span> <span class="o">*</span> <span class="p">(</span><span class="n">aep_opt_without_neighbor</span> <span class="o">/</span> <span class="n">aep_baseline</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
 <span class="n">farm_power_opt_without_neighbor</span> <span class="o">=</span> <span class="n">fmodel</span><span class="o">.</span><span class="n">get_farm_power</span><span class="p">(</span><span class="n">turbine_weights</span><span class="o">=</span><span class="n">turbine_weights</span><span class="p">)</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Baseline AEP: </span><span class="si">{</span><span class="n">aep_baseline</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mf">1e9</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> GWh.&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Baseline AEP: </span><span class="si">{</span><span class="n">aep_baseline</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mf">1e9</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> GWh."</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span>
-    <span class="sa">f</span><span class="s2">&quot;Optimal AEP (Not accounting for neighboring farm): </span><span class="si">{</span><span class="n">aep_opt_without_neighbor</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mf">1e9</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> GWh.&quot;</span>
+    <span class="sa">f</span><span class="s2">"Optimal AEP (Not accounting for neighboring farm): </span><span class="si">{</span><span class="n">aep_opt_without_neighbor</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mf">1e9</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> GWh."</span>
 <span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Optimal AEP (Accounting for neighboring farm): </span><span class="si">{</span><span class="n">aep_opt_with_neighbor</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mf">1e9</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> GWh.&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Optimal AEP (Accounting for neighboring farm): </span><span class="si">{</span><span class="n">aep_opt_with_neighbor</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mf">1e9</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> GWh."</span><span class="p">)</span>
 
 <span class="c1"># Plot the optimal yaw angles for turbine 0 with and without accounting for the neighboring farm</span>
-<span class="n">yaw_angles_0_with_neighbor</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="n">df_opt_with_neighbor</span><span class="p">[</span><span class="s2">&quot;yaw_angles_opt&quot;</span><span class="p">])[:,</span> <span class="mi">0</span><span class="p">]</span>
-<span class="n">yaw_angles_0_without_neighbor</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="n">df_opt_without_neighbor</span><span class="p">[</span><span class="s2">&quot;yaw_angles_opt&quot;</span><span class="p">])[:,</span> <span class="mi">0</span><span class="p">]</span>
+<span class="n">yaw_angles_0_with_neighbor</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="n">df_opt_with_neighbor</span><span class="p">[</span><span class="s2">"yaw_angles_opt"</span><span class="p">])[:,</span> <span class="mi">0</span><span class="p">]</span>
+<span class="n">yaw_angles_0_without_neighbor</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="n">df_opt_without_neighbor</span><span class="p">[</span><span class="s2">"yaw_angles_opt"</span><span class="p">])[:,</span> <span class="mi">0</span><span class="p">]</span>
 
 <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
-    <span class="n">df_opt_with_neighbor</span><span class="p">[</span><span class="s2">&quot;wind_direction&quot;</span><span class="p">],</span>
+    <span class="n">df_opt_with_neighbor</span><span class="p">[</span><span class="s2">"wind_direction"</span><span class="p">],</span>
     <span class="n">yaw_angles_0_with_neighbor</span><span class="p">,</span>
-    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Accounting for neighboring farm&quot;</span><span class="p">,</span>
+    <span class="n">label</span><span class="o">=</span><span class="s2">"Accounting for neighboring farm"</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
-    <span class="n">df_opt_without_neighbor</span><span class="p">[</span><span class="s2">&quot;wind_direction&quot;</span><span class="p">],</span>
+    <span class="n">df_opt_without_neighbor</span><span class="p">[</span><span class="s2">"wind_direction"</span><span class="p">],</span>
     <span class="n">yaw_angles_0_without_neighbor</span><span class="p">,</span>
-    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Not accounting for neighboring farm&quot;</span><span class="p">,</span>
+    <span class="n">label</span><span class="o">=</span><span class="s2">"Not accounting for neighboring farm"</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Wind direction (deg)&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Yaw angle (deg)&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"Wind direction (deg)"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"Yaw angle (deg)"</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Optimal yaw angles for turbine 0&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"Optimal yaw angles for turbine 0"</span><span class="p">)</span>
 
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
-<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">'ignore'</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1197,7 +1256,7 @@
   val = 2 * (avg_v - v_core) / (v_top + v_bottom)
 /home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:160: RuntimeWarning: invalid value encountered in divide
   C0 = 1 - u0 / freestream_velocity
-/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:505: RuntimeWarning: invalid value encountered in divide
+/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:512: RuntimeWarning: invalid value encountered in divide
   I_total = np.sqrt((2 / 3) * k_total) / average_u_i
 /home/runner/work/floris/floris/floris/core/wake_velocity/gauss.py:80: RuntimeWarning: invalid value encountered in divide
   sigma_z0 = rotor_diameter_i * 0.5 * np.sqrt(uR / (u_initial + u0))
@@ -1208,8 +1267,8 @@ Optimal AEP (Not accounting for neighboring farm): 147.96 GWh.
 Optimal AEP (Accounting for neighboring farm): 148.34 GWh.
 </pre></div>
 </div>
-<img alt="../../_images/7a16c3c3b6bf30eed67a509f4d2f02871301c784120bbadb4225a6fc30d6e98f.png" src="../../_images/7a16c3c3b6bf30eed67a509f4d2f02871301c784120bbadb4225a6fc30d6e98f.png" />
-<img alt="../../_images/5907a5fe8ca9fa33e839b431c9c0a5de41547a8d8048c12e27abc52f6def4264.png" src="../../_images/5907a5fe8ca9fa33e839b431c9c0a5de41547a8d8048c12e27abc52f6def4264.png" />
+<img alt="../../_images/9bca2c8d3e66235b19812c373db3877598a6740331de4408c1b533e1796061e6.png" src="../../_images/9bca2c8d3e66235b19812c373db3877598a6740331de4408c1b533e1796061e6.png" />
+<img alt="../../_images/dd1b5c76269e022ee2f6036c71fed7dd10fb09c92d5e43848a0e715df1de2c45.png" src="../../_images/dd1b5c76269e022ee2f6036c71fed7dd10fb09c92d5e43848a0e715df1de2c45.png" />
 </div>
 </div>
 </section>
@@ -1312,8 +1371,8 @@ By National Laboratory of the Rockies
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
-<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb"></script>
 
   <footer class="bd-footer">
   </footer>

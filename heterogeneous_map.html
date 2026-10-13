@@ -27,8 +27,8 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
-<link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+  <link href="_static/styles/theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
@@ -39,10 +39,10 @@
     <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- So that users can add custom icons -->
-  <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="_static/scripts/fontawesome.js?digest=55c26ed414f5f8a31ebb"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
-<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
     <script src="_static/documentation_options.js?v=30a733bc"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
@@ -60,6 +60,12 @@
     <script>
                 window.dataLayer = window.dataLayer || [];
                 function gtag(){ dataLayer.push(arguments); }
+                gtag('consent', 'default', {
+                    'ad_storage': 'denied',
+                    'ad_user_data': 'denied',
+                    'ad_personalization': 'denied',
+                    'analytics_storage': 'denied'
+                });
                 gtag('js', new Date());
                 gtag('config', 'G-JV2SK7CNPR');
             </script>
@@ -69,11 +75,18 @@
     <script>
                 window.dataLayer = window.dataLayer || [];
                 function gtag(){ dataLayer.push(arguments); }
+                gtag('consent', 'default', {
+                    'ad_storage': 'denied',
+                    'ad_user_data': 'denied',
+                    'ad_personalization': 'denied',
+                    'analytics_storage': 'denied'
+                });
                 gtag('js', new Date());
                 gtag('config', 'G-JV2SK7CNPR');
             </script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'heterogeneous_map';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Layout Optimization" href="layout_optimization.html" />
@@ -81,20 +94,26 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="python"/>
   <meta name="docsearch:version" content="" />
+  
+    
+    <script src="_static/searchtools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script src="searchindex.js"></script>
+  
   </head>
-  
-  
-  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
-
+  <body data-default-mode="">
   
   
   <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
   
   <div id="pst-scroll-pixel-helper"></div>
   
   <button type="button" class="btn rounded-pill" id="pst-back-to-top">
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
-
+  
+  
+  
   
   <dialog id="pst-search-dialog">
     
@@ -120,7 +139,51 @@
 </div>
 
   
-    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
     </header>
   
 
@@ -639,7 +702,7 @@
                 <h2> Contents </h2>
             </div>
             <nav aria-label="Page">
-                <ul class="visible nav section-nav flex-column">
+                <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#initialization">Initialization</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#interpolation">Interpolation</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#visualization">Visualization</a></li>
@@ -708,7 +771,7 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>HeterogeneousMap with 2 dimensions using interpolation method &quot;linear&quot;.
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>HeterogeneousMap with 2 dimensions using interpolation method "linear".
 Speed multipliers are defined for 5 points and 4 wind conditions.
 
          0    1     2    3    4
@@ -740,14 +803,14 @@ Speed multipliers are defined for 5 points and 4 wind conditions.
     <span class="p">),</span>
     <span class="n">wind_directions</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">270.0</span><span class="p">,</span> <span class="mf">270.0</span><span class="p">,</span> <span class="mf">90.0</span><span class="p">,</span> <span class="mf">90.0</span><span class="p">]),</span>
     <span class="n">wind_speeds</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">5.0</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">]),</span>
-    <span class="n">interp_method</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span>
+    <span class="n">interp_method</span><span class="o">=</span><span class="s2">"nearest"</span>
 <span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">heterogeneous_map_nearest</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>HeterogeneousMap with 2 dimensions using interpolation method &quot;nearest&quot;.
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>HeterogeneousMap with 2 dimensions using interpolation method "nearest".
 Speed multipliers are defined for 5 points and 4 wind conditions.
 
          0    1     2    3    4
@@ -773,29 +836,29 @@ Speed multipliers are defined for 5 points and 4 wind conditions.
 <span class="n">heterogeneous_map</span><span class="o">.</span><span class="n">plot_single_speed_multiplier</span><span class="p">(</span>
     <span class="n">wind_direction</span><span class="o">=</span><span class="mf">60.0</span><span class="p">,</span> <span class="n">wind_speed</span><span class="o">=</span><span class="mf">8.5</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mf">1.2</span>
 <span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Wind Direction = 60.0</span><span class="se">\n</span><span class="s2">Wind Speed = 8.5&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"Wind Direction = 60.0</span><span class="se">\n</span><span class="s2">Wind Speed = 8.5"</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
 
 <span class="n">ax</span> <span class="o">=</span> <span class="n">axarr</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 <span class="n">heterogeneous_map</span><span class="o">.</span><span class="n">plot_single_speed_multiplier</span><span class="p">(</span>
     <span class="n">wind_direction</span><span class="o">=</span><span class="mf">130.0</span><span class="p">,</span> <span class="n">wind_speed</span><span class="o">=</span><span class="mf">4.0</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mf">1.2</span>
 <span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Wind Direction = 130.0</span><span class="se">\n</span><span class="s2">Wind Speed = 4.0&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"Wind Direction = 130.0</span><span class="se">\n</span><span class="s2">Wind Speed = 4.0"</span><span class="p">)</span>
 
 <span class="n">ax</span> <span class="o">=</span> <span class="n">axarr</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
 <span class="n">heterogeneous_map</span><span class="o">.</span><span class="n">plot_single_speed_multiplier</span><span class="p">(</span>
     <span class="n">wind_direction</span><span class="o">=</span><span class="mf">280.0</span><span class="p">,</span> <span class="n">wind_speed</span><span class="o">=</span><span class="mf">16.0</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mf">1.2</span>
 <span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Wind Direction = 280.0</span><span class="se">\n</span><span class="s2">Wind Speed = 16.0&quot;</span><span class="p">)</span>
-<span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s2">&quot;Heterogeneous speedup map for several directions and wind speeds&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"Wind Direction = 280.0</span><span class="se">\n</span><span class="s2">Wind Speed = 16.0"</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s2">"Heterogeneous speedup map for several directions and wind speeds"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0.5, 0.98, &#39;Heterogeneous speedup map for several directions and wind speeds&#39;)
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0.5, 0.98, 'Heterogeneous speedup map for several directions and wind speeds')
 </pre></div>
 </div>
-<img alt="_images/1c3304a61c5e791a24e31152a0bf05fb451336f3480742f286a52d1ba0a7e352.png" src="_images/1c3304a61c5e791a24e31152a0bf05fb451336f3480742f286a52d1ba0a7e352.png" />
+<img alt="_images/d9f30ffe469af99414e79782dff61a64e90fda09a6bd0f740d13de76f24cfba8.png" src="_images/d9f30ffe469af99414e79782dff61a64e90fda09a6bd0f740d13de76f24cfba8.png" />
 </div>
 </div>
 </section>
@@ -805,7 +868,7 @@ Speed multipliers are defined for 5 points and 4 wind conditions.
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Initialize FlorisModel</span>
-<span class="n">fmodel</span> <span class="o">=</span> <span class="n">FlorisModel</span><span class="p">(</span><span class="s2">&quot;gch.yaml&quot;</span><span class="p">)</span>
+<span class="n">fmodel</span> <span class="o">=</span> <span class="n">FlorisModel</span><span class="p">(</span><span class="s2">"gch.yaml"</span><span class="p">)</span>
 
 <span class="c1"># Change the layout to a 2 turbine layout within the heterogeneous domain</span>
 <span class="n">fmodel</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">layout_x</span><span class="o">=</span><span class="p">[</span><span class="mi">200</span><span class="p">,</span> <span class="mf">200.0</span><span class="p">],</span> <span class="n">layout_y</span><span class="o">=</span><span class="p">[</span><span class="mi">50</span><span class="p">,</span> <span class="mf">450.0</span><span class="p">])</span>
@@ -840,8 +903,8 @@ Speed multipliers are defined for 5 points and 4 wind conditions.
         <span class="n">fmodel</span><span class="o">=</span><span class="n">fmodel</span><span class="p">,</span>
         <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span>
         <span class="n">title</span><span class="o">=</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Wind Direction = </span><span class="si">{</span><span class="n">time_series</span><span class="o">.</span><span class="n">wind_directions</span><span class="p">[</span><span class="n">findex</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;Wind Speed = </span><span class="si">{</span><span class="n">time_series</span><span class="o">.</span><span class="n">wind_speeds</span><span class="p">[</span><span class="n">findex</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">"Wind Direction = </span><span class="si">{</span><span class="n">time_series</span><span class="o">.</span><span class="n">wind_directions</span><span class="p">[</span><span class="n">findex</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
+            <span class="sa">f</span><span class="s2">"Wind Speed = </span><span class="si">{</span><span class="n">time_series</span><span class="o">.</span><span class="n">wind_speeds</span><span class="p">[</span><span class="n">findex</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span>
         <span class="p">),</span>
     <span class="p">)</span>
 </pre></div>
@@ -866,7 +929,7 @@ Speed multipliers are defined for 5 points and 4 wind conditions.
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Blue">floris.logging_manager.LoggingManager</span> <span class=" -Color -Color-Bold -Color-Bold-Black">WARNING</span> <span class=" -Color -Color-Yellow">The calculated flow field contains points outside of the the user-defined heterogeneous inflow bounds. For these points, the interpolated value has been filled with the freestream wind speed. If this is not the desired behavior, the user will need to expand the heterogeneous inflow bounds to fully cover the calculated flow field area.</span>
 </pre></div>
 </div>
-<img alt="_images/365f79e2b2837b7815c33235e0053460aba9f0a8d7deffbee226ae9c0def723f.png" src="_images/365f79e2b2837b7815c33235e0053460aba9f0a8d7deffbee226ae9c0def723f.png" />
+<img alt="_images/357fce02bc955c82c3718e26e998bbbc988eeae8869f428e6d77f492494f5d4d.png" src="_images/357fce02bc955c82c3718e26e998bbbc988eeae8869f428e6d77f492494f5d4d.png" />
 </div>
 </div>
 </section>
@@ -917,7 +980,7 @@ Speed multipliers are defined for 5 points and 4 wind conditions.
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>HeterogeneousMap with 3 dimensions using interpolation method &quot;linear&quot;.
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>HeterogeneousMap with 3 dimensions using interpolation method "linear".
 Speed multipliers are defined for 12 points and 4 wind conditions.
 
         0    1    2    3    4    5    6    7    8    9    10   11
@@ -937,10 +1000,10 @@ Speed multipliers are defined for 12 points and 4 wind conditions.
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Axes: xlabel=&#39;X (m)&#39;, ylabel=&#39;Y (m)&#39;&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Axes: xlabel='X (m)', ylabel='Y (m)'&gt;
 </pre></div>
 </div>
-<img alt="_images/c5683d101bebc4c9888037c85d0d930087d207a8e4b48a64daf7aa9a07115841.png" src="_images/c5683d101bebc4c9888037c85d0d930087d207a8e4b48a64daf7aa9a07115841.png" />
+<img alt="_images/e0e5016e7d14eaa2362d26bfbd149abdbc1bb260680c3e9d9bbbe1418ae6b0d6.png" src="_images/e0e5016e7d14eaa2362d26bfbd149abdbc1bb260680c3e9d9bbbe1418ae6b0d6.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -950,10 +1013,10 @@ Speed multipliers are defined for 12 points and 4 wind conditions.
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Axes: xlabel=&#39;X (m)&#39;, ylabel=&#39;Y (m)&#39;&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Axes: xlabel='X (m)', ylabel='Y (m)'&gt;
 </pre></div>
 </div>
-<img alt="_images/459ab6839c2db7df7da80df72480aa4499424473ece87102cbdf1774150c772e.png" src="_images/459ab6839c2db7df7da80df72480aa4499424473ece87102cbdf1774150c772e.png" />
+<img alt="_images/29d5776996bcc48ac7a6efc35d2105e3db285e89a690028bef7a62cd6b63c066.png" src="_images/29d5776996bcc48ac7a6efc35d2105e3db285e89a690028bef7a62cd6b63c066.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -993,8 +1056,8 @@ Speed multipliers are defined for 12 points and 4 wind conditions.
     <span class="n">fmodel</span><span class="o">=</span><span class="n">fmodel</span><span class="p">,</span>
     <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span>
     <span class="n">title</span><span class="o">=</span><span class="p">(</span>
-        <span class="sa">f</span><span class="s2">&quot;Wind Direction = </span><span class="si">{</span><span class="n">time_series</span><span class="o">.</span><span class="n">wind_directions</span><span class="p">[</span><span class="n">findex</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="sa">f</span><span class="s2">&quot;Wind Speed = </span><span class="si">{</span><span class="n">time_series</span><span class="o">.</span><span class="n">wind_speeds</span><span class="p">[</span><span class="n">findex</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="sa">f</span><span class="s2">"Wind Direction = </span><span class="si">{</span><span class="n">time_series</span><span class="o">.</span><span class="n">wind_directions</span><span class="p">[</span><span class="n">findex</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="sa">f</span><span class="s2">"Wind Speed = </span><span class="si">{</span><span class="n">time_series</span><span class="o">.</span><span class="n">wind_speeds</span><span class="p">[</span><span class="n">findex</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span>
     <span class="p">),</span>
 <span class="p">)</span>
 
@@ -1010,8 +1073,8 @@ Speed multipliers are defined for 12 points and 4 wind conditions.
     <span class="n">cut_plane</span><span class="o">=</span><span class="n">y_plane</span><span class="p">,</span>
     <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span>
     <span class="n">title</span><span class="o">=</span><span class="p">(</span>
-        <span class="sa">f</span><span class="s2">&quot;Wind Direction = </span><span class="si">{</span><span class="n">time_series</span><span class="o">.</span><span class="n">wind_directions</span><span class="p">[</span><span class="n">findex</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="sa">f</span><span class="s2">&quot;Wind Speed = </span><span class="si">{</span><span class="n">time_series</span><span class="o">.</span><span class="n">wind_speeds</span><span class="p">[</span><span class="n">findex</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="sa">f</span><span class="s2">"Wind Direction = </span><span class="si">{</span><span class="n">time_series</span><span class="o">.</span><span class="n">wind_directions</span><span class="p">[</span><span class="n">findex</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="sa">f</span><span class="s2">"Wind Speed = </span><span class="si">{</span><span class="n">time_series</span><span class="o">.</span><span class="n">wind_speeds</span><span class="p">[</span><span class="n">findex</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span>
     <span class="p">),</span>
 <span class="p">)</span>
 </pre></div>
@@ -1030,10 +1093,10 @@ Speed multipliers are defined for 12 points and 4 wind conditions.
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Blue">floris.logging_manager.LoggingManager</span> <span class=" -Color -Color-Bold -Color-Bold-Black">WARNING</span> <span class=" -Color -Color-Yellow">The calculated flow field contains points outside of the the user-defined heterogeneous inflow bounds. For these points, the interpolated value has been filled with the freestream wind speed. If this is not the desired behavior, the user will need to expand the heterogeneous inflow bounds to fully cover the calculated flow field area.</span>
 </pre></div>
 </div>
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Axes: title={&#39;center&#39;: &#39;Wind Direction = 275.0\nWind Speed = 7.0&#39;}&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Axes: title={'center': 'Wind Direction = 275.0\nWind Speed = 7.0'}&gt;
 </pre></div>
 </div>
-<img alt="_images/a5543d3111095092416f36fa116eee8b1b17decbbe4aab0f62fe0e2c08696caa.png" src="_images/a5543d3111095092416f36fa116eee8b1b17decbbe4aab0f62fe0e2c08696caa.png" />
+<img alt="_images/c11b73f7748ea447e00aaa3562048e3167d198a0f2adbb401dd46b3f8512df52.png" src="_images/c11b73f7748ea447e00aaa3562048e3167d198a0f2adbb401dd46b3f8512df52.png" />
 </div>
 </div>
 </section>
@@ -1104,7 +1167,7 @@ Speed multipliers are defined for 12 points and 4 wind conditions.
     <i class="fa-solid fa-list"></i> Contents
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
-    <ul class="visible nav section-nav flex-column">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#initialization">Initialization</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#interpolation">Interpolation</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#visualization">Visualization</a></li>
@@ -1158,8 +1221,8 @@ By National Laboratory of the Rockies
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
-<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb"></script>
 
   <footer class="bd-footer">
   </footer>

@@ -27,8 +27,8 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
-<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+  <link href="../_static/styles/theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
@@ -39,10 +39,10 @@
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- So that users can add custom icons -->
-  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="../_static/scripts/fontawesome.js?digest=55c26ed414f5f8a31ebb"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
-<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
     <script src="../_static/documentation_options.js?v=30a733bc"></script>
     <script src="../_static/doctools.js?v=9a2dae69"></script>
@@ -60,6 +60,12 @@
     <script>
                 window.dataLayer = window.dataLayer || [];
                 function gtag(){ dataLayer.push(arguments); }
+                gtag('consent', 'default', {
+                    'ad_storage': 'denied',
+                    'ad_user_data': 'denied',
+                    'ad_personalization': 'denied',
+                    'analytics_storage': 'denied'
+                });
                 gtag('js', new Date());
                 gtag('config', 'G-JV2SK7CNPR');
             </script>
@@ -69,11 +75,18 @@
     <script>
                 window.dataLayer = window.dataLayer || [];
                 function gtag(){ dataLayer.push(arguments); }
+                gtag('consent', 'default', {
+                    'ad_storage': 'denied',
+                    'ad_user_data': 'denied',
+                    'ad_personalization': 'denied',
+                    'analytics_storage': 'denied'
+                });
                 gtag('js', new Date());
                 gtag('config', 'G-JV2SK7CNPR');
             </script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'examples/003_wind_data_objects';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Example 4: Set" href="004_set.html" />
@@ -81,20 +94,26 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="python"/>
   <meta name="docsearch:version" content="" />
+  
+    
+    <script src="../_static/searchtools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../searchindex.js"></script>
+  
   </head>
-  
-  
-  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
-
+  <body data-default-mode="">
   
   
   <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
   
   <div id="pst-scroll-pixel-helper"></div>
   
   <button type="button" class="btn rounded-pill" id="pst-back-to-top">
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
-
+  
+  
+  
   
   <dialog id="pst-search-dialog">
     
@@ -120,7 +139,47 @@
 </div>
 
   
-    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
     </header>
   
 
@@ -646,7 +705,7 @@
 <h1>Example 3: Wind Data Objects<a class="headerlink" href="#example-3-wind-data-objects" title="Link to this heading">#</a></h1>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Example 3: Wind Data Objects</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="sd">"""Example 3: Wind Data Objects</span>
 
 <span class="sd">This example demonstrates the use of wind data objects in FLORIS:</span>
 <span class="sd"> TimeSeries, WindRose, and WindTIRose.</span>
@@ -660,7 +719,7 @@
 <span class="sd">    5) Plotting</span>
 <span class="sd">    6) Setting the FLORIS model using the object</span>
 
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
@@ -684,7 +743,7 @@
 <span class="c1"># The TimeSeries class is used to hold time series data, such as wind speed, wind direction,</span>
 <span class="c1"># and turbulence intensity.</span>
 
-<span class="c1"># There is also a &quot;value&quot; wind data variable, which represents the value of the power</span>
+<span class="c1"># There is also a "value" wind data variable, which represents the value of the power</span>
 <span class="c1"># generated at each time step or wind condition (e.g., the price of electricity). This can</span>
 <span class="c1"># then be used in later optimization methods to optimize for quantities besides AEP.</span>
 
@@ -790,7 +849,7 @@
 <span class="c1"># If the TI is not provided, can specify a fixed TI for all bins using the ti_col_or_value</span>
 <span class="c1"># input</span>
 <span class="n">wind_rose_from_csv</span> <span class="o">=</span> <span class="n">WindRose</span><span class="o">.</span><span class="n">read_csv_long</span><span class="p">(</span>
-    <span class="s2">&quot;inputs/wind_rose.csv&quot;</span><span class="p">,</span> <span class="n">wd_col</span><span class="o">=</span><span class="s2">&quot;wd&quot;</span><span class="p">,</span> <span class="n">ws_col</span><span class="o">=</span><span class="s2">&quot;ws&quot;</span><span class="p">,</span> <span class="n">freq_col</span><span class="o">=</span><span class="s2">&quot;freq_val&quot;</span><span class="p">,</span> <span class="n">ti_col_or_value</span><span class="o">=</span><span class="mf">0.06</span>
+    <span class="s2">"inputs/wind_rose.csv"</span><span class="p">,</span> <span class="n">wd_col</span><span class="o">=</span><span class="s2">"wd"</span><span class="p">,</span> <span class="n">ws_col</span><span class="o">=</span><span class="s2">"ws"</span><span class="p">,</span> <span class="n">freq_col</span><span class="o">=</span><span class="s2">"freq_val"</span><span class="p">,</span> <span class="n">ti_col_or_value</span><span class="o">=</span><span class="mf">0.06</span>
 <span class="p">)</span>
 
 <span class="c1">##################################################</span>
@@ -829,8 +888,8 @@
 
 <span class="c1"># Assign value using default settings. This produces a value vs. wind speed that approximates</span>
 <span class="c1"># the normalized mean electricity price vs. wind speed curve for the SPP market in the U.S.</span>
-<span class="c1"># for years 2018-2020 from figure 7 in &quot;The value of wake steering wind farm flow control in</span>
-<span class="c1"># US energy markets,&quot; Wind Energy Science, 2024. https://doi.org/10.5194/wes-9-219-2024.</span>
+<span class="c1"># for years 2018-2020 from figure 7 in "The value of wake steering wind farm flow control in</span>
+<span class="c1"># US energy markets," Wind Energy Science, 2024. https://doi.org/10.5194/wes-9-219-2024.</span>
 <span class="n">wind_rose</span><span class="o">.</span><span class="n">assign_value_piecewise_linear</span><span class="p">()</span>
 
 <span class="c1">##################################################</span>
@@ -860,7 +919,7 @@
 <span class="c1"># are also extracted for expected power and AEP-like calculations.</span>
 <span class="c1"># Similarly the value data is extracted and maintained.</span>
 
-<span class="n">fmodel</span> <span class="o">=</span> <span class="n">FlorisModel</span><span class="p">(</span><span class="s2">&quot;inputs/gch.yaml&quot;</span><span class="p">)</span>
+<span class="n">fmodel</span> <span class="o">=</span> <span class="n">FlorisModel</span><span class="p">(</span><span class="s2">"inputs/gch.yaml"</span><span class="p">)</span>
 
 <span class="c1"># Set the wind conditions using the TimeSeries object</span>
 <span class="n">fmodel</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">wind_data</span><span class="o">=</span><span class="n">time_series</span><span class="p">)</span>
@@ -880,8 +939,8 @@
 <span class="n">fmodel</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">wind_data</span><span class="o">=</span><span class="n">wind_rose</span><span class="p">)</span>
 
 <span class="nb">print</span><span class="p">(</span>
-    <span class="sa">f</span><span class="s2">&quot;Number of conditions to simulate with compute_zero_freq_occurrence = False: &quot;</span>
-    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">fmodel</span><span class="o">.</span><span class="n">n_findex</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="sa">f</span><span class="s2">"Number of conditions to simulate with compute_zero_freq_occurrence = False: "</span>
+    <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">fmodel</span><span class="o">.</span><span class="n">n_findex</span><span class="si">}</span><span class="s2">"</span>
 <span class="p">)</span>
 
 <span class="n">wind_rose</span> <span class="o">=</span> <span class="n">WindRose</span><span class="p">(</span>
@@ -894,8 +953,8 @@
 <span class="n">fmodel</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">wind_data</span><span class="o">=</span><span class="n">wind_rose</span><span class="p">)</span>
 
 <span class="nb">print</span><span class="p">(</span>
-    <span class="sa">f</span><span class="s2">&quot;Number of conditions to simulate with compute_zero_freq_occurrence = &quot;</span>
-    <span class="sa">f</span><span class="s2">&quot;True: </span><span class="si">{</span><span class="n">fmodel</span><span class="o">.</span><span class="n">n_findex</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="sa">f</span><span class="s2">"Number of conditions to simulate with compute_zero_freq_occurrence = "</span>
+    <span class="sa">f</span><span class="s2">"True: </span><span class="si">{</span><span class="n">fmodel</span><span class="o">.</span><span class="n">n_findex</span><span class="si">}</span><span class="s2">"</span>
 <span class="p">)</span>
 
 <span class="c1"># Set the wind conditions using the WindTIRose object</span>
@@ -903,7 +962,7 @@
 
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
-<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">'ignore'</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -912,10 +971,10 @@
 Number of conditions to simulate with compute_zero_freq_occurrence = True: 4
 </pre></div>
 </div>
-<img alt="../_images/659cf83dbbf6b24cff23a233dd125aed737363e39f8f88a0bd76d0046b54ba4c.png" src="../_images/659cf83dbbf6b24cff23a233dd125aed737363e39f8f88a0bd76d0046b54ba4c.png" />
-<img alt="../_images/725a812d631cec0336ef459b472ae01c25bf5c1bcc243124e4eb13f2c3de9dad.png" src="../_images/725a812d631cec0336ef459b472ae01c25bf5c1bcc243124e4eb13f2c3de9dad.png" />
-<img alt="../_images/2eb5b0e5893a69d296d8c9e21f36863d6139224911bb6d7fb4906a30f101a112.png" src="../_images/2eb5b0e5893a69d296d8c9e21f36863d6139224911bb6d7fb4906a30f101a112.png" />
-<img alt="../_images/e7860134e4df08d9d7900a02514f0e76ec60d341dbf5f2f97d006bc4369ddea3.png" src="../_images/e7860134e4df08d9d7900a02514f0e76ec60d341dbf5f2f97d006bc4369ddea3.png" />
+<img alt="../_images/493be273aadef1131419f8291b02492aacca1f7d0f41b66fb44c7da6200eaa5e.png" src="../_images/493be273aadef1131419f8291b02492aacca1f7d0f41b66fb44c7da6200eaa5e.png" />
+<img alt="../_images/591e627eb7ff7507df61700a72f7bbd6277157e035ae461982ffc9f06a433738.png" src="../_images/591e627eb7ff7507df61700a72f7bbd6277157e035ae461982ffc9f06a433738.png" />
+<img alt="../_images/380ec13b3fad7666ba850a3d01b621052bbc47c1da9e970e30a673e6b7d865aa.png" src="../_images/380ec13b3fad7666ba850a3d01b621052bbc47c1da9e970e30a673e6b7d865aa.png" />
+<img alt="../_images/3ff517293fa08bdbcf8f9530bdc03e5e5b84455e1a96b4cefb1c2dd3c6ca6f02.png" src="../_images/3ff517293fa08bdbcf8f9530bdc03e5e5b84455e1a96b4cefb1c2dd3c6ca6f02.png" />
 </div>
 </div>
 </section>
@@ -1018,8 +1077,8 @@ By National Laboratory of the Rockies
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
-<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb"></script>
 
   <footer class="bd-footer">
   </footer>

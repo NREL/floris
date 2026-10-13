@@ -27,8 +27,8 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
-<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+  <link href="../../_static/styles/theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
@@ -39,10 +39,10 @@
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- So that users can add custom icons -->
-  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="../../_static/scripts/fontawesome.js?digest=55c26ed414f5f8a31ebb"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
-<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
     <script src="../../_static/documentation_options.js?v=30a733bc"></script>
     <script src="../../_static/doctools.js?v=9a2dae69"></script>
@@ -60,6 +60,12 @@
     <script>
                 window.dataLayer = window.dataLayer || [];
                 function gtag(){ dataLayer.push(arguments); }
+                gtag('consent', 'default', {
+                    'ad_storage': 'denied',
+                    'ad_user_data': 'denied',
+                    'ad_personalization': 'denied',
+                    'analytics_storage': 'denied'
+                });
                 gtag('js', new Date());
                 gtag('config', 'G-JV2SK7CNPR');
             </script>
@@ -69,11 +75,18 @@
     <script>
                 window.dataLayer = window.dataLayer || [];
                 function gtag(){ dataLayer.push(arguments); }
+                gtag('consent', 'default', {
+                    'ad_storage': 'denied',
+                    'ad_user_data': 'denied',
+                    'ad_personalization': 'denied',
+                    'analytics_storage': 'denied'
+                });
                 gtag('js', new Date());
                 gtag('config', 'G-JV2SK7CNPR');
             </script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'examples/examples_layout_optimization/005_layout_optimization_complex_boundary';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="Example: LTI and VOC Behavior with Changing Wind Direction and Power Setpoints" href="../examples_load_optimization/001_lti_and_voc.html" />
@@ -81,20 +94,26 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="python"/>
   <meta name="docsearch:version" content="" />
+  
+    
+    <script src="../../_static/searchtools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script src="../../searchindex.js"></script>
+  
   </head>
-  
-  
-  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
-
+  <body data-default-mode="">
   
   
   <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
   
   <div id="pst-scroll-pixel-helper"></div>
   
   <button type="button" class="btn rounded-pill" id="pst-back-to-top">
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
-
+  
+  
+  
   
   <dialog id="pst-search-dialog">
     
@@ -120,7 +139,47 @@
 </div>
 
   
-    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
     </header>
   
 
@@ -646,11 +705,11 @@
 <h1>Example: Separated boundaries layout optimization<a class="headerlink" href="#example-separated-boundaries-layout-optimization" title="Link to this heading">#</a></h1>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Example: Separated boundaries layout optimization</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="sd">"""Example: Separated boundaries layout optimization</span>
 <span class="sd">Demonstrates the capabilities of LayoutOptimizationGridded and</span>
 <span class="sd">LayoutOptimizationRandomSearch to optimize turbine layouts with complex</span>
 <span class="sd">boundaries.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
@@ -664,9 +723,9 @@
 <span class="p">)</span>
 
 
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">'__main__'</span><span class="p">:</span>
     <span class="c1"># Load the Floris model</span>
-    <span class="n">fmodel</span> <span class="o">=</span> <span class="n">FlorisModel</span><span class="p">(</span><span class="s1">&#39;../inputs/gch.yaml&#39;</span><span class="p">)</span>
+    <span class="n">fmodel</span> <span class="o">=</span> <span class="n">FlorisModel</span><span class="p">(</span><span class="s1">'../inputs/gch.yaml'</span><span class="p">)</span>
 
     <span class="c1"># Set the boundaries</span>
     <span class="c1"># The boundaries for the turbines, specified as vertices</span>
@@ -707,7 +766,7 @@
         <span class="n">min_dist</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">layout_opt_gridded</span><span class="o">.</span><span class="n">optimize</span><span class="p">()</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Gridded layout complete.&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"Gridded layout complete."</span><span class="p">)</span>
 
     <span class="c1"># Set the layout on the fmodel</span>
     <span class="n">fmodel</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">layout_x</span><span class="o">=</span><span class="n">layout_opt_gridded</span><span class="o">.</span><span class="n">x_opt</span><span class="p">,</span> <span class="n">layout_y</span><span class="o">=</span><span class="n">layout_opt_gridded</span><span class="o">.</span><span class="n">y_opt</span><span class="p">)</span>
@@ -724,13 +783,13 @@
     <span class="n">layout_opt_rs</span><span class="o">.</span><span class="n">optimize</span><span class="p">()</span>
 
     <span class="n">layout_opt_rs</span><span class="o">.</span><span class="n">plot_layout_opt_results</span><span class="p">(</span>
-        <span class="n">initial_locs_plotting_dict</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="s2">&quot;Gridded initial layout&quot;</span><span class="p">},</span>
-        <span class="n">final_locs_plotting_dict</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="s2">&quot;Random search optimized layout&quot;</span><span class="p">},</span>
+        <span class="n">initial_locs_plotting_dict</span><span class="o">=</span><span class="p">{</span><span class="s2">"label"</span><span class="p">:</span> <span class="s2">"Gridded initial layout"</span><span class="p">},</span>
+        <span class="n">final_locs_plotting_dict</span><span class="o">=</span><span class="p">{</span><span class="s2">"label"</span><span class="p">:</span> <span class="s2">"Random search optimized layout"</span><span class="p">},</span>
     <span class="p">)</span>
 
     <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
-<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">'ignore'</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -754,10 +813,10 @@ Optimization time: 0.0 s / 60.0 s
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>=======================================
 Optimization step +1.0
 Optimization time = +11.8 [s]
-Mean AEP = 87.1 [GWh] (+2.24%)
-Median AEP = 87.2 [GWh] (+2.35%)
-Max AEP = 87.3 [GWh] (+2.49%)
-Min AEP = 86.7 [GWh] (+1.76%)
+Mean AEP = 87.1 [GWh] (+2.25%)
+Median AEP = 87.1 [GWh] (+2.24%)
+Max AEP = 87.3 [GWh] (+2.51%)
+Min AEP = 86.9 [GWh] (+2.01%)
 =======================================
 Optimization time: 11.8 s / 60.0 s
 </pre></div>
@@ -765,10 +824,10 @@ Optimization time: 11.8 s / 60.0 s
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>=======================================
 Optimization step +2.0
 Optimization time = +23.6 [s]
-Mean AEP = 87.5 [GWh] (+2.70%)
-Median AEP = 87.5 [GWh] (+2.71%)
-Max AEP = 87.5 [GWh] (+2.76%)
-Min AEP = 87.4 [GWh] (+2.60%)
+Mean AEP = 87.4 [GWh] (+2.58%)
+Median AEP = 87.4 [GWh] (+2.59%)
+Max AEP = 87.5 [GWh] (+2.71%)
+Min AEP = 87.3 [GWh] (+2.43%)
 =======================================
 Optimization time: 23.6 s / 60.0 s
 </pre></div>
@@ -776,48 +835,48 @@ Optimization time: 23.6 s / 60.0 s
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>=======================================
 Optimization step +3.0
 Optimization time = +35.4 [s]
-Mean AEP = 87.6 [GWh] (+2.77%)
-Median AEP = 87.6 [GWh] (+2.78%)
-Max AEP = 87.6 [GWh] (+2.81%)
-Min AEP = 87.5 [GWh] (+2.72%)
+Mean AEP = 87.5 [GWh] (+2.70%)
+Median AEP = 87.5 [GWh] (+2.74%)
+Max AEP = 87.5 [GWh] (+2.75%)
+Min AEP = 87.4 [GWh] (+2.57%)
 =======================================
 Optimization time: 35.4 s / 60.0 s
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>=======================================
 Optimization step +4.0
-Optimization time = +47.3 [s]
-Mean AEP = 87.6 [GWh] (+2.84%)
-Median AEP = 87.6 [GWh] (+2.83%)
-Max AEP = 87.6 [GWh] (+2.88%)
-Min AEP = 87.6 [GWh] (+2.81%)
+Optimization time = +47.2 [s]
+Mean AEP = 87.6 [GWh] (+2.81%)
+Median AEP = 87.6 [GWh] (+2.80%)
+Max AEP = 87.6 [GWh] (+2.82%)
+Min AEP = 87.6 [GWh] (+2.80%)
 =======================================
-Optimization time: 47.3 s / 60.0 s
+Optimization time: 47.2 s / 60.0 s
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>=======================================
 Optimization step +5.0
-Optimization time = +59.1 [s]
-Mean AEP = 87.6 [GWh] (+2.86%)
-Median AEP = 87.6 [GWh] (+2.87%)
-Max AEP = 87.6 [GWh] (+2.89%)
-Min AEP = 87.6 [GWh] (+2.82%)
+Optimization time = +59.0 [s]
+Mean AEP = 87.6 [GWh] (+2.85%)
+Median AEP = 87.6 [GWh] (+2.85%)
+Max AEP = 87.6 [GWh] (+2.86%)
+Min AEP = 87.6 [GWh] (+2.84%)
 =======================================
-Optimization time: 59.1 s / 60.0 s
+Optimization time: 59.0 s / 60.0 s
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>=======================================
 Optimization step +6.0
 Optimization time = +70.8 [s]
-Mean AEP = 87.6 [GWh] (+2.88%)
-Median AEP = 87.6 [GWh] (+2.89%)
-Max AEP = 87.7 [GWh] (+2.89%)
+Mean AEP = 87.6 [GWh] (+2.86%)
+Median AEP = 87.6 [GWh] (+2.86%)
+Max AEP = 87.6 [GWh] (+2.86%)
 Min AEP = 87.6 [GWh] (+2.86%)
 =======================================
-Final AEP = 87.7 [GWh] (+2.89%)
+Final AEP = 87.6 [GWh] (+2.86%)
 </pre></div>
 </div>
-<img alt="../../_images/668c71f2cd0015e0b8b9b7ae4f595c18d74bd9c7e429e5ec0e79b014df7bf653.png" src="../../_images/668c71f2cd0015e0b8b9b7ae4f595c18d74bd9c7e429e5ec0e79b014df7bf653.png" />
+<img alt="../../_images/eb74414e7916eadc469f245bfd8bdff836962a9b96c8d7f00067ec8887602433.png" src="../../_images/eb74414e7916eadc469f245bfd8bdff836962a9b96c8d7f00067ec8887602433.png" />
 </div>
 </div>
 </section>
@@ -920,8 +979,8 @@ By National Laboratory of the Rockies
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
-<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb"></script>
 
   <footer class="bd-footer">
   </footer>

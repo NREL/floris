@@ -27,8 +27,8 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
-<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+  <link href="../../_static/styles/theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
@@ -39,10 +39,10 @@
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- So that users can add custom icons -->
-  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="../../_static/scripts/fontawesome.js?digest=55c26ed414f5f8a31ebb"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
-<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
     <script src="../../_static/documentation_options.js?v=30a733bc"></script>
     <script src="../../_static/doctools.js?v=9a2dae69"></script>
@@ -60,6 +60,12 @@
     <script>
                 window.dataLayer = window.dataLayer || [];
                 function gtag(){ dataLayer.push(arguments); }
+                gtag('consent', 'default', {
+                    'ad_storage': 'denied',
+                    'ad_user_data': 'denied',
+                    'ad_personalization': 'denied',
+                    'analytics_storage': 'denied'
+                });
                 gtag('js', new Date());
                 gtag('config', 'G-JV2SK7CNPR');
             </script>
@@ -69,11 +75,18 @@
     <script>
                 window.dataLayer = window.dataLayer || [];
                 function gtag(){ dataLayer.push(arguments); }
+                gtag('consent', 'default', {
+                    'ad_storage': 'denied',
+                    'ad_user_data': 'denied',
+                    'ad_personalization': 'denied',
+                    'analytics_storage': 'denied'
+                });
                 gtag('js', new Date());
                 gtag('config', 'G-JV2SK7CNPR');
             </script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'examples/examples_emgauss/002_empirical_gauss_deflection_parameters';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="Example: Floating turbines" href="../examples_floating/001_floating_turbine_models.html" />
@@ -81,20 +94,26 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="python"/>
   <meta name="docsearch:version" content="" />
+  
+    
+    <script src="../../_static/searchtools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script src="../../searchindex.js"></script>
+  
   </head>
-  
-  
-  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
-
+  <body data-default-mode="">
   
   
   <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
   
   <div id="pst-scroll-pixel-helper"></div>
   
   <button type="button" class="btn rounded-pill" id="pst-back-to-top">
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
-
+  
+  
+  
   
   <dialog id="pst-search-dialog">
     
@@ -120,7 +139,47 @@
 </div>
 
   
-    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
     </header>
   
 
@@ -646,11 +705,11 @@
 <h1>Example: Empirical Gaussian deflection parameters<a class="headerlink" href="#example-empirical-gaussian-deflection-parameters" title="Link to this heading">#</a></h1>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Example: Empirical Gaussian deflection parameters</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="sd">"""Example: Empirical Gaussian deflection parameters</span>
 
 <span class="sd">This example illustrates the main parameters of the Empirical Gaussian</span>
 <span class="sd">deflection model and their effects on the wind turbine wake.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">copy</span>
 
@@ -672,7 +731,7 @@
 
 <span class="n">yaw_angles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">first_three_yaw_angles</span> <span class="o">+</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">num_in_row</span> <span class="o">-</span> <span class="mi">3</span><span class="p">))[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:]</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Turbine yaw angles (degrees): &quot;</span><span class="p">,</span> <span class="n">yaw_angles</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Turbine yaw angles (degrees): "</span><span class="p">,</span> <span class="n">yaw_angles</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 
 
 <span class="c1"># Define function for visualizing wakes</span>
@@ -709,15 +768,15 @@
 
     <span class="c1"># Create the plots</span>
     <span class="c1"># Cutplane settings</span>
-    <span class="n">cp_ls</span> <span class="o">=</span> <span class="s2">&quot;solid&quot;</span>  <span class="c1"># line style</span>
+    <span class="n">cp_ls</span> <span class="o">=</span> <span class="s2">"solid"</span>  <span class="c1"># line style</span>
     <span class="n">cp_lw</span> <span class="o">=</span> <span class="mf">0.5</span>  <span class="c1"># line width</span>
-    <span class="n">cp_clr</span> <span class="o">=</span> <span class="s2">&quot;black&quot;</span>  <span class="c1"># line color</span>
+    <span class="n">cp_clr</span> <span class="o">=</span> <span class="s2">"black"</span>  <span class="c1"># line color</span>
     <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
     <span class="n">fig</span><span class="o">.</span><span class="n">set_size_inches</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">12</span><span class="p">)</span>
     <span class="c1"># Horizontal profile</span>
     <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">311</span><span class="p">)</span>
     <span class="n">visualize_cut_plane</span><span class="p">(</span>
-        <span class="n">horizontal_plane</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Top-down profile&quot;</span><span class="p">,</span> <span class="n">min_speed</span><span class="o">=</span><span class="n">min_ws</span><span class="p">,</span> <span class="n">max_speed</span><span class="o">=</span><span class="n">max_ws</span>
+        <span class="n">horizontal_plane</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">"Top-down profile"</span><span class="p">,</span> <span class="n">min_speed</span><span class="o">=</span><span class="n">min_ws</span><span class="p">,</span> <span class="n">max_speed</span><span class="o">=</span><span class="n">max_ws</span>
     <span class="p">)</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
         <span class="n">x_bounds</span><span class="p">,</span> <span class="p">[</span><span class="n">streamwise_plane_location</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">cp_clr</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="n">cp_lw</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="n">cp_ls</span>
@@ -727,7 +786,7 @@
 
     <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">312</span><span class="p">)</span>
     <span class="n">visualize_cut_plane</span><span class="p">(</span>
-        <span class="n">y_plane</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Streamwise profile&quot;</span><span class="p">,</span> <span class="n">min_speed</span><span class="o">=</span><span class="n">min_ws</span><span class="p">,</span> <span class="n">max_speed</span><span class="o">=</span><span class="n">max_ws</span>
+        <span class="n">y_plane</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">"Streamwise profile"</span><span class="p">,</span> <span class="n">min_speed</span><span class="o">=</span><span class="n">min_ws</span><span class="p">,</span> <span class="n">max_speed</span><span class="o">=</span><span class="n">max_ws</span>
     <span class="p">)</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
         <span class="n">x_bounds</span><span class="p">,</span> <span class="p">[</span><span class="n">horizontal_plane_location</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">cp_clr</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="n">cp_lw</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="n">cp_ls</span>
@@ -740,7 +799,7 @@
         <span class="n">visualize_cut_plane</span><span class="p">(</span>
             <span class="n">cp</span><span class="p">,</span>
             <span class="n">ax</span><span class="o">=</span><span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">cross_planes</span><span class="p">),</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">7</span><span class="p">),</span>
-            <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Loc: </span><span class="si">{</span><span class="n">cpl</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2">m&quot;</span><span class="p">,</span>
+            <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">"Loc: </span><span class="si">{</span><span class="n">cpl</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2">m"</span><span class="p">,</span>
             <span class="n">min_speed</span><span class="o">=</span><span class="n">min_ws</span><span class="p">,</span>
             <span class="n">max_speed</span><span class="o">=</span><span class="n">max_ws</span><span class="p">,</span>
         <span class="p">)</span>
@@ -753,7 +812,7 @@
 <span class="c1">## Main script</span>
 
 <span class="c1"># Load input yaml and define farm layout</span>
-<span class="n">fmodel</span> <span class="o">=</span> <span class="n">FlorisModel</span><span class="p">(</span><span class="s2">&quot;../inputs/emgauss.yaml&quot;</span><span class="p">)</span>
+<span class="n">fmodel</span> <span class="o">=</span> <span class="n">FlorisModel</span><span class="p">(</span><span class="s2">"../inputs/emgauss.yaml"</span><span class="p">)</span>
 <span class="n">D</span> <span class="o">=</span> <span class="n">fmodel</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">rotor_diameters</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 <span class="n">fmodel</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
     <span class="n">layout_x</span><span class="o">=</span><span class="p">[</span><span class="n">x</span> <span class="o">*</span> <span class="mf">5.0</span> <span class="o">*</span> <span class="n">D</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_in_row</span><span class="p">)],</span>
@@ -778,7 +837,7 @@
 <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">num_in_row</span><span class="p">))</span> <span class="o">+</span> <span class="n">width</span> <span class="o">*</span> <span class="n">nw</span>
 <span class="n">nw</span> <span class="o">+=</span> <span class="mi">1</span>
 
-<span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;Original&quot;</span>
+<span class="n">title</span> <span class="o">=</span> <span class="s2">"Original"</span>
 <span class="n">ax0</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">turbine_powers</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">title</span><span class="p">)</span>
 <span class="n">ax0</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
 
@@ -789,8 +848,8 @@
 <span class="c1"># Increase the maximum deflection attained</span>
 <span class="n">fmodel_dict_mod</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">fmodel_dict</span><span class="p">)</span>
 
-<span class="n">fmodel_dict_mod</span><span class="p">[</span><span class="s2">&quot;wake&quot;</span><span class="p">][</span><span class="s2">&quot;wake_deflection_parameters&quot;</span><span class="p">][</span><span class="s2">&quot;empirical_gauss&quot;</span><span class="p">][</span>
-    <span class="s2">&quot;horizontal_deflection_gain_D&quot;</span>
+<span class="n">fmodel_dict_mod</span><span class="p">[</span><span class="s2">"wake"</span><span class="p">][</span><span class="s2">"wake_deflection_parameters"</span><span class="p">][</span><span class="s2">"empirical_gauss"</span><span class="p">][</span>
+    <span class="s2">"horizontal_deflection_gain_D"</span>
 <span class="p">]</span> <span class="o">=</span> <span class="mf">5.0</span>
 
 <span class="n">fmodel</span> <span class="o">=</span> <span class="n">FlorisModel</span><span class="p">(</span><span class="n">fmodel_dict_mod</span><span class="p">)</span>
@@ -806,7 +865,7 @@
 <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">num_in_row</span><span class="p">))</span> <span class="o">+</span> <span class="n">width</span> <span class="o">*</span> <span class="n">nw</span>
 <span class="n">nw</span> <span class="o">+=</span> <span class="mi">1</span>
 
-<span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;Increase max deflection&quot;</span>
+<span class="n">title</span> <span class="o">=</span> <span class="s2">"Increase max deflection"</span>
 <span class="n">ax0</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">turbine_powers</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">title</span><span class="p">)</span>
 
 <span class="k">if</span> <span class="n">show_flow_cuts</span><span class="p">:</span>
@@ -814,8 +873,8 @@
 
 <span class="c1"># Add (increase) influence of wake added mixing</span>
 <span class="n">fmodel_dict_mod</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">fmodel_dict</span><span class="p">)</span>
-<span class="n">fmodel_dict_mod</span><span class="p">[</span><span class="s2">&quot;wake&quot;</span><span class="p">][</span><span class="s2">&quot;wake_deflection_parameters&quot;</span><span class="p">][</span><span class="s2">&quot;empirical_gauss&quot;</span><span class="p">][</span>
-    <span class="s2">&quot;mixing_gain_deflection&quot;</span>
+<span class="n">fmodel_dict_mod</span><span class="p">[</span><span class="s2">"wake"</span><span class="p">][</span><span class="s2">"wake_deflection_parameters"</span><span class="p">][</span><span class="s2">"empirical_gauss"</span><span class="p">][</span>
+    <span class="s2">"mixing_gain_deflection"</span>
 <span class="p">]</span> <span class="o">=</span> <span class="mf">100.0</span>
 
 <span class="n">fmodel</span> <span class="o">=</span> <span class="n">FlorisModel</span><span class="p">(</span><span class="n">fmodel_dict_mod</span><span class="p">)</span>
@@ -831,7 +890,7 @@
 <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">num_in_row</span><span class="p">))</span> <span class="o">+</span> <span class="n">width</span> <span class="o">*</span> <span class="n">nw</span>
 <span class="n">nw</span> <span class="o">+=</span> <span class="mi">1</span>
 
-<span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;Increase mixing gain&quot;</span>
+<span class="n">title</span> <span class="o">=</span> <span class="s2">"Increase mixing gain"</span>
 <span class="n">ax0</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">turbine_powers</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">title</span><span class="p">)</span>
 
 <span class="k">if</span> <span class="n">show_flow_cuts</span><span class="p">:</span>
@@ -841,11 +900,11 @@
 <span class="n">fmodel_dict_mod</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">fmodel_dict</span><span class="p">)</span>
 <span class="c1"># Include a WIM gain so that YAM is reflected in deflection as well</span>
 <span class="c1"># as deficit</span>
-<span class="n">fmodel_dict_mod</span><span class="p">[</span><span class="s2">&quot;wake&quot;</span><span class="p">][</span><span class="s2">&quot;wake_deflection_parameters&quot;</span><span class="p">][</span><span class="s2">&quot;empirical_gauss&quot;</span><span class="p">][</span>
-    <span class="s2">&quot;mixing_gain_deflection&quot;</span>
+<span class="n">fmodel_dict_mod</span><span class="p">[</span><span class="s2">"wake"</span><span class="p">][</span><span class="s2">"wake_deflection_parameters"</span><span class="p">][</span><span class="s2">"empirical_gauss"</span><span class="p">][</span>
+    <span class="s2">"mixing_gain_deflection"</span>
 <span class="p">]</span> <span class="o">=</span> <span class="mf">100.0</span>
-<span class="n">fmodel_dict_mod</span><span class="p">[</span><span class="s2">&quot;wake&quot;</span><span class="p">][</span><span class="s2">&quot;wake_deflection_parameters&quot;</span><span class="p">][</span><span class="s2">&quot;empirical_gauss&quot;</span><span class="p">][</span>
-    <span class="s2">&quot;yaw_added_mixing_gain&quot;</span>
+<span class="n">fmodel_dict_mod</span><span class="p">[</span><span class="s2">"wake"</span><span class="p">][</span><span class="s2">"wake_deflection_parameters"</span><span class="p">][</span><span class="s2">"empirical_gauss"</span><span class="p">][</span>
+    <span class="s2">"yaw_added_mixing_gain"</span>
 <span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
 <span class="n">fmodel</span> <span class="o">=</span> <span class="n">FlorisModel</span><span class="p">(</span><span class="n">fmodel_dict_mod</span><span class="p">)</span>
 <span class="n">fmodel</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
@@ -860,7 +919,7 @@
 <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">num_in_row</span><span class="p">))</span> <span class="o">+</span> <span class="n">width</span> <span class="o">*</span> <span class="n">nw</span>
 <span class="n">nw</span> <span class="o">+=</span> <span class="mi">1</span>
 
-<span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;Increase yaw-added mixing&quot;</span>
+<span class="n">title</span> <span class="o">=</span> <span class="s2">"Increase yaw-added mixing"</span>
 <span class="n">ax0</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">turbine_powers</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">title</span><span class="p">)</span>
 
 <span class="k">if</span> <span class="n">show_flow_cuts</span><span class="p">:</span>
@@ -868,14 +927,14 @@
 
 <span class="c1"># Power plot aesthetics</span>
 <span class="n">ax0</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">num_in_row</span><span class="p">))</span>
-<span class="n">ax0</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">([</span><span class="sa">f</span><span class="s2">&quot;T</span><span class="si">{</span><span class="n">t</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_in_row</span><span class="p">)])</span>
+<span class="n">ax0</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">([</span><span class="sa">f</span><span class="s2">"T</span><span class="si">{</span><span class="n">t</span><span class="si">}</span><span class="s2">"</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_in_row</span><span class="p">)])</span>
 <span class="n">ax0</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
-<span class="n">ax0</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Turbine&quot;</span><span class="p">)</span>
-<span class="n">ax0</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Power [MW]&quot;</span><span class="p">)</span>
+<span class="n">ax0</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"Turbine"</span><span class="p">)</span>
+<span class="n">ax0</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"Power [MW]"</span><span class="p">)</span>
 
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
-<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">'ignore'</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -883,11 +942,11 @@
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Turbine yaw angles (degrees):  [20. 20. 10.  0.  0.]
 </pre></div>
 </div>
-<img alt="../../_images/bf62101b92eea814fe34f65b9a93c903a47a4b4c7d53a1c06459ad174ea9b602.png" src="../../_images/bf62101b92eea814fe34f65b9a93c903a47a4b4c7d53a1c06459ad174ea9b602.png" />
-<img alt="../../_images/d29cc97a639f5f5c4ffbc5eda119b7f9cd774a0fbe9b576d029a50a8f8a09159.png" src="../../_images/d29cc97a639f5f5c4ffbc5eda119b7f9cd774a0fbe9b576d029a50a8f8a09159.png" />
-<img alt="../../_images/336aa161c5eab60f0674ee786e207447f3448b35d3ad9f71fe8da58cf5b56c35.png" src="../../_images/336aa161c5eab60f0674ee786e207447f3448b35d3ad9f71fe8da58cf5b56c35.png" />
-<img alt="../../_images/e86089e436c7c4f8524197236ad19c1901a36f852929460f77cf5603db37e1d0.png" src="../../_images/e86089e436c7c4f8524197236ad19c1901a36f852929460f77cf5603db37e1d0.png" />
-<img alt="../../_images/b1676c30ef1e365995f409dd85cbd4f0cc0247a4954bc390c5dfde3d2c7ceb6a.png" src="../../_images/b1676c30ef1e365995f409dd85cbd4f0cc0247a4954bc390c5dfde3d2c7ceb6a.png" />
+<img alt="../../_images/90a2e62cb9fb87a69e03655bf00101f71f18e22836a3591dcbabba12afe43414.png" src="../../_images/90a2e62cb9fb87a69e03655bf00101f71f18e22836a3591dcbabba12afe43414.png" />
+<img alt="../../_images/5baec2a760626e0b05f1ee4ef03037d4919cac495e4ba911a0e4057ea27cae69.png" src="../../_images/5baec2a760626e0b05f1ee4ef03037d4919cac495e4ba911a0e4057ea27cae69.png" />
+<img alt="../../_images/fd3bfe269cf9661c8984d7374542e84e2ca080a034179eae3b617dd883a249e4.png" src="../../_images/fd3bfe269cf9661c8984d7374542e84e2ca080a034179eae3b617dd883a249e4.png" />
+<img alt="../../_images/c22b9d5d5de737acbc63d577d1664458b5e8e3dcf7eea73d8419f64b74744304.png" src="../../_images/c22b9d5d5de737acbc63d577d1664458b5e8e3dcf7eea73d8419f64b74744304.png" />
+<img alt="../../_images/3eeddf8949f1f0e59b81aef24795ec8d9ad0a57fdf0469e19ef0118c44ef916f.png" src="../../_images/3eeddf8949f1f0e59b81aef24795ec8d9ad0a57fdf0469e19ef0118c44ef916f.png" />
 </div>
 </div>
 </section>
@@ -990,8 +1049,8 @@ By National Laboratory of the Rockies
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
-<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb"></script>
 
   <footer class="bd-footer">
   </footer>

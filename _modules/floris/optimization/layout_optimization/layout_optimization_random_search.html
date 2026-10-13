@@ -26,8 +26,8 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
-<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+  <link href="../../../../_static/styles/theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
@@ -38,10 +38,10 @@
     <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- So that users can add custom icons -->
-  <script src="../../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="../../../../_static/scripts/fontawesome.js?digest=55c26ed414f5f8a31ebb"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
-<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
     <script src="../../../../_static/documentation_options.js?v=30a733bc"></script>
     <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
@@ -59,6 +59,12 @@
     <script>
                 window.dataLayer = window.dataLayer || [];
                 function gtag(){ dataLayer.push(arguments); }
+                gtag('consent', 'default', {
+                    'ad_storage': 'denied',
+                    'ad_user_data': 'denied',
+                    'ad_personalization': 'denied',
+                    'analytics_storage': 'denied'
+                });
                 gtag('js', new Date());
                 gtag('config', 'G-JV2SK7CNPR');
             </script>
@@ -68,11 +74,16 @@
     <script>
                 window.dataLayer = window.dataLayer || [];
                 function gtag(){ dataLayer.push(arguments); }
+                gtag('consent', 'default', {
+                    'ad_storage': 'denied',
+                    'ad_user_data': 'denied',
+                    'ad_personalization': 'denied',
+                    'analytics_storage': 'denied'
+                });
                 gtag('js', new Date());
                 gtag('config', 'G-JV2SK7CNPR');
             </script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
-    <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
     <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10.8/dist/mermaid.esm.min.mjs";
 
 
@@ -81,173 +92,11 @@
 
 const initStyles = () => {
     const defaultStyle = document.createElement('style');
-    defaultStyle.textContent = `pre.mermaid {
-    /* Same as .mermaid-container > pre */
-    display: block;
-    width: 100%;
-}
-
-pre.mermaid > svg {
-    /* Same as .mermaid-container > pre > svg */
-    height: 500px;
-    width: 100%;
-    max-width: 100% !important;
-}`;
+    defaultStyle.textContent = "pre.mermaid {\n    /* Same as .mermaid-container > pre */\n    display: block;\n    width: 100%;\n}\n\npre.mermaid > svg {\n    /* Same as .mermaid-container > pre > svg */\n    height: 500px;\n    width: 100%;\n    max-width: 100% !important;\n}";
     document.head.appendChild(defaultStyle);
 
     const fullscreenStyle = document.createElement('style');
-    fullscreenStyle.textContent = `.mermaid-container {
-    display: flex;
-    flex-direction: row;
-    width: 100%;
-}
-
-.mermaid-container > pre {
-    display: block;
-    width: 100%;
-}
-
-.mermaid-container > pre > svg {
-    height: 500px;
-    width: 100%;
-    max-width: 100% !important;
-}
-
-.mermaid-fullscreen-btn {
-    width: 28px;
-    height: 28px;
-    background: rgba(255, 255, 255, 0.95);
-    border: 1px solid rgba(0, 0, 0, 0.3);
-    border-radius: 4px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-    font-size: 14px;
-    line-height: 1;
-    padding: 0;
-    color: #333;
-}
-
-.mermaid-fullscreen-btn:hover {
-    opacity: 100% !important;
-    background: rgba(255, 255, 255, 1);
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
-    transform: scale(1.1);
-}
-
-.mermaid-fullscreen-btn.dark-theme {
-    background: rgba(50, 50, 50, 0.95);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    color: #e0e0e0;
-}
-
-.mermaid-fullscreen-btn.dark-theme:hover {
-    background: rgba(60, 60, 60, 1);
-    box-shadow: 0 3px 10px rgba(255, 255, 255, 0.2);
-}
-
-.mermaid-fullscreen-modal {
-    display: none;
-    position: fixed !important;
-    top: 0 !important;
-    left: 0 !important;
-    width: 95vw;
-    height: 100vh;
-    background: rgba(255, 255, 255, 0.98);
-    z-index: 9999;
-    padding: 20px;
-    overflow: auto;
-}
-
-.mermaid-fullscreen-modal.dark-theme {
-    background: rgba(0, 0, 0, 0.98);
-}
-
-.mermaid-fullscreen-modal.active {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.mermaid-container-fullscreen {
-    position: relative;
-    width: 95vw;
-    height: 90vh;
-    max-width: 95vw;
-    max-height: 90vh;
-    background: white;
-    border-radius: 8px;
-    padding: 20px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-    overflow: auto;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.mermaid-container-fullscreen.dark-theme {
-    background: #1a1a1a;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
-}
-
-.mermaid-container-fullscreen pre.mermaid {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.mermaid-container-fullscreen .mermaid svg {
-    height: 100% !important;
-    width: 100% !important;
-    cursor: grab;
-}
-
-.mermaid-fullscreen-close {
-    position: fixed !important;
-    top: 20px !important;
-    right: 20px !important;
-    width: 40px;
-    height: 40px;
-    background: rgba(255, 255, 255, 0.95);
-    border: 1px solid rgba(0, 0, 0, 0.2);
-    border-radius: 50%;
-    cursor: pointer;
-    z-index: 10000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-    transition: all 0.2s;
-    font-size: 24px;
-    line-height: 1;
-    color: #333;
-}
-
-.mermaid-fullscreen-close:hover {
-    background: white;
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
-    transform: scale(1.1);
-}
-
-.mermaid-fullscreen-close.dark-theme {
-    background: rgba(50, 50, 50, 0.95);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    color: #e0e0e0;
-}
-
-.mermaid-fullscreen-close.dark-theme:hover {
-    background: rgba(60, 60, 60, 1);
-    box-shadow: 0 6px 16px rgba(255, 255, 255, 0.2);
-}
-
-.mermaid-fullscreen-modal .mermaid-fullscreen-btn {
-    display: none !important;
-}`;
+    fullscreenStyle.textContent = ".mermaid-container {\n    position: relative;\n    display: flex;\n    flex-direction: row;\n    width: 100%;\n}\n\n.mermaid-container > pre {\n    display: block;\n    width: 100%;\n}\n\n.mermaid-container > pre > svg {\n    height: 500px;\n    width: 100%;\n    max-width: 100% !important;\n}\n\n.mermaid-fullscreen-btn {\n    position: absolute;\n    width: 28px;\n    height: 28px;\n    background: rgba(255, 255, 255, 0.95);\n    border: 1px solid rgba(0, 0, 0, 0.3);\n    border-radius: 4px;\n    cursor: pointer;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n    transition: all 0.2s;\n    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);\n    font-size: 14px;\n    line-height: 1;\n    padding: 0;\n    color: #333;\n}\n\n.mermaid-fullscreen-btn:hover {\n    opacity: 100% !important;\n    background: rgba(255, 255, 255, 1);\n    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);\n    transform: scale(1.1);\n}\n\n.mermaid-fullscreen-btn.dark-theme {\n    background: rgba(50, 50, 50, 0.95);\n    border: 1px solid rgba(255, 255, 255, 0.3);\n    color: #e0e0e0;\n}\n\n.mermaid-fullscreen-btn.dark-theme:hover {\n    background: rgba(60, 60, 60, 1);\n    box-shadow: 0 3px 10px rgba(255, 255, 255, 0.2);\n}\n\n.mermaid-fullscreen-modal {\n    display: none;\n    position: fixed !important;\n    top: 0 !important;\n    left: 0 !important;\n    width: 95vw;\n    height: 100vh;\n    background: rgba(255, 255, 255, 0.98);\n    z-index: 9999;\n    padding: 20px;\n    overflow: auto;\n}\n\n.mermaid-fullscreen-modal.dark-theme {\n    background: rgba(0, 0, 0, 0.98);\n}\n\n.mermaid-fullscreen-modal.active {\n    display: flex;\n    align-items: center;\n    justify-content: center;\n}\n\n.mermaid-container-fullscreen {\n    position: relative;\n    width: 95vw;\n    height: 90vh;\n    max-width: 95vw;\n    max-height: 90vh;\n    background: white;\n    border-radius: 8px;\n    padding: 20px;\n    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);\n    overflow: auto;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n}\n\n.mermaid-container-fullscreen.dark-theme {\n    background: #1a1a1a;\n    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);\n}\n\n.mermaid-container-fullscreen pre.mermaid {\n    width: 100%;\n    height: 100%;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n}\n\n.mermaid-container-fullscreen .mermaid svg {\n    height: 100% !important;\n    width: 100% !important;\n    cursor: grab;\n}\n\n.mermaid-fullscreen-close {\n    position: fixed !important;\n    top: 20px !important;\n    right: 20px !important;\n    width: 40px;\n    height: 40px;\n    background: rgba(255, 255, 255, 0.95);\n    border: 1px solid rgba(0, 0, 0, 0.2);\n    border-radius: 50%;\n    cursor: pointer;\n    z-index: 10000;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);\n    transition: all 0.2s;\n    font-size: 24px;\n    line-height: 1;\n    color: #333;\n}\n\n.mermaid-fullscreen-close:hover {\n    background: white;\n    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);\n    transform: scale(1.1);\n}\n\n.mermaid-fullscreen-close.dark-theme {\n    background: rgba(50, 50, 50, 0.95);\n    border: 1px solid rgba(255, 255, 255, 0.2);\n    color: #e0e0e0;\n}\n\n.mermaid-fullscreen-close.dark-theme:hover {\n    background: rgba(60, 60, 60, 1);\n    box-shadow: 0 6px 16px rgba(255, 255, 255, 0.2);\n}\n\n.mermaid-fullscreen-modal .mermaid-fullscreen-btn {\n    display: none !important;\n}";
     document.head.appendChild(fullscreenStyle);
 }
 
@@ -292,6 +141,32 @@ let darkTheme = isDarkTheme();
 let modal = null;
 let modalContent = null;
 let previousScrollOffset = [window.scrollX, window.scrollY];
+let _lazyObserver = null;
+let _renderQueue = Promise.resolve();
+let closeModal = () => {};
+
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal?.classList.contains('active')) {
+        closeModal();
+    }
+});
+
+// Apply d3 zoom to each SVG. Idempotent: an SVG already wrapped is skipped,
+// so this is safe to call both for the initial batch and for diagrams that
+// render lazily once they become visible.
+const addZoomToSvgs = (svgs) => {
+    svgs.each(function() {
+        if (this.getAttribute('data-zoom-applied') === 'true') return;
+        var svg = d3.select(this);
+        svg.html("<g class='wrapper'>" + svg.html() + "</g>");
+        var inner = svg.select("g");
+        var zoom = d3.zoom().on("zoom", function(event) {
+            inner.attr("transform", event.transform);
+        });
+        svg.call(zoom);
+        this.setAttribute('data-zoom-applied', 'true');
+    });
+};
 
 const runMermaid = async (rerun) => {
     console.log("Running mermaid diagrams, rerun =", rerun);
@@ -299,7 +174,15 @@ const runMermaid = async (rerun) => {
     let all_mermaids = document.querySelectorAll(".mermaid");
 
     if (rerun) {
+        // Disconnect any previous lazy rendering observer
+        if (_lazyObserver) {
+            _lazyObserver.disconnect();
+            _lazyObserver = null;
+        }
+
         all_mermaids.forEach((el) => {
+            el.removeAttribute('data-mermaid-deferred');
+            el.removeAttribute('data-mermaid-render-failed');
             if(!el.hasAttribute("data-original-code")) {
                 // store original code
                 // console.log(`Storing original code for first run: `, el.innerHTML);
@@ -316,42 +199,100 @@ const runMermaid = async (rerun) => {
                 el.setAttribute('data-original-code', el.innerHTML);
             }
         });
-        await mermaid.run();
+
+        // Separate visible and hidden elements. Mermaid's layout engine measures
+        // text dimensions via the DOM, which fails for elements hidden by a parent
+        // (e.g., Reveal.js non-active slides, sphinx-design unopened tabs),
+        // producing broken SVGs. Render visible elements now, defer hidden ones.
+        const visible = [];
+        const hidden = [];
+        all_mermaids.forEach((el) => {
+            // offsetParent is null for display:none ancestors.
+            // getClientRects().length > 0 catches position:fixed elements
+            // (which also have null offsetParent but are still visible).
+            if (el.offsetParent !== null || el.getClientRects().length > 0) {
+                visible.push(el);
+            } else {
+                hidden.push(el);
+                el.setAttribute('data-mermaid-deferred', 'true');
+            }
+        });
+
+        if (visible.length > 0) {
+            try {
+                await mermaid.run({ nodes: visible });
+            } catch (e) {
+                console.error("Mermaid rendering failed:", e);
+            }
+        }
+
+        // Lazily render hidden elements when they become visible.
+        // Uses a promise chain (_renderQueue) to serialize rendering,
+        // since IntersectionObserver may report multiple entries at once
+        // and mermaid.run() is not safe to call concurrently.
+        if (hidden.length > 0) {
+            if (typeof IntersectionObserver === 'undefined') {
+                console.warn("IntersectionObserver not available; hidden mermaid diagrams will not render.");
+            } else {
+                _renderQueue = Promise.resolve();
+                _lazyObserver = new IntersectionObserver((entries) => {
+                    for (const entry of entries) {
+                        if (entry.isIntersecting && entry.target.getAttribute("data-processed") !== "true") {
+                            _lazyObserver.unobserve(entry.target);
+                            const el = entry.target;
+                            _renderQueue = _renderQueue.then(async () => {
+                                try {
+                                    await mermaid.run({ nodes: [el] });
+                                    el.removeAttribute('data-mermaid-deferred');
+                                    // Apply zoom to the now-rendered diagram, matching
+                                    // the decoration visible diagrams receive.
+                                    if (false) {
+                                        addZoomToSvgs(d3.selectAll("").select(function() {
+                                            return this.querySelector("svg");
+                                        }));
+                                    }
+                                } catch (e) {
+                                    console.error("Mermaid deferred rendering failed:", e);
+                                    el.removeAttribute('data-mermaid-deferred');
+                                    el.setAttribute('data-mermaid-render-failed', 'true');
+                                }
+                            });
+                        }
+                    }
+                });
+                hidden.forEach((el) => _lazyObserver.observe(el));
+            }
+        }
     }
 
     all_mermaids = document.querySelectorAll(".mermaid");
-    const mermaids_processed = document.querySelectorAll(".mermaid[data-processed='true']");
+    // Exclude deferred (hidden) and render-failed elements from completion checks
+    const mermaids_active = document.querySelectorAll(".mermaid:not([data-mermaid-deferred]):not([data-mermaid-render-failed])");
+    const mermaids_processed = document.querySelectorAll(".mermaid:not([data-mermaid-deferred]):not([data-mermaid-render-failed])[data-processed='true']");
 
-    if ("False" === "True") {
-        const mermaids_to_add_zoom = -1 === -1 ? all_mermaids.length : -1;
+    if (false) {
+        const mermaids_to_add_zoom = 0 === -1 ? mermaids_active.length : 0;
         if(mermaids_to_add_zoom > 0) {
-            var svgs = d3.selectAll("");
-            if(all_mermaids.length !== mermaids_processed.length) {
+            var svgs = d3.selectAll("").select(function() {
+                return this.querySelector("svg");
+            });
+            // Wait until every active (visible) diagram has rendered. Deferred
+            // diagrams are excluded, so a fixed d3_node_count that counts a
+            // hidden diagram no longer loops forever waiting for its SVG.
+            if(mermaids_active.length !== mermaids_processed.length) {
                 setTimeout(() => runMermaid(false), 200);
                 return;
-            } else if(svgs.size() !== mermaids_to_add_zoom) {
-                setTimeout(() => runMermaid(false), 200);
-                return;
-            } else {
-                svgs.each(function() {
-                    var svg = d3.select(this);
-                    svg.html("<g class='wrapper'>" + svg.html() + "</g>");
-                    var inner = svg.select("g");
-                    var zoom = d3.zoom().on("zoom", function(event) {
-                        inner.attr("transform", event.transform);
-                    });
-                    svg.call(zoom);
-                });
             }
+            addZoomToSvgs(svgs);
         }
-    } else if(all_mermaids.length !== mermaids_processed.length) {
+    } else if(mermaids_active.length !== mermaids_processed.length) {
         // Wait for mermaid to process all diagrams
         setTimeout(() => runMermaid(false), 200);
         return;
     }
 
     // Stop here if not adding fullscreen capability
-    if ("True" !== "True") return;
+    if (!true) return;
 
     if (modal !== null ) {
         // Destroy existing modal
@@ -374,7 +315,7 @@ const runMermaid = async (rerun) => {
     modalContent = modal.querySelector('.mermaid-container-fullscreen');
     const closeBtn = modal.querySelector('.mermaid-fullscreen-close');
 
-    const closeModal = () => {
+    closeModal = () => {
         modal.classList.remove('active');
         modalContent.innerHTML = '';
         document.body.style.overflow = ''
@@ -385,12 +326,6 @@ const runMermaid = async (rerun) => {
     modal.addEventListener('click', (e) => {
         if (e.target === modal) closeModal();
     });
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && modal.classList.contains('active')) {
-            closeModal();
-        }
-    });
-
     document.querySelectorAll('.mermaid').forEach((mermaidDiv) => {
         if (mermaidDiv.parentNode.classList.contains('mermaid-container') ||
             mermaidDiv.closest('.mermaid-fullscreen-modal')) {
@@ -410,8 +345,8 @@ const runMermaid = async (rerun) => {
         const fullscreenBtn = document.createElement('button');
         fullscreenBtn.className = 'mermaid-fullscreen-btn' + (darkTheme ? ' dark-theme' : '');
         fullscreenBtn.setAttribute('aria-label', 'View diagram in fullscreen');
-        fullscreenBtn.textContent = '⛶';
-        fullscreenBtn.style.opacity = '50%';
+        fullscreenBtn.textContent = "\u26f6";
+        fullscreenBtn.style.opacity = "50%";
 
         // Calculate dynamic position based on diagram's margin and padding
         const diagramStyle = window.getComputedStyle(mermaidDiv);
@@ -423,7 +358,7 @@ const runMermaid = async (rerun) => {
         fullscreenBtn.style.right = `${marginRight + paddingRight + 4}px`;
 
         fullscreenBtn.addEventListener('click', () => {
-            previousScrollOffset = [window.scroll, window.scrollY];
+            previousScrollOffset = [window.scrollX, window.scrollY];
             const clone = mermaidDiv.cloneNode(true);
             modalContent.innerHTML = '';
             modalContent.appendChild(clone);
@@ -435,9 +370,9 @@ const runMermaid = async (rerun) => {
                 svg.style.width = '100%';
                 svg.style.height = 'auto';
                 svg.style.maxWidth = '100%';
-                svg.style.sdisplay = 'block';
+                svg.style.display = 'block';
 
-                if ("False" === "True") {
+                if (false) {
                     setTimeout(() => {
                         const g = svg.querySelector('g');
                         if (g) {
@@ -460,8 +395,11 @@ const runMermaid = async (rerun) => {
     });
 };
 
+
+
 const load = async () => {
     initStyles();
+
 
     await runMermaid(true);
 
@@ -471,10 +409,8 @@ const load = async () => {
             darkTheme = newDarkTheme;
             console.log("Theme change detected, re-running mermaid with", darkTheme ? "dark" : "default", "theme");
             await mermaid.initialize(
-                {...JSON.parse(
-                    `{"startOnLoad": false}`
-                ),
-                ...{ darkMode: darkTheme, theme: darkTheme ? 'dark' : 'default' },
+                {...{"startOnLoad": false},
+                ...{ darkMode: darkTheme, theme: darkTheme ? "dark" : "default" },
                 }
             );
             await runMermaid(true);
@@ -499,35 +435,40 @@ const load = async () => {
 
 console.log("Initializing mermaid with", darkTheme ? "dark" : "default", "theme");
 mermaid.initialize(
-    {...JSON.parse(
-        `{"startOnLoad": false}`
-    ),
-    ...{ darkMode: darkTheme, theme: darkTheme ? 'dark' : 'default' },
+    {...{"startOnLoad": false},
+    ...{ darkMode: darkTheme, theme: darkTheme ? "dark" : "default" },
     }
 );
 
 window.addEventListener("load", load);
 window.runMermaid = runMermaid;</script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/floris/optimization/layout_optimization/layout_optimization_random_search';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="python"/>
   <meta name="docsearch:version" content="" />
+  
+    
+    <script src="../../../../_static/searchtools.js"></script>
+    <script src="../../../../_static/language_data.js"></script>
+    <script src="../../../../searchindex.js"></script>
+  
   </head>
-  
-  
-  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
-
+  <body data-default-mode="">
   
   
   <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
   
   <div id="pst-scroll-pixel-helper"></div>
   
   <button type="button" class="btn rounded-pill" id="pst-back-to-top">
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
-
+  
+  
+  
   
   <dialog id="pst-search-dialog">
     
@@ -553,7 +494,47 @@ window.runMermaid = runMermaid;</script>
 </div>
 
   
-    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
     </header>
   
 
@@ -1079,11 +1060,11 @@ window.runMermaid = runMermaid;</script>
     <span class="n">max_y</span><span class="p">,</span>
     <span class="n">s</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Generates an initial layout by randomly placing</span>
 <span class="sd">    the first turbine than placing the remaining turbines</span>
 <span class="sd">    as far as possible from the existing turbines.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="c1"># Set random seed</span>
     <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
@@ -1103,7 +1084,7 @@ window.runMermaid = runMermaid;</script>
     <span class="c1"># Now add the remaining points</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">N</span><span class="p">):</span>
 
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Placing turbine </span><span class="si">{0}</span><span class="s2"> of </span><span class="si">{1}</span><span class="s2">.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">N</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"Placing turbine </span><span class="si">{0}</span><span class="s2"> of </span><span class="si">{1}</span><span class="s2">."</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">N</span><span class="p">))</span>
         <span class="c1"># Add a new turbine being as far as possible from current</span>
         <span class="n">max_dist</span> <span class="o">=</span> <span class="mf">0.</span>
         <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">min_x</span><span class="p">,</span> <span class="n">max_x</span><span class="p">,</span><span class="n">step_size</span><span class="p">):</span>
@@ -1137,7 +1118,7 @@ window.runMermaid = runMermaid;</script>
         <span class="n">n_individuals</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
         <span class="n">seconds_per_iteration</span><span class="o">=</span><span class="mf">60.</span><span class="p">,</span>
         <span class="n">total_optimization_seconds</span><span class="o">=</span><span class="mf">600.</span><span class="p">,</span>
-        <span class="n">interface</span><span class="o">=</span><span class="s2">&quot;multiprocessing&quot;</span><span class="p">,</span>  <span class="c1"># Options are &#39;multiprocessing&#39;, &#39;mpi4py&#39;, None</span>
+        <span class="n">interface</span><span class="o">=</span><span class="s2">"multiprocessing"</span><span class="p">,</span>  <span class="c1"># Options are 'multiprocessing', 'mpi4py', None</span>
         <span class="n">max_workers</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">grid_step_size</span><span class="o">=</span><span class="mf">100.</span><span class="p">,</span>
         <span class="n">relegation_number</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
@@ -1146,14 +1127,14 @@ window.runMermaid = runMermaid;</script>
         <span class="n">random_seed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">use_value</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Optimize layout using genetic random search algorithm. Details of the algorithm can be found</span>
 <span class="sd">        in Sinner and Fleming, 2024: https://dx.doi.org/10.1088/1742-6596/2767/3/032036</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            fmodel (_type_): _description_</span>
 <span class="sd">            boundaries (iterable(float, float)): Pairs of x- and y-coordinates</span>
-<span class="sd">                that represent the boundary&#39;s vertices (m).</span>
+<span class="sd">                that represent the boundary's vertices (m).</span>
 <span class="sd">            min_dist (float, optional): The minimum distance to be maintained</span>
 <span class="sd">                between turbines during the optimization (m). If not specified,</span>
 <span class="sd">                initializes to 2 rotor diameters. Defaults to None.</span>
@@ -1162,7 +1143,7 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">                of the rotor diameter.</span>
 <span class="sd">            distance_pmf (dict, optional): Probability mass function describing the</span>
 <span class="sd">                length of steps in the random search. Specified as a dictionary with</span>
-<span class="sd">                keys &quot;d&quot; (array of step distances, specified in meters) and &quot;p&quot;</span>
+<span class="sd">                keys "d" (array of step distances, specified in meters) and "p"</span>
 <span class="sd">                (array of probability of occurrence, should sum to 1). Defaults to</span>
 <span class="sd">                uniform probability between 0.5D and 2D, with some extra mass</span>
 <span class="sd">                to encourage large changes.</span>
@@ -1172,9 +1153,9 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">                run each step of the optimization for. Defaults to 60.</span>
 <span class="sd">            total_optimization_seconds (float, optional): The total number of</span>
 <span class="sd">                seconds to run the optimization for. Defaults to 600.</span>
-<span class="sd">            interface (str): Parallel computing interface to leverage. Recommended is &#39;concurrent&#39;</span>
-<span class="sd">                or &#39;multiprocessing&#39; for local (single-system) use, and &#39;mpi4py&#39; for high</span>
-<span class="sd">                performance computing on multiple nodes. Defaults to &#39;multiprocessing&#39;.</span>
+<span class="sd">            interface (str): Parallel computing interface to leverage. Recommended is 'concurrent'</span>
+<span class="sd">                or 'multiprocessing' for local (single-system) use, and 'mpi4py' for high</span>
+<span class="sd">                performance computing on multiple nodes. Defaults to 'multiprocessing'.</span>
 <span class="sd">            max_workers (int): Number of parallel workers, typically equal to the number of cores</span>
 <span class="sd">                you have on your system or HPC.  Defaults to None, which will use all</span>
 <span class="sd">                available cores.</span>
@@ -1190,14 +1171,14 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">            random_seed (int or None): Random seed for reproducibility. Defaults to None.</span>
 <span class="sd">            use_value (bool, optional): If True, the layout optimization objective</span>
 <span class="sd">                is to maximize annual value production using the value array in the</span>
-<span class="sd">                FLORIS model&#39;s WindData object. If False, the optimization</span>
+<span class="sd">                FLORIS model's WindData object. If False, the optimization</span>
 <span class="sd">                objective is to maximize AEP. Defaults to False.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># The parallel computing interface to use</span>
-        <span class="k">if</span> <span class="n">interface</span> <span class="o">==</span> <span class="s2">&quot;mpi4py&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">interface</span> <span class="o">==</span> <span class="s2">"mpi4py"</span><span class="p">:</span>
             <span class="kn">import</span><span class="w"> </span><span class="nn">mpi4py.futures</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mp</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_PoolExecutor</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">MPIPoolExecutor</span>
-        <span class="k">elif</span> <span class="n">interface</span> <span class="o">==</span> <span class="s2">&quot;multiprocessing&quot;</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="n">interface</span> <span class="o">==</span> <span class="s2">"multiprocessing"</span><span class="p">:</span>
             <span class="kn">import</span><span class="w"> </span><span class="nn">multiprocessing</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mp</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_PoolExecutor</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">Pool</span>
             <span class="k">if</span> <span class="n">max_workers</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -1205,20 +1186,20 @@ window.runMermaid = runMermaid;</script>
         <span class="k">elif</span> <span class="n">interface</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">n_individuals</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">or</span> <span class="p">(</span><span class="n">max_workers</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">max_workers</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">):</span>
                 <span class="nb">print</span><span class="p">(</span>
-                    <span class="s2">&quot;Parallelization not possible with interface=None. &quot;</span>
-                    <span class="o">+</span><span class="s2">&quot;Reducing n_individuals to 1 and ignoring max_workers.&quot;</span>
+                    <span class="s2">"Parallelization not possible with interface=None. "</span>
+                    <span class="o">+</span><span class="s2">"Reducing n_individuals to 1 and ignoring max_workers."</span>
                 <span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_PoolExecutor</span> <span class="o">=</span> <span class="kc">None</span>
                 <span class="n">max_workers</span> <span class="o">=</span> <span class="kc">None</span>
                 <span class="n">n_individuals</span> <span class="o">=</span> <span class="mi">1</span>
 
-        <span class="c1"># elif interface == &quot;concurrent&quot;:</span>
+        <span class="c1"># elif interface == "concurrent":</span>
         <span class="c1">#     from concurrent.futures import ProcessPoolExecutor</span>
         <span class="c1">#     self._PoolExecutor = ProcessPoolExecutor</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Interface &#39;</span><span class="si">{</span><span class="n">interface</span><span class="si">}</span><span class="s2">&#39; not recognized. &quot;</span>
-                <span class="s2">&quot;Please use &#39; &#39;multiprocessing&#39; or &#39;mpi4py&#39;.&quot;</span>
+                <span class="sa">f</span><span class="s2">"Interface '</span><span class="si">{</span><span class="n">interface</span><span class="si">}</span><span class="s2">' not recognized. "</span>
+                <span class="s2">"Please use ' 'multiprocessing' or 'mpi4py'."</span>
             <span class="p">)</span>
 
         <span class="c1"># Store the max_workers</span>
@@ -1232,18 +1213,18 @@ window.runMermaid = runMermaid;</script>
 
         <span class="c1"># Confirm the relegation_number is valid</span>
         <span class="k">if</span> <span class="n">relegation_number</span> <span class="o">&gt;</span> <span class="n">n_individuals</span> <span class="o">/</span> <span class="mi">2</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;relegation_number must be less than n_individuals / 2.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"relegation_number must be less than n_individuals / 2."</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">relegation_number</span> <span class="o">=</span> <span class="n">relegation_number</span>
 
         <span class="c1"># Store the rotor diameter and number of turbines</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">D</span> <span class="o">=</span> <span class="n">fmodel</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">rotor_diameters</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">fmodel</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">rotor_diameters</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">D</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Using largest rotor diameter for min_dist_D and distance_pmf.&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"Using largest rotor diameter for min_dist_D and distance_pmf."</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">N_turbines</span> <span class="o">=</span> <span class="n">fmodel</span><span class="o">.</span><span class="n">n_turbines</span>
 
         <span class="c1"># Make sure not both min_dist and min_dist_D are defined</span>
         <span class="k">if</span> <span class="n">min_dist</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">min_dist_D</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Only one of min_dist and min_dist_D can be defined.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Only one of min_dist and min_dist_D can be defined."</span><span class="p">)</span>
 
         <span class="c1"># If min_dist_D is defined, convert to min_dist</span>
         <span class="k">if</span> <span class="n">min_dist_D</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -1257,11 +1238,11 @@ window.runMermaid = runMermaid;</script>
             <span class="n">use_value</span><span class="o">=</span><span class="n">use_value</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="k">if</span> <span class="n">use_value</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_obj_name</span> <span class="o">=</span> <span class="s2">&quot;value&quot;</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_obj_unit</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_obj_name</span> <span class="o">=</span> <span class="s2">"value"</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_obj_unit</span> <span class="o">=</span> <span class="s2">""</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_obj_name</span> <span class="o">=</span> <span class="s2">&quot;AEP&quot;</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_obj_unit</span> <span class="o">=</span> <span class="s2">&quot;[GWh]&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_obj_name</span> <span class="o">=</span> <span class="s2">"AEP"</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_obj_unit</span> <span class="o">=</span> <span class="s2">"[GWh]"</span>
 
         <span class="c1"># Save min_dist_D</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">min_dist_D</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_dist</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">D</span>
@@ -1324,7 +1305,7 @@ window.runMermaid = runMermaid;</script>
         <span class="k">if</span> <span class="n">use_dist_based_init</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_generate_initial_layouts</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Using supplied initial layout for </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_individuals</span><span class="si">}</span><span class="s1"> individuals.&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Using supplied initial layout for </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_individuals</span><span class="si">}</span><span class="s1"> individuals.'</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_individuals</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">x_candidate</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x_initial</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">y_candidate</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_initial</span>
@@ -1342,18 +1323,18 @@ window.runMermaid = runMermaid;</script>
 <div class="viewcode-block" id="LayoutOptimizationRandomSearch.describe">
 <a class="viewcode-back" href="../../../../_autosummary/floris.optimization.layout_optimization.layout_optimization_random_search.html#floris.optimization.layout_optimization.layout_optimization_random_search.LayoutOptimizationRandomSearch.describe">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">describe</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Random Layout Optimization&quot;</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Number of turbines to optimize = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">N_turbines</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Minimum distance between turbines = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">min_dist_D</span><span class="si">}</span><span class="s2"> [D], </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">min_dist</span><span class="si">}</span><span class="s2"> [m]&quot;</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Number of individuals = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_individuals</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Seconds per iteration = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">seconds_per_iteration</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Initial </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_obj_name</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">objective_initial</span><span class="o">/</span><span class="mf">1e9</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_obj_unit</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"Random Layout Optimization"</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Number of turbines to optimize = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">N_turbines</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Minimum distance between turbines = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">min_dist_D</span><span class="si">}</span><span class="s2"> [D], </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">min_dist</span><span class="si">}</span><span class="s2"> [m]"</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Number of individuals = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_individuals</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Seconds per iteration = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">seconds_per_iteration</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Initial </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_obj_name</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">objective_initial</span><span class="o">/</span><span class="mf">1e9</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_obj_unit</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span></div>
 
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_process_dist_pmf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dist_pmf</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Check validity of pmf and assign default if none provided.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="n">dist_pmf</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">jump_dist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">xmax</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">xmin</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ymax</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">ymin</span><span class="p">])</span><span class="o">/</span><span class="mi">2</span>
             <span class="n">jump_prob</span> <span class="o">=</span> <span class="mf">0.05</span>
@@ -1361,22 +1342,22 @@ window.runMermaid = runMermaid;</script>
             <span class="n">d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">D</span><span class="p">,</span> <span class="mi">99</span><span class="p">),</span> <span class="n">jump_dist</span><span class="p">)</span>
             <span class="n">p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="mi">1</span><span class="o">-</span><span class="n">jump_prob</span><span class="p">)</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">d</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">d</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">jump_prob</span><span class="p">)</span>
             <span class="n">p</span> <span class="o">=</span> <span class="n">p</span> <span class="o">/</span> <span class="n">p</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
-            <span class="n">dist_pmf</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;d&quot;</span><span class="p">:</span><span class="n">d</span><span class="p">,</span> <span class="s2">&quot;p&quot;</span><span class="p">:</span><span class="n">p</span><span class="p">}</span>
+            <span class="n">dist_pmf</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"d"</span><span class="p">:</span><span class="n">d</span><span class="p">,</span> <span class="s2">"p"</span><span class="p">:</span><span class="n">p</span><span class="p">}</span>
 
         <span class="c1"># Check correct keys are provided</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">k</span> <span class="ow">in</span> <span class="n">dist_pmf</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;d&quot;</span><span class="p">,</span> <span class="s2">&quot;p&quot;</span><span class="p">)):</span>
-            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;distance_pmf must contains keys </span><span class="se">\&quot;</span><span class="s2">d</span><span class="se">\&quot;</span><span class="s2"> (step distance)&quot;</span><span class="o">+</span>\
-                <span class="s2">&quot; and </span><span class="se">\&quot;</span><span class="s2">p</span><span class="se">\&quot;</span><span class="s2"> (probability of occurrence).&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">k</span> <span class="ow">in</span> <span class="n">dist_pmf</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"d"</span><span class="p">,</span> <span class="s2">"p"</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">"distance_pmf must contains keys </span><span class="se">\"</span><span class="s2">d</span><span class="se">\"</span><span class="s2"> (step distance)"</span><span class="o">+</span>\
+                <span class="s2">" and </span><span class="se">\"</span><span class="s2">p</span><span class="se">\"</span><span class="s2"> (probability of occurrence)."</span><span class="p">)</span>
 
         <span class="c1"># Check entries are in the correct form</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">dist_pmf</span><span class="p">[</span><span class="s2">&quot;d&quot;</span><span class="p">],</span> <span class="s2">&quot;__len__&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">dist_pmf</span><span class="p">[</span><span class="s2">&quot;d&quot;</span><span class="p">],</span> <span class="s2">&quot;__len__&quot;</span><span class="p">)</span>\
-            <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">dist_pmf</span><span class="p">[</span><span class="s2">&quot;d&quot;</span><span class="p">])</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">dist_pmf</span><span class="p">[</span><span class="s2">&quot;p&quot;</span><span class="p">]):</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;distance_pmf entries should be numpy arrays or lists&quot;</span><span class="o">+</span>\
-                <span class="s2">&quot; of equal length.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">dist_pmf</span><span class="p">[</span><span class="s2">"d"</span><span class="p">],</span> <span class="s2">"__len__"</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">dist_pmf</span><span class="p">[</span><span class="s2">"d"</span><span class="p">],</span> <span class="s2">"__len__"</span><span class="p">)</span>\
+            <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">dist_pmf</span><span class="p">[</span><span class="s2">"d"</span><span class="p">])</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">dist_pmf</span><span class="p">[</span><span class="s2">"p"</span><span class="p">]):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">"distance_pmf entries should be numpy arrays or lists"</span><span class="o">+</span>\
+                <span class="s2">" of equal length."</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">dist_pmf</span><span class="p">[</span><span class="s2">&quot;p&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">(),</span> <span class="mi">1</span><span class="p">):</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Probability mass function does not sum to 1. Normalizing.&quot;</span><span class="p">)</span>
-            <span class="n">dist_pmf</span><span class="p">[</span><span class="s2">&quot;p&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">dist_pmf</span><span class="p">[</span><span class="s2">&quot;p&quot;</span><span class="p">])</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">dist_pmf</span><span class="p">[</span><span class="s2">&quot;p&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">dist_pmf</span><span class="p">[</span><span class="s2">"p"</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">(),</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">"Probability mass function does not sum to 1. Normalizing."</span><span class="p">)</span>
+            <span class="n">dist_pmf</span><span class="p">[</span><span class="s2">"p"</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">dist_pmf</span><span class="p">[</span><span class="s2">"p"</span><span class="p">])</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">dist_pmf</span><span class="p">[</span><span class="s2">"p"</span><span class="p">])</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">distance_pmf</span> <span class="o">=</span> <span class="n">dist_pmf</span>
 
@@ -1409,26 +1390,26 @@ window.runMermaid = runMermaid;</script>
         <span class="p">)</span>
         <span class="n">increase_max</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">objective_max</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">objective_initial</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">objective_initial</span>
         <span class="n">increase_min</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">objective_min</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">objective_initial</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">objective_initial</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=======================================&quot;</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Optimization step </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">iteration_step</span><span class="si">:</span><span class="s2">+.1f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Optimization time = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">opt_time</span><span class="si">:</span><span class="s2">+.1f</span><span class="si">}</span><span class="s2"> [s]&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"======================================="</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Optimization step </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">iteration_step</span><span class="si">:</span><span class="s2">+.1f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Optimization time = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">opt_time</span><span class="si">:</span><span class="s2">+.1f</span><span class="si">}</span><span class="s2"> [s]"</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Mean </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_obj_name</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">objective_mean</span><span class="o">/</span><span class="mf">1e9</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_obj_unit</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">increase_mean</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2">%)&quot;</span>
+            <span class="sa">f</span><span class="s2">"Mean </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_obj_name</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">objective_mean</span><span class="o">/</span><span class="mf">1e9</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">"</span>
+            <span class="sa">f</span><span class="s2">" </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_obj_unit</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">increase_mean</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2">%)"</span>
         <span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Median </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_obj_name</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">objective_median</span><span class="o">/</span><span class="mf">1e9</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_obj_unit</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">increase_median</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2">%)&quot;</span>
+            <span class="sa">f</span><span class="s2">"Median </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_obj_name</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">objective_median</span><span class="o">/</span><span class="mf">1e9</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">"</span>
+            <span class="sa">f</span><span class="s2">" </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_obj_unit</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">increase_median</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2">%)"</span>
         <span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Max </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_obj_name</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">objective_max</span><span class="o">/</span><span class="mf">1e9</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_obj_unit</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">increase_max</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2">%)&quot;</span>
+            <span class="sa">f</span><span class="s2">"Max </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_obj_name</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">objective_max</span><span class="o">/</span><span class="mf">1e9</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">"</span>
+            <span class="sa">f</span><span class="s2">" </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_obj_unit</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">increase_max</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2">%)"</span>
         <span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Min </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_obj_name</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">objective_min</span><span class="o">/</span><span class="mf">1e9</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_obj_unit</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">increase_min</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2">%)&quot;</span>
+            <span class="sa">f</span><span class="s2">"Min </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_obj_name</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">objective_min</span><span class="o">/</span><span class="mf">1e9</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">"</span>
+            <span class="sa">f</span><span class="s2">" </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_obj_unit</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">increase_min</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2">%)"</span>
         <span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=======================================&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"======================================="</span><span class="p">)</span>
 
         <span class="c1"># Replace the relegation_number worst performing layouts with relegation_number</span>
         <span class="c1"># best layouts</span>
@@ -1442,11 +1423,11 @@ window.runMermaid = runMermaid;</script>
 
     <span class="c1"># Private methods</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_generate_initial_layouts</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        This method generates n_individuals initial layout of turbines. It does</span>
 <span class="sd">        this by calling the _generate_random_layout method within a multiprocessing</span>
 <span class="sd">        pool.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="c1"># Set random seed for initial layout</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">random_seed</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -1456,7 +1437,7 @@ window.runMermaid = runMermaid;</script>
             <span class="c1"># 23 is just an arbitrary choice to ensure different random seeds</span>
             <span class="c1"># to the evaluation code</span>
 
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Generating </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_individuals</span><span class="si">}</span><span class="s1"> initial layouts...&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Generating </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_individuals</span><span class="si">}</span><span class="s1"> initial layouts...'</span><span class="p">)</span>
         <span class="n">t1</span> <span class="o">=</span> <span class="n">timerpc</span><span class="p">()</span>
         <span class="c1"># Generate the multiargs for parallel execution</span>
         <span class="n">multiargs</span> <span class="o">=</span> <span class="p">[</span>
@@ -1475,7 +1456,7 @@ window.runMermaid = runMermaid;</script>
             <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_PoolExecutor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">max_workers</span><span class="p">)</span> <span class="k">as</span> <span class="n">p</span><span class="p">:</span>
                 <span class="c1"># This code is not currently necessary, but leaving in case implement</span>
                 <span class="c1"># concurrent later, based on parallel_computing_interface.py</span>
-                <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">interface</span> <span class="o">==</span> <span class="s2">&quot;mpi4py&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">interface</span> <span class="o">==</span> <span class="s2">&quot;multiprocessing&quot;</span><span class="p">):</span>
+                <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">interface</span> <span class="o">==</span> <span class="s2">"mpi4py"</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">interface</span> <span class="o">==</span> <span class="s2">"multiprocessing"</span><span class="p">):</span>
                         <span class="n">out</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">starmap</span><span class="p">(</span><span class="n">_gen_dist_based_init</span><span class="p">,</span> <span class="n">multiargs</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span> <span class="c1"># Parallelization not activated</span>
             <span class="n">out</span> <span class="o">=</span> <span class="p">[</span><span class="n">_gen_dist_based_init</span><span class="p">(</span><span class="o">*</span><span class="n">multiargs</span><span class="p">[</span><span class="mi">0</span><span class="p">])]</span>
@@ -1496,7 +1477,7 @@ window.runMermaid = runMermaid;</script>
             <span class="p">)</span>
 
         <span class="n">t2</span> <span class="o">=</span> <span class="n">timerpc</span><span class="p">()</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Time to generate initial layouts: </span><span class="si">{</span><span class="n">t2</span><span class="o">-</span><span class="n">t1</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> s&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Time to generate initial layouts: </span><span class="si">{</span><span class="n">t2</span><span class="o">-</span><span class="n">t1</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> s"</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_initial_and_final_locs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">x_initial</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x_initial</span>
@@ -1506,10 +1487,10 @@ window.runMermaid = runMermaid;</script>
         <span class="k">return</span> <span class="n">x_initial</span><span class="p">,</span> <span class="n">y_initial</span><span class="p">,</span> <span class="n">x_opt</span><span class="p">,</span> <span class="n">y_opt</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_initialize_optimization</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Set up logs etc</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Optimizing using </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_individuals</span><span class="si">}</span><span class="s1"> individuals.&#39;</span><span class="p">)</span>
+<span class="sd">        """</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Optimizing using </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_individuals</span><span class="si">}</span><span class="s1"> individuals.'</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_opt_start_time</span> <span class="o">=</span> <span class="n">timerpc</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_opt_stop_time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_opt_start_time</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_optimization_seconds</span>
 
@@ -1518,9 +1499,9 @@ window.runMermaid = runMermaid;</script>
         <span class="bp">self</span><span class="o">.</span><span class="n">_num_objective_calls</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">n_individuals</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_run_optimization_generation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Run a generation of the outer genetic algorithm</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Set random seed for the main loop</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">random_seed</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">multi_random_seeds</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">n_individuals</span>
@@ -1532,7 +1513,7 @@ window.runMermaid = runMermaid;</script>
 
         <span class="c1"># Update the optimization time</span>
         <span class="n">sim_time</span> <span class="o">=</span> <span class="n">timerpc</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_opt_start_time</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Optimization time: </span><span class="si">{</span><span class="n">sim_time</span><span class="si">:</span><span class="s1">.1f</span><span class="si">}</span><span class="s1"> s / </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">total_optimization_seconds</span><span class="si">:</span><span class="s1">.1f</span><span class="si">}</span><span class="s1"> s&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Optimization time: </span><span class="si">{</span><span class="n">sim_time</span><span class="si">:</span><span class="s1">.1f</span><span class="si">}</span><span class="s1"> s / </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">total_optimization_seconds</span><span class="si">:</span><span class="s1">.1f</span><span class="si">}</span><span class="s1"> s'</span><span class="p">)</span>
 
 
         <span class="c1"># Generate the multiargs for parallel execution of single individual optimization</span>
@@ -1574,9 +1555,9 @@ window.runMermaid = runMermaid;</script>
         <span class="bp">self</span><span class="o">.</span><span class="n">_evaluate_opt_step</span><span class="p">()</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_finalize_optimization</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Package and print final results.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="c1"># Finalize the result</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">objective_final</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">objective_candidate</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -1586,17 +1567,17 @@ window.runMermaid = runMermaid;</script>
         <span class="c1"># Print the final result</span>
         <span class="n">increase</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">objective_final</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">objective_initial</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">objective_initial</span>
         <span class="nb">print</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Final </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_obj_name</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">objective_final</span><span class="o">/</span><span class="mf">1e9</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_obj_unit</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">increase</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2">%)&quot;</span>
+            <span class="sa">f</span><span class="s2">"Final </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_obj_name</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">objective_final</span><span class="o">/</span><span class="mf">1e9</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">"</span>
+            <span class="sa">f</span><span class="s2">" </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_obj_unit</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">increase</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2">%)"</span>
         <span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_test_optimize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Perform a fixed number of iterations with a single worker for</span>
 <span class="sd">        debugging and testing purposes.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Set up a minimal problem to run on a single worker</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Running test optimization on a single worker.&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"Running test optimization on a single worker."</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_PoolExecutor</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">max_workers</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">n_individuals</span> <span class="o">=</span> <span class="mi">1</span>
@@ -1616,9 +1597,9 @@ window.runMermaid = runMermaid;</script>
 <div class="viewcode-block" id="LayoutOptimizationRandomSearch.optimize">
 <a class="viewcode-back" href="../../../../_autosummary/floris.optimization.layout_optimization.layout_optimization_random_search.html#floris.optimization.layout_optimization.layout_optimization_random_search.LayoutOptimizationRandomSearch.optimize">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">optimize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Perform the optimization</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_initialize_optimization</span><span class="p">()</span>
 
         <span class="c1"># Run generations until the overall stop time</span>
@@ -1634,17 +1615,17 @@ window.runMermaid = runMermaid;</script>
 <div class="viewcode-block" id="LayoutOptimizationRandomSearch.plot_distance_pmf">
 <a class="viewcode-back" href="../../../../_autosummary/floris.optimization.layout_optimization.layout_optimization_random_search.html#floris.optimization.layout_optimization.layout_optimization_random_search.LayoutOptimizationRandomSearch.plot_distance_pmf">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">plot_distance_pmf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Tool to check the used distance pmf.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">if</span> <span class="n">ax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">_</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
 
-        <span class="n">ax</span><span class="o">.</span><span class="n">stem</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">distance_pmf</span><span class="p">[</span><span class="s2">&quot;d&quot;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">distance_pmf</span><span class="p">[</span><span class="s2">&quot;p&quot;</span><span class="p">],</span> <span class="n">linefmt</span><span class="o">=</span><span class="s2">&quot;k-&quot;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">stem</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">distance_pmf</span><span class="p">[</span><span class="s2">"d"</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">distance_pmf</span><span class="p">[</span><span class="s2">"p"</span><span class="p">],</span> <span class="n">linefmt</span><span class="o">=</span><span class="s2">"k-"</span><span class="p">)</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Step distance [m]&quot;</span><span class="p">)</span>
-        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Probability&quot;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"Step distance [m]"</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"Probability"</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">ax</span></div>
 </div>
@@ -1705,7 +1686,7 @@ window.runMermaid = runMermaid;</script>
         <span class="n">stop_time</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span>
         <span class="n">dd</span> <span class="o">=</span> <span class="mi">0</span>
 
-    <span class="c1"># Loop as long as we&#39;ve not hit the stop time</span>
+    <span class="c1"># Loop as long as we've not hit the stop time</span>
     <span class="k">while</span> <span class="n">timerpc</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">stop_time</span><span class="p">:</span>
 
         <span class="k">if</span> <span class="n">debug</span> <span class="ow">and</span> <span class="n">dd</span> <span class="o">&gt;=</span> <span class="n">debug_iterations</span><span class="p">:</span>
@@ -1716,7 +1697,7 @@ window.runMermaid = runMermaid;</script>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">use_momentum</span><span class="p">:</span>
             <span class="n">get_new_point</span> <span class="o">=</span> <span class="kc">True</span>
 
-        <span class="k">if</span> <span class="n">get_new_point</span><span class="p">:</span> <span class="c1">#If the last test wasn&#39;t successful</span>
+        <span class="k">if</span> <span class="n">get_new_point</span><span class="p">:</span> <span class="c1">#If the last test wasn't successful</span>
 
             <span class="c1"># Randomly select a turbine to nudge</span>
             <span class="n">tr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">num_turbines</span><span class="p">)</span>
@@ -1725,7 +1706,7 @@ window.runMermaid = runMermaid;</script>
             <span class="n">rand_dir</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
 
             <span class="c1"># Randomly select a distance to travel according to pmf</span>
-            <span class="n">rand_dist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">dist_pmf</span><span class="p">[</span><span class="s2">&quot;d&quot;</span><span class="p">],</span> <span class="n">p</span><span class="o">=</span><span class="n">dist_pmf</span><span class="p">[</span><span class="s2">&quot;p&quot;</span><span class="p">])</span>
+            <span class="n">rand_dist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">dist_pmf</span><span class="p">[</span><span class="s2">"d"</span><span class="p">],</span> <span class="n">p</span><span class="o">=</span><span class="n">dist_pmf</span><span class="p">[</span><span class="s2">"p"</span><span class="p">])</span>
 
         <span class="c1"># Get a new test point</span>
         <span class="n">test_x</span> <span class="o">=</span> <span class="n">layout_x</span><span class="p">[</span><span class="n">tr</span><span class="p">]</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">rand_dir</span><span class="p">)</span> <span class="o">*</span> <span class="n">rand_dist</span>
@@ -1754,7 +1735,7 @@ window.runMermaid = runMermaid;</script>
         <span class="k">if</span> <span class="n">enable_geometric_yaw</span><span class="p">:</span> <span class="c1"># Select appropriate yaw angles</span>
             <span class="n">yaw_opt</span><span class="o">.</span><span class="n">fmodel_subset</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">layout_x</span><span class="o">=</span><span class="n">layout_x</span><span class="p">,</span> <span class="n">layout_y</span><span class="o">=</span><span class="n">layout_y</span><span class="p">)</span>
             <span class="n">df_opt</span> <span class="o">=</span> <span class="n">yaw_opt</span><span class="o">.</span><span class="n">optimize</span><span class="p">()</span>
-            <span class="n">yaw_angles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="n">df_opt</span><span class="p">[</span><span class="s1">&#39;yaw_angles_opt&#39;</span><span class="p">])</span>
+            <span class="n">yaw_angles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="n">df_opt</span><span class="p">[</span><span class="s1">'yaw_angles_opt'</span><span class="p">])</span>
 
         <span class="n">num_objective_calls</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="n">test_objective</span> <span class="o">=</span> <span class="n">_get_objective</span><span class="p">(</span><span class="n">layout_x</span><span class="p">,</span> <span class="n">layout_y</span><span class="p">,</span> <span class="n">fmodel_</span><span class="p">,</span> <span class="n">yaw_angles</span><span class="p">,</span> <span class="n">use_value</span><span class="p">)</span>
@@ -1838,8 +1819,8 @@ By National Laboratory of the Rockies
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
-<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="../../../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb"></script>
+<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb"></script>
 
   <footer class="bd-footer">
   </footer>
