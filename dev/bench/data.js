@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1791914128111,
+  "lastUpdate": 1791919479076,
   "repoUrl": "https://github.com/NatLabRockies/floris",
   "entries": {
     "Python Benchmark with pytest-benchmark": [
@@ -5846,6 +5846,72 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.00027897407376579054",
             "extra": "mean: 4.001677685554447 msec\nrounds: 194"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ba65d765c06258da06520e3ca3aa25d0ca595a3c",
+          "message": "Update isort requirement from <9,>=5 to >=5,<10 (#1203)\n\nUpdates the requirements on [isort](https://github.com/PyCQA/isort) to permit the latest version.\n- [Release notes](https://github.com/PyCQA/isort/releases)\n- [Changelog](https://github.com/PyCQA/isort/blob/main/CHANGELOG.md)\n- [Commits](https://github.com/PyCQA/isort/compare/5.0.0...9.0.1)\n\n---\nupdated-dependencies:\n- dependency-name: isort\n  dependency-version: 9.0.1\n  dependency-type: direct:development\n...\n\nSigned-off-by: dependabot[bot] <support@github.com>\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>",
+          "timestamp": "2026-10-13T13:06:52-06:00",
+          "tree_id": "b68aa868aa845f7a25aff88a162333260011a785",
+          "url": "https://github.com/NatLabRockies/floris/commit/ba65d765c06258da06520e3ca3aa25d0ca595a3c"
+        },
+        "date": 1791919476904,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "benchmarks/bench.py::test_timing_small_farm_set",
+            "value": 81.3841435200814,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00010401740096103032",
+            "extra": "mean: 12.287405835428515 msec\nrounds: 79"
+          },
+          {
+            "name": "benchmarks/bench.py::test_timing_small_farm_run",
+            "value": 108.02325856506135,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00014234634948191355",
+            "extra": "mean: 9.257265641525798 msec\nrounds: 53"
+          },
+          {
+            "name": "benchmarks/bench.py::test_timing_large_farm_set",
+            "value": 50.32888691257484,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0006439112596659189",
+            "extra": "mean: 19.869304913042825 msec\nrounds: 46"
+          },
+          {
+            "name": "benchmarks/bench.py::test_timing_large_farm_run",
+            "value": 0.488491285414911,
+            "unit": "iter/sec",
+            "range": "stddev: 0.011102996403355513",
+            "extra": "mean: 2.0471194264000587 sec\nrounds: 5"
+          },
+          {
+            "name": "benchmarks/bench.py::test_timing_het_set",
+            "value": 69.59818305216184,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0002545921487708057",
+            "extra": "mean: 14.368191181808994 msec\nrounds: 66"
+          },
+          {
+            "name": "benchmarks/bench.py::test_timing_het_run",
+            "value": 251.3847545651508,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00006762327513794895",
+            "extra": "mean: 3.9779659738308926 msec\nrounds: 191"
           }
         ]
       }
