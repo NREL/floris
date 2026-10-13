@@ -940,6 +940,10 @@
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Using point 0 at (0.0, 0.0) as reference location
 </pre></div>
 </div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:512: RuntimeWarning: invalid value encountered in divide
+  I_total = np.sqrt((2 / 3) * k_total) / average_u_i
+</pre></div>
+</div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Using supplied initial layout for 4 individuals.
 =======================================
 Optimization step +0.0
@@ -953,11 +957,11 @@ Optimizing using 4 individuals.
 Optimization time: 0.0 s / 120.0 s
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:512: RuntimeWarning: invalid value encountered in divide
-  I_total = np.sqrt((2 / 3) * k_total) / average_u_i
-</pre></div>
-</div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/wind_data.py:3088: RuntimeWarning: invalid value encountered in power
+  exponent = -((x / a) ** k)
+/home/runner/work/floris/floris/floris/wind_data.py:3088: RuntimeWarning: invalid value encountered in power
+  exponent = -((x / a) ** k)
+/home/runner/work/floris/floris/floris/wind_data.py:3088: RuntimeWarning: invalid value encountered in power
   exponent = -((x / a) ** k)
 /home/runner/work/floris/floris/floris/wind_data.py:3088: RuntimeWarning: invalid value encountered in power
   exponent = -((x / a) ** k)
@@ -965,8 +969,16 @@ Optimization time: 0.0 s / 120.0 s
   val = 2 * (avg_v - v_core) / (v_top + v_bottom)
 /home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:160: RuntimeWarning: invalid value encountered in divide
   C0 = 1 - u0 / freestream_velocity
-/home/runner/work/floris/floris/floris/wind_data.py:3088: RuntimeWarning: invalid value encountered in power
-  exponent = -((x / a) ** k)
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:327: RuntimeWarning: invalid value encountered in divide
+  val = 2 * (avg_v - v_core) / (v_top + v_bottom)
+/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:160: RuntimeWarning: invalid value encountered in divide
+  C0 = 1 - u0 / freestream_velocity
+/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:512: RuntimeWarning: invalid value encountered in divide
+  I_total = np.sqrt((2 / 3) * k_total) / average_u_i
+/home/runner/work/floris/floris/floris/core/wake_velocity/gauss.py:80: RuntimeWarning: invalid value encountered in divide
+  sigma_z0 = rotor_diameter_i * 0.5 * np.sqrt(uR / (u_initial + u0))
 /home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:512: RuntimeWarning: invalid value encountered in divide
   I_total = np.sqrt((2 / 3) * k_total) / average_u_i
 /home/runner/work/floris/floris/floris/core/wake_velocity/gauss.py:80: RuntimeWarning: invalid value encountered in divide
@@ -975,8 +987,63 @@ Optimization time: 0.0 s / 120.0 s
   val = 2 * (avg_v - v_core) / (v_top + v_bottom)
 /home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:160: RuntimeWarning: invalid value encountered in divide
   C0 = 1 - u0 / freestream_velocity
+/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:327: RuntimeWarning: invalid value encountered in divide
+  val = 2 * (avg_v - v_core) / (v_top + v_bottom)
+/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:160: RuntimeWarning: invalid value encountered in divide
+  C0 = 1 - u0 / freestream_velocity
+/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:512: RuntimeWarning: invalid value encountered in divide
+  I_total = np.sqrt((2 / 3) * k_total) / average_u_i
+/home/runner/work/floris/floris/floris/core/wake_velocity/gauss.py:80: RuntimeWarning: invalid value encountered in divide
+  sigma_z0 = rotor_diameter_i * 0.5 * np.sqrt(uR / (u_initial + u0))
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:512: RuntimeWarning: invalid value encountered in divide
+  I_total = np.sqrt((2 / 3) * k_total) / average_u_i
+/home/runner/work/floris/floris/floris/core/wake_velocity/gauss.py:80: RuntimeWarning: invalid value encountered in divide
+  sigma_z0 = rotor_diameter_i * 0.5 * np.sqrt(uR / (u_initial + u0))
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>=======================================
+Optimization step +1.0
+Optimization time = +31.7 [s]
+Mean AEP = 40.9 [GWh] (+0.52%)
+Median AEP = 40.9 [GWh] (+0.55%)
+Max AEP = 40.9 [GWh] (+0.55%)
+Min AEP = 40.8 [GWh] (+0.43%)
+=======================================
+Optimization time: 31.7 s / 120.0 s
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/wind_data.py:3088: RuntimeWarning: invalid value encountered in power
+  exponent = -((x / a) ** k)
 /home/runner/work/floris/floris/floris/wind_data.py:3088: RuntimeWarning: invalid value encountered in power
   exponent = -((x / a) ** k)
+/home/runner/work/floris/floris/floris/wind_data.py:3088: RuntimeWarning: invalid value encountered in power
+  exponent = -((x / a) ** k)
+/home/runner/work/floris/floris/floris/wind_data.py:3088: RuntimeWarning: invalid value encountered in power
+  exponent = -((x / a) ** k)
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:327: RuntimeWarning: invalid value encountered in divide
+  val = 2 * (avg_v - v_core) / (v_top + v_bottom)
+/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:160: RuntimeWarning: invalid value encountered in divide
+  C0 = 1 - u0 / freestream_velocity
+/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:327: RuntimeWarning: invalid value encountered in divide
+  val = 2 * (avg_v - v_core) / (v_top + v_bottom)
+/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:160: RuntimeWarning: invalid value encountered in divide
+  C0 = 1 - u0 / freestream_velocity
+/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:327: RuntimeWarning: invalid value encountered in divide
+  val = 2 * (avg_v - v_core) / (v_top + v_bottom)
+/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:160: RuntimeWarning: invalid value encountered in divide
+  C0 = 1 - u0 / freestream_velocity
+/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:512: RuntimeWarning: invalid value encountered in divide
+  I_total = np.sqrt((2 / 3) * k_total) / average_u_i
+/home/runner/work/floris/floris/floris/core/wake_velocity/gauss.py:80: RuntimeWarning: invalid value encountered in divide
+  sigma_z0 = rotor_diameter_i * 0.5 * np.sqrt(uR / (u_initial + u0))
+/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:512: RuntimeWarning: invalid value encountered in divide
+  I_total = np.sqrt((2 / 3) * k_total) / average_u_i
+/home/runner/work/floris/floris/floris/core/wake_velocity/gauss.py:80: RuntimeWarning: invalid value encountered in divide
+  sigma_z0 = rotor_diameter_i * 0.5 * np.sqrt(uR / (u_initial + u0))
 /home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:512: RuntimeWarning: invalid value encountered in divide
   I_total = np.sqrt((2 / 3) * k_total) / average_u_i
 /home/runner/work/floris/floris/floris/core/wake_velocity/gauss.py:80: RuntimeWarning: invalid value encountered in divide
@@ -991,82 +1058,17 @@ Optimization time: 0.0 s / 120.0 s
   I_total = np.sqrt((2 / 3) * k_total) / average_u_i
 /home/runner/work/floris/floris/floris/core/wake_velocity/gauss.py:80: RuntimeWarning: invalid value encountered in divide
   sigma_z0 = rotor_diameter_i * 0.5 * np.sqrt(uR / (u_initial + u0))
-/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:327: RuntimeWarning: invalid value encountered in divide
-  val = 2 * (avg_v - v_core) / (v_top + v_bottom)
-/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:160: RuntimeWarning: invalid value encountered in divide
-  C0 = 1 - u0 / freestream_velocity
-/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:512: RuntimeWarning: invalid value encountered in divide
-  I_total = np.sqrt((2 / 3) * k_total) / average_u_i
-/home/runner/work/floris/floris/floris/core/wake_velocity/gauss.py:80: RuntimeWarning: invalid value encountered in divide
-  sigma_z0 = rotor_diameter_i * 0.5 * np.sqrt(uR / (u_initial + u0))
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>=======================================
-Optimization step +1.0
-Optimization time = +31.2 [s]
-Mean AEP = 40.9 [GWh] (+0.52%)
-Median AEP = 40.9 [GWh] (+0.56%)
-Max AEP = 40.9 [GWh] (+0.57%)
-Min AEP = 40.8 [GWh] (+0.38%)
-=======================================
-Optimization time: 31.2 s / 120.0 s
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/wind_data.py:3088: RuntimeWarning: invalid value encountered in power
-  exponent = -((x / a) ** k)
-/home/runner/work/floris/floris/floris/wind_data.py:3088: RuntimeWarning: invalid value encountered in power
-  exponent = -((x / a) ** k)
-/home/runner/work/floris/floris/floris/wind_data.py:3088: RuntimeWarning: invalid value encountered in power
-  exponent = -((x / a) ** k)
-/home/runner/work/floris/floris/floris/wind_data.py:3088: RuntimeWarning: invalid value encountered in power
-  exponent = -((x / a) ** k)
-/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:327: RuntimeWarning: invalid value encountered in divide
-  val = 2 * (avg_v - v_core) / (v_top + v_bottom)
-/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:160: RuntimeWarning: invalid value encountered in divide
-  C0 = 1 - u0 / freestream_velocity
-/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:327: RuntimeWarning: invalid value encountered in divide
-  val = 2 * (avg_v - v_core) / (v_top + v_bottom)
-/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:160: RuntimeWarning: invalid value encountered in divide
-  C0 = 1 - u0 / freestream_velocity
-/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:512: RuntimeWarning: invalid value encountered in divide
-  I_total = np.sqrt((2 / 3) * k_total) / average_u_i
-/home/runner/work/floris/floris/floris/core/wake_velocity/gauss.py:80: RuntimeWarning: invalid value encountered in divide
-  sigma_z0 = rotor_diameter_i * 0.5 * np.sqrt(uR / (u_initial + u0))
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:512: RuntimeWarning: invalid value encountered in divide
-  I_total = np.sqrt((2 / 3) * k_total) / average_u_i
-/home/runner/work/floris/floris/floris/core/wake_velocity/gauss.py:80: RuntimeWarning: invalid value encountered in divide
-  sigma_z0 = rotor_diameter_i * 0.5 * np.sqrt(uR / (u_initial + u0))
-/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:327: RuntimeWarning: invalid value encountered in divide
-  val = 2 * (avg_v - v_core) / (v_top + v_bottom)
-/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:160: RuntimeWarning: invalid value encountered in divide
-  C0 = 1 - u0 / freestream_velocity
-/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:512: RuntimeWarning: invalid value encountered in divide
-  I_total = np.sqrt((2 / 3) * k_total) / average_u_i
-/home/runner/work/floris/floris/floris/core/wake_velocity/gauss.py:80: RuntimeWarning: invalid value encountered in divide
-  sigma_z0 = rotor_diameter_i * 0.5 * np.sqrt(uR / (u_initial + u0))
-/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:327: RuntimeWarning: invalid value encountered in divide
-  val = 2 * (avg_v - v_core) / (v_top + v_bottom)
-/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:160: RuntimeWarning: invalid value encountered in divide
-  C0 = 1 - u0 / freestream_velocity
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:512: RuntimeWarning: invalid value encountered in divide
-  I_total = np.sqrt((2 / 3) * k_total) / average_u_i
-/home/runner/work/floris/floris/floris/core/wake_velocity/gauss.py:80: RuntimeWarning: invalid value encountered in divide
-  sigma_z0 = rotor_diameter_i * 0.5 * np.sqrt(uR / (u_initial + u0))
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>=======================================
 Optimization step +2.0
-Optimization time = +62.4 [s]
-Mean AEP = 40.9 [GWh] (+0.58%)
-Median AEP = 40.9 [GWh] (+0.58%)
-Max AEP = 40.9 [GWh] (+0.58%)
-Min AEP = 40.9 [GWh] (+0.57%)
+Optimization time = +63.3 [s]
+Mean AEP = 40.9 [GWh] (+0.55%)
+Median AEP = 40.9 [GWh] (+0.56%)
+Max AEP = 40.9 [GWh] (+0.56%)
+Min AEP = 40.9 [GWh] (+0.55%)
 =======================================
-Optimization time: 62.4 s / 120.0 s
+Optimization time: 63.3 s / 120.0 s
 </pre></div>
 </div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/wind_data.py:3088: RuntimeWarning: invalid value encountered in power
@@ -1081,14 +1083,16 @@ Optimization time: 62.4 s / 120.0 s
   val = 2 * (avg_v - v_core) / (v_top + v_bottom)
 /home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:160: RuntimeWarning: invalid value encountered in divide
   C0 = 1 - u0 / freestream_velocity
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:512: RuntimeWarning: invalid value encountered in divide
+  I_total = np.sqrt((2 / 3) * k_total) / average_u_i
+/home/runner/work/floris/floris/floris/core/wake_velocity/gauss.py:80: RuntimeWarning: invalid value encountered in divide
+  sigma_z0 = rotor_diameter_i * 0.5 * np.sqrt(uR / (u_initial + u0))
 /home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:327: RuntimeWarning: invalid value encountered in divide
   val = 2 * (avg_v - v_core) / (v_top + v_bottom)
 /home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:160: RuntimeWarning: invalid value encountered in divide
   C0 = 1 - u0 / freestream_velocity
-/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:512: RuntimeWarning: invalid value encountered in divide
-  I_total = np.sqrt((2 / 3) * k_total) / average_u_i
-/home/runner/work/floris/floris/floris/core/wake_velocity/gauss.py:80: RuntimeWarning: invalid value encountered in divide
-  sigma_z0 = rotor_diameter_i * 0.5 * np.sqrt(uR / (u_initial + u0))
 </pre></div>
 </div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:512: RuntimeWarning: invalid value encountered in divide
@@ -1115,13 +1119,13 @@ Optimization time: 62.4 s / 120.0 s
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>=======================================
 Optimization step +3.0
-Optimization time = +93.7 [s]
-Mean AEP = 40.9 [GWh] (+0.58%)
-Median AEP = 40.9 [GWh] (+0.58%)
-Max AEP = 40.9 [GWh] (+0.58%)
-Min AEP = 40.9 [GWh] (+0.58%)
+Optimization time = +95.0 [s]
+Mean AEP = 40.9 [GWh] (+0.56%)
+Median AEP = 40.9 [GWh] (+0.56%)
+Max AEP = 40.9 [GWh] (+0.56%)
+Min AEP = 40.9 [GWh] (+0.55%)
 =======================================
-Optimization time: 93.7 s / 120.0 s
+Optimization time: 95.0 s / 120.0 s
 </pre></div>
 </div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/wind_data.py:3088: RuntimeWarning: invalid value encountered in power
@@ -1140,22 +1144,20 @@ Optimization time: 93.7 s / 120.0 s
   C0 = 1 - u0 / freestream_velocity
 /home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:327: RuntimeWarning: invalid value encountered in divide
   val = 2 * (avg_v - v_core) / (v_top + v_bottom)
-/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:512: RuntimeWarning: invalid value encountered in divide
-  I_total = np.sqrt((2 / 3) * k_total) / average_u_i
-/home/runner/work/floris/floris/floris/core/wake_velocity/gauss.py:80: RuntimeWarning: invalid value encountered in divide
-  sigma_z0 = rotor_diameter_i * 0.5 * np.sqrt(uR / (u_initial + u0))
 /home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:160: RuntimeWarning: invalid value encountered in divide
   C0 = 1 - u0 / freestream_velocity
 /home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:512: RuntimeWarning: invalid value encountered in divide
   I_total = np.sqrt((2 / 3) * k_total) / average_u_i
 /home/runner/work/floris/floris/floris/core/wake_velocity/gauss.py:80: RuntimeWarning: invalid value encountered in divide
   sigma_z0 = rotor_diameter_i * 0.5 * np.sqrt(uR / (u_initial + u0))
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:327: RuntimeWarning: invalid value encountered in divide
+/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:327: RuntimeWarning: invalid value encountered in divide
   val = 2 * (avg_v - v_core) / (v_top + v_bottom)
 /home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:160: RuntimeWarning: invalid value encountered in divide
   C0 = 1 - u0 / freestream_velocity
+/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:512: RuntimeWarning: invalid value encountered in divide
+  I_total = np.sqrt((2 / 3) * k_total) / average_u_i
+/home/runner/work/floris/floris/floris/core/wake_velocity/gauss.py:80: RuntimeWarning: invalid value encountered in divide
+  sigma_z0 = rotor_diameter_i * 0.5 * np.sqrt(uR / (u_initial + u0))
 /home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:512: RuntimeWarning: invalid value encountered in divide
   I_total = np.sqrt((2 / 3) * k_total) / average_u_i
 /home/runner/work/floris/floris/floris/core/wake_velocity/gauss.py:80: RuntimeWarning: invalid value encountered in divide
@@ -1172,21 +1174,21 @@ Optimization time: 93.7 s / 120.0 s
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>=======================================
 Optimization step +4.0
-Optimization time = +125.0 [s]
+Optimization time = +126.7 [s]
 Mean AEP = 40.9 [GWh] (+0.58%)
 Median AEP = 40.9 [GWh] (+0.58%)
 Max AEP = 40.9 [GWh] (+0.58%)
-Min AEP = 40.9 [GWh] (+0.58%)
+Min AEP = 40.9 [GWh] (+0.57%)
 =======================================
 Final AEP = 40.9 [GWh] (+0.58%)
 =====================================
 Objective log array (WRG):
 (5, 4)
-[[0.99421439 0.99421439 0.99421439 0.99421439]
- [0.99992697 0.99974303 0.99975674 0.99796233]
- [0.99994763 0.99987735 0.99993344 0.99998593]
- [1.         0.99996056 0.99993344 0.99999936]
- [1.         0.99999936 0.99996056 1.        ]]
+[[0.99423384 0.99423384 0.99423384 0.99423384]
+ [0.99970164 0.99973707 0.99849658 0.99966915]
+ [0.99974481 0.99970164 0.99976054 0.99976985]
+ [0.99979734 0.99976054 0.99974818 0.99976985]
+ [0.99997556 0.99994001 0.99999588 1.        ]]
 Using supplied initial layout for 4 individuals.
 =======================================
 Optimization step +0.0
@@ -1202,46 +1204,46 @@ Optimization time: 0.0 s / 120.0 s
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>=======================================
 Optimization step +1.0
-Optimization time = +31.1 [s]
-Mean AEP = 44.0 [GWh] (+0.74%)
+Optimization time = +31.6 [s]
+Mean AEP = 44.0 [GWh] (+0.70%)
 Median AEP = 44.0 [GWh] (+0.74%)
-Max AEP = 44.0 [GWh] (+0.76%)
-Min AEP = 44.0 [GWh] (+0.73%)
+Max AEP = 44.0 [GWh] (+0.74%)
+Min AEP = 44.0 [GWh] (+0.60%)
 =======================================
-Optimization time: 31.1 s / 120.0 s
+Optimization time: 31.6 s / 120.0 s
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>=======================================
 Optimization step +2.0
-Optimization time = +62.3 [s]
-Mean AEP = 44.0 [GWh] (+0.76%)
-Median AEP = 44.0 [GWh] (+0.76%)
-Max AEP = 44.0 [GWh] (+0.76%)
+Optimization time = +63.2 [s]
+Mean AEP = 44.0 [GWh] (+0.74%)
+Median AEP = 44.0 [GWh] (+0.74%)
+Max AEP = 44.0 [GWh] (+0.74%)
 Min AEP = 44.0 [GWh] (+0.74%)
 =======================================
-Optimization time: 62.3 s / 120.0 s
+Optimization time: 63.2 s / 120.0 s
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>=======================================
 Optimization step +3.0
-Optimization time = +93.4 [s]
-Mean AEP = 44.0 [GWh] (+0.76%)
-Median AEP = 44.0 [GWh] (+0.76%)
-Max AEP = 44.0 [GWh] (+0.76%)
-Min AEP = 44.0 [GWh] (+0.76%)
+Optimization time = +94.7 [s]
+Mean AEP = 44.0 [GWh] (+0.74%)
+Median AEP = 44.0 [GWh] (+0.74%)
+Max AEP = 44.0 [GWh] (+0.74%)
+Min AEP = 44.0 [GWh] (+0.74%)
 =======================================
-Optimization time: 93.4 s / 120.0 s
+Optimization time: 94.7 s / 120.0 s
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>=======================================
 Optimization step +4.0
-Optimization time = +124.8 [s]
-Mean AEP = 44.0 [GWh] (+0.76%)
-Median AEP = 44.0 [GWh] (+0.76%)
-Max AEP = 44.0 [GWh] (+0.76%)
-Min AEP = 44.0 [GWh] (+0.76%)
+Optimization time = +126.3 [s]
+Mean AEP = 44.0 [GWh] (+0.74%)
+Median AEP = 44.0 [GWh] (+0.74%)
+Max AEP = 44.0 [GWh] (+0.74%)
+Min AEP = 44.0 [GWh] (+0.74%)
 =======================================
-Final AEP = 44.0 [GWh] (+0.76%)
+Final AEP = 44.0 [GWh] (+0.74%)
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Using supplied initial layout for 4 individuals.
@@ -1259,10 +1261,10 @@ Optimization time: 0.0 s / 120.0 s
 </div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:327: RuntimeWarning: invalid value encountered in divide
   val = 2 * (avg_v - v_core) / (v_top + v_bottom)
-/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:327: RuntimeWarning: invalid value encountered in divide
-  val = 2 * (avg_v - v_core) / (v_top + v_bottom)
 /home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:160: RuntimeWarning: invalid value encountered in divide
   C0 = 1 - u0 / freestream_velocity
+/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:327: RuntimeWarning: invalid value encountered in divide
+  val = 2 * (avg_v - v_core) / (v_top + v_bottom)
 /home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:160: RuntimeWarning: invalid value encountered in divide
   C0 = 1 - u0 / freestream_velocity
 /home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:327: RuntimeWarning: invalid value encountered in divide
@@ -1293,13 +1295,13 @@ Optimization time: 0.0 s / 120.0 s
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>=======================================
 Optimization step +1.0
-Optimization time = +31.2 [s]
-Mean AEP = 40.3 [GWh] (+0.64%)
-Median AEP = 40.3 [GWh] (+0.65%)
+Optimization time = +31.6 [s]
+Mean AEP = 40.3 [GWh] (+0.60%)
+Median AEP = 40.3 [GWh] (+0.64%)
 Max AEP = 40.3 [GWh] (+0.65%)
-Min AEP = 40.3 [GWh] (+0.63%)
+Min AEP = 40.3 [GWh] (+0.48%)
 =======================================
-Optimization time: 31.2 s / 120.0 s
+Optimization time: 31.6 s / 120.0 s
 </pre></div>
 </div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:327: RuntimeWarning: invalid value encountered in divide
@@ -1338,13 +1340,13 @@ Optimization time: 31.2 s / 120.0 s
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>=======================================
 Optimization step +2.0
-Optimization time = +62.4 [s]
+Optimization time = +63.2 [s]
 Mean AEP = 40.3 [GWh] (+0.65%)
 Median AEP = 40.3 [GWh] (+0.65%)
 Max AEP = 40.3 [GWh] (+0.65%)
 Min AEP = 40.3 [GWh] (+0.65%)
 =======================================
-Optimization time: 62.4 s / 120.0 s
+Optimization time: 63.2 s / 120.0 s
 </pre></div>
 </div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:327: RuntimeWarning: invalid value encountered in divide
@@ -1357,18 +1359,10 @@ Optimization time: 62.4 s / 120.0 s
   C0 = 1 - u0 / freestream_velocity
 /home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:327: RuntimeWarning: invalid value encountered in divide
   val = 2 * (avg_v - v_core) / (v_top + v_bottom)
+/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:160: RuntimeWarning: invalid value encountered in divide
+  C0 = 1 - u0 / freestream_velocity
 /home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:327: RuntimeWarning: invalid value encountered in divide
   val = 2 * (avg_v - v_core) / (v_top + v_bottom)
-/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:512: RuntimeWarning: invalid value encountered in divide
-  I_total = np.sqrt((2 / 3) * k_total) / average_u_i
-/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:512: RuntimeWarning: invalid value encountered in divide
-  I_total = np.sqrt((2 / 3) * k_total) / average_u_i
-/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:160: RuntimeWarning: invalid value encountered in divide
-  C0 = 1 - u0 / freestream_velocity
-/home/runner/work/floris/floris/floris/core/wake_velocity/gauss.py:80: RuntimeWarning: invalid value encountered in divide
-  sigma_z0 = rotor_diameter_i * 0.5 * np.sqrt(uR / (u_initial + u0))
-/home/runner/work/floris/floris/floris/core/wake_velocity/gauss.py:80: RuntimeWarning: invalid value encountered in divide
-  sigma_z0 = rotor_diameter_i * 0.5 * np.sqrt(uR / (u_initial + u0))
 /home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:160: RuntimeWarning: invalid value encountered in divide
   C0 = 1 - u0 / freestream_velocity
 /home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:512: RuntimeWarning: invalid value encountered in divide
@@ -1377,19 +1371,27 @@ Optimization time: 62.4 s / 120.0 s
   I_total = np.sqrt((2 / 3) * k_total) / average_u_i
 /home/runner/work/floris/floris/floris/core/wake_velocity/gauss.py:80: RuntimeWarning: invalid value encountered in divide
   sigma_z0 = rotor_diameter_i * 0.5 * np.sqrt(uR / (u_initial + u0))
+/home/runner/work/floris/floris/floris/core/wake_velocity/gauss.py:80: RuntimeWarning: invalid value encountered in divide
+  sigma_z0 = rotor_diameter_i * 0.5 * np.sqrt(uR / (u_initial + u0))
+/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:512: RuntimeWarning: invalid value encountered in divide
+  I_total = np.sqrt((2 / 3) * k_total) / average_u_i
+/home/runner/work/floris/floris/floris/core/wake_velocity/gauss.py:80: RuntimeWarning: invalid value encountered in divide
+  sigma_z0 = rotor_diameter_i * 0.5 * np.sqrt(uR / (u_initial + u0))
+/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:512: RuntimeWarning: invalid value encountered in divide
+  I_total = np.sqrt((2 / 3) * k_total) / average_u_i
 /home/runner/work/floris/floris/floris/core/wake_velocity/gauss.py:80: RuntimeWarning: invalid value encountered in divide
   sigma_z0 = rotor_diameter_i * 0.5 * np.sqrt(uR / (u_initial + u0))
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>=======================================
 Optimization step +3.0
-Optimization time = +93.6 [s]
+Optimization time = +94.8 [s]
 Mean AEP = 40.3 [GWh] (+0.65%)
 Median AEP = 40.3 [GWh] (+0.65%)
 Max AEP = 40.3 [GWh] (+0.65%)
 Min AEP = 40.3 [GWh] (+0.65%)
 =======================================
-Optimization time: 93.6 s / 120.0 s
+Optimization time: 94.8 s / 120.0 s
 </pre></div>
 </div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:327: RuntimeWarning: invalid value encountered in divide
@@ -1400,14 +1402,6 @@ Optimization time: 93.6 s / 120.0 s
   val = 2 * (avg_v - v_core) / (v_top + v_bottom)
 /home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:160: RuntimeWarning: invalid value encountered in divide
   C0 = 1 - u0 / freestream_velocity
-/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:512: RuntimeWarning: invalid value encountered in divide
-  I_total = np.sqrt((2 / 3) * k_total) / average_u_i
-/home/runner/work/floris/floris/floris/core/wake_velocity/gauss.py:80: RuntimeWarning: invalid value encountered in divide
-  sigma_z0 = rotor_diameter_i * 0.5 * np.sqrt(uR / (u_initial + u0))
-/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:512: RuntimeWarning: invalid value encountered in divide
-  I_total = np.sqrt((2 / 3) * k_total) / average_u_i
-/home/runner/work/floris/floris/floris/core/wake_velocity/gauss.py:80: RuntimeWarning: invalid value encountered in divide
-  sigma_z0 = rotor_diameter_i * 0.5 * np.sqrt(uR / (u_initial + u0))
 /home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:327: RuntimeWarning: invalid value encountered in divide
   val = 2 * (avg_v - v_core) / (v_top + v_bottom)
 /home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:160: RuntimeWarning: invalid value encountered in divide
@@ -1416,6 +1410,14 @@ Optimization time: 93.6 s / 120.0 s
   val = 2 * (avg_v - v_core) / (v_top + v_bottom)
 /home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:160: RuntimeWarning: invalid value encountered in divide
   C0 = 1 - u0 / freestream_velocity
+/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:512: RuntimeWarning: invalid value encountered in divide
+  I_total = np.sqrt((2 / 3) * k_total) / average_u_i
+/home/runner/work/floris/floris/floris/core/wake_velocity/gauss.py:80: RuntimeWarning: invalid value encountered in divide
+  sigma_z0 = rotor_diameter_i * 0.5 * np.sqrt(uR / (u_initial + u0))
+/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:512: RuntimeWarning: invalid value encountered in divide
+  I_total = np.sqrt((2 / 3) * k_total) / average_u_i
+/home/runner/work/floris/floris/floris/core/wake_velocity/gauss.py:80: RuntimeWarning: invalid value encountered in divide
+  sigma_z0 = rotor_diameter_i * 0.5 * np.sqrt(uR / (u_initial + u0))
 /home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:512: RuntimeWarning: invalid value encountered in divide
   I_total = np.sqrt((2 / 3) * k_total) / average_u_i
 /home/runner/work/floris/floris/floris/core/wake_velocity/gauss.py:80: RuntimeWarning: invalid value encountered in divide
@@ -1428,7 +1430,7 @@ Optimization time: 93.6 s / 120.0 s
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>=======================================
 Optimization step +4.0
-Optimization time = +124.8 [s]
+Optimization time = +126.4 [s]
 Mean AEP = 40.3 [GWh] (+0.65%)
 Median AEP = 40.3 [GWh] (+0.65%)
 Max AEP = 40.3 [GWh] (+0.65%)
@@ -1438,16 +1440,16 @@ Final AEP = 40.3 [GWh] (+0.65%)
 =====================================
 Objective log array (HET):
 (5, 4)
-[[0.99244601 0.99244601 0.99244601 0.99244601]
- [0.99979974 0.99974984 0.99998805 0.99973428]
- [0.99999517 0.9998055  0.99997378 0.99998805]
- [0.99999517 0.9999994  0.99997378 0.99999729]
- [0.9999994  1.         0.99999517 0.9999994 ]]
+[[0.99263344 0.99263344 0.99263344 0.99263344]
+ [0.99861615 0.99999188 0.99995707 0.99993492]
+ [1.         0.99998093 0.99998005 0.99999248]
+ [1.         0.99999248 0.99998746 1.        ]
+ [1.         1.         0.99999248 1.        ]]
 </pre></div>
 </div>
 <img alt="../../_images/9e3c6fe7ca751e79a9f43544087d444ca6d8d0af7945cb49430f861a534fbf85.png" src="../../_images/9e3c6fe7ca751e79a9f43544087d444ca6d8d0af7945cb49430f861a534fbf85.png" />
-<img alt="../../_images/8afe88012dce603431277301fe5c9c93258fc89c4e180ab30990c942b47765c9.png" src="../../_images/8afe88012dce603431277301fe5c9c93258fc89c4e180ab30990c942b47765c9.png" />
-<img alt="../../_images/2110d14ea8c68ab05a8b8e0da661993b2611d410ff8e81e8b873356a4c93da22.png" src="../../_images/2110d14ea8c68ab05a8b8e0da661993b2611d410ff8e81e8b873356a4c93da22.png" />
+<img alt="../../_images/b623c0856f7e341d3bb34fdd551453690b73a1e66da2437720d8939abc1ee8cd.png" src="../../_images/b623c0856f7e341d3bb34fdd551453690b73a1e66da2437720d8939abc1ee8cd.png" />
+<img alt="../../_images/b058568f472d585d9470d78cdd11fdd2aec7045345e36d3d30cca3f4a69412f6.png" src="../../_images/b058568f472d585d9470d78cdd11fdd2aec7045345e36d3d30cca3f4a69412f6.png" />
 </div>
 </div>
 </section>
